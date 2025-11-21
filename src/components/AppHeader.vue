@@ -13,7 +13,11 @@
         <BroomstickLogo
           class="header-logo"
           alt="broomstick"
+          tabindex="0"
+          role="button"
           @click="$emit('home')"
+          @keydown.enter="$emit('home')"
+          @keydown.space.prevent="$emit('home')"
           style="cursor: pointer"
         />
       </div>
