@@ -1,0 +1,101 @@
+{
+  "broomstick": {
+    "tagline": "Uncover Lexemes that can be improved on Wikidata",
+    "subtitle": "Select a Lexeme language and query to begin."
+  },
+  "search": {
+    "button": "Search",
+    "heading": "Search",
+    "language-label": "Lexeme language",
+    "query-label": "Find Lexeme that",
+    "language-placeholder": "Choose a language",
+    "query-placeholder": "Choose an option",
+    "show-panel": "Search & filter",
+    "show-panel-aria-with-filters": "Show search and filter ({count} filter active) | Show search and filter ({count} filters active)",
+    "show-panel-aria": "Show search and filter (no filter active)",
+    "hide-panel-aria": "Hide search and filter",
+    "search-form-filter-clear-notice": "Starting a new search will clear all filters."
+  },
+  "results": {
+    "querying": "Querying Wikidata...",
+    "querying-aria": "Querying Wikidata"
+  },
+  "errors": {
+    "language-not-found": "Language not found. Try choosing another language.",
+    "query-not-found": "Query type not found. Try choosing another query.",
+    "query-failed": "An error occurred while querying Wikidata.",
+    "lexical-category-not-found": "Lexical category not found. Try choosing another category."
+  },
+  "table": {
+    "visited-header": "Visited status",
+    "visited-yes": "Visited",
+    "visited-no": "Not visited",
+    "result-count": "{count} result | {count} results",
+    "lexeme-id-header": "LID",
+    "lemma-header": "Lemma",
+    "category-header": "Lexical category",
+    "all-visited": "All Lexemes have been visited.",
+    "no-results": "Lexemes not found.",
+    "try-query": "Try clearing the filter, select another Lexeme language, or select another query.",
+    "hide-visited": "Hide visited",
+    "hide-visited-aria": "Hide visited",
+    "hidden-count": "{count} hidden"
+  },
+    "cdx-table-pagination-status-message-determinate-short": "{x}–{y} of {z}",
+    "cdx-table-pagination-status-message-determinate-long": "Showing results {x}–{y} of {z}",
+    "cdx-table-pager-items-per-page-current": "{current} rows",
+    "cdx-table-pager-button-first-page": "First page",
+    "cdx-table-pager-button-last-page": "Last page",
+    "cdx-table-pager-button-next-page": "Next page",
+    "cdx-table-pager-button-prev-page": "Previous page",
+
+  "footer": {
+    "by": "by",
+    "powered-by": "Powered by Wikidata",
+    "about": "About",
+    "privacy": "Privacy policy",
+    "license": "License",
+    "source": "Source code"
+  },
+  "settings": {
+    "menu-label": "Settings",
+    "theme-label": "Theme",
+    "theme-auto": "Automatic",
+    "theme-auto-description": "Follow your browser theme",
+    "theme-light": "Light",
+    "theme-dark": "Dark",
+    "language-label": "Display language",
+    "close": "Close",
+    "apply": "Apply",
+    "cancel": "Cancel",
+    "translate-help": "Want to add or improve translation in your language?",
+    "translate-link": "Help translate Broomstick."
+  },
+  "queries": {
+  "general": "General",
+  "senses": "Senses",
+  "forms": "Forms",
+  "misplacements": "Misplacements",
+  "is-empty": "is empty",
+  "missing-senses": "has no Senses",
+  "missing-forms": "has no Forms",
+  "missing-external-identifiers": "has no external identifiers",
+  "missing-usage-example": "missing usage example (P5831)",
+  "missing-item-for-sense": "missing item for this sense (P5137), demonym of (P6271), or hyperonym (P6593)",
+  "missing-predicate-troponym": "missing predicate for (P9970) or troponym of (P5975)",
+  "missing-ipa": "missing IPA transcription (P898)",
+  "missing-pronunciation-audio": "missing pronunciation audio (P443)",
+  "missing-grammatical-features": "has no grammatical features",
+  "misplaced-item-for-sense": "misplaced item for this sense (P5137) at Lexeme level instead of Senses level"
+},
+"filters": {
+  "heading": "Filter",
+  "clear-all": "Clear all",
+  "text-placeholder": "LID or Lemma",
+  "text-label-aria": "Search LID or Lemma",
+  "category-all": "All",
+  "category-label": "Lexical category",
+  "lexical-category-placeholder": "Select a category"
+}
+
+}
