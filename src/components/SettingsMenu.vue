@@ -11,7 +11,7 @@
     <cdx-menu-button
       v-model:selected="selectedItem"
       :menu-items="menuItems"
-      aria-label="settings"
+      :aria-label="$t('settings.menu-label')"
     >
       <template #default>
         <cdx-icon :icon="cdxIconMenu" />
@@ -21,14 +21,14 @@
     <!-- theme dialog -->
     <cdx-dialog
       v-model:open="showThemeDialog"
-      title="Theme"
+      :title="$t('settings.theme-label')"
       :use-close-button="true"
       :primary-action="{
-        label: 'Apply',
+        label: $t('settings.apply'),
         actionType: 'progressive',
       }"
       :default-action="{
-        label: 'Cancel',
+        label: $t('settings.cancel'),
       }"
       @primary="saveTheme"
       @default="showThemeDialog = false"
@@ -36,16 +36,16 @@
       <div class="dialog-content">
         <cdx-field>
           <cdx-radio v-model="tempTheme" name="theme" input-value="auto">
-            <template #default> Automatic </template>
+            <template #default> {{ $t('settings.theme-auto') }} </template>
             <template #description>
-              <span class="radio-description">Follow your browser theme</span>
+              <span class="radio-description">{{ $t('settings.theme-auto-description') }}</span>
             </template>
           </cdx-radio>
           <cdx-radio v-model="tempTheme" name="theme" input-value="light">
-            Light
+            {{ $t('settings.theme-light') }}
           </cdx-radio>
           <cdx-radio v-model="tempTheme" name="theme" input-value="dark">
-            Dark
+            {{ $t('settings.theme-dark') }}
           </cdx-radio>
         </cdx-field>
       </div>
@@ -54,34 +54,44 @@
     <!-- display language dialog -->
     <cdx-dialog
       v-model:open="showLanguageDialog"
-      title="Display language"
+      :title="$t('settings.language-label')"
       :use-close-button="true"
-      :primary-action="{
-        label: 'Apply',
-        actionType: 'progressive',
-      }"
-      :default-action="{
-        label: 'Cancel',
-      }"
-      @primary="saveLanguage"
-      @default="showLanguageDialog = false"
     >
       <div class="dialog-content">
         <cdx-field>
-          <cdx-radio v-model="tempLanguage" name="language" input-value="en">
-            English
+          <cdx-radio v-for="lang in DISPLAY_LANGUAGES" :key="lang.code" v-model="tempLanguage" name="language" :input-value="lang.code">
+            {{ lang.nativeName }}
           </cdx-radio>
-          <!-- 
-          <cdx-radio
-            v-model="tempLanguage"
-            name="language"
-            input-value="id"
-          >
-            Indonesian
-          </cdx-radio>
-          -->
         </cdx-field>
       </div>
+            <template #footer>
+        <p class="translate-help">
+          {{ $t('settings.translate-help') }}
+          <a 
+            href="https://translatewiki.net/wiki/Translating:Broomstick" 
+            target="_blank" 
+            rel="noopener"
+            class="translate-link"
+          >
+            {{ $t('settings.translate-link') }}
+          </a>
+        </p>
+        <div class="footer-buttons">
+          <cdx-button  
+            @click="showLanguageDialog = false"
+            class="cancel-button"
+          >
+            {{ $t('settings.cancel') }}
+          </cdx-button>
+          <cdx-button 
+            action="progressive" 
+            weight="primary" 
+            @click="saveLanguage"
+          >
+            {{ $t('settings.apply') }}
+          </cdx-button>
+        </div>
+      </template>
     </cdx-dialog>
   </div>
 </template>
@@ -94,6 +104,7 @@ import {
   CdxField,
   CdxRadio,
   CdxIcon,
+  CdxButton
 } from "@wikimedia/codex";
 import {
   cdxIconMenu,
@@ -101,32 +112,33 @@ import {
   cdxIconMoon,
   cdxIconLanguage,
 } from "@wikimedia/codex-icons";
+import { DISPLAY_LANGUAGES } from '../i18n/displayLanguages.js';
+import { useI18n } from 'vue-i18n';
+
+const { t, locale } = useI18n();
 
 const selectedItem = ref(null);
 const currentTheme = ref("auto");
-const currentLanguage = ref("en");
+const currentLanguage = ref(locale.value);
 
 const tempTheme = ref("auto");
-const tempLanguage = ref("en");
+const tempLanguage = ref(locale.value);
 
 const showThemeDialog = ref(false);
 const showLanguageDialog = ref(false);
 
 const themeLabel = computed(() => {
   const labels = {
-    auto: "Automatic",
-    light: "Light",
-    dark: "Dark",
+    auto: t('settings.theme-auto'),
+    light: t('settings.theme-light'),
+    dark: t('settings.theme-dark'),
   };
   return labels[currentTheme.value];
 });
 
 const languageLabel = computed(() => {
-  const labels = {
-    en: "English",
-    id: "Indonesian",
-  };
-  return labels[currentLanguage.value];
+  const lang = DISPLAY_LANGUAGES.find(l => l.code === currentLanguage.value);
+  return lang ? lang.nativeName : 'English';
 });
 
 const effectiveTheme = computed(() => {
@@ -134,20 +146,25 @@ const effectiveTheme = computed(() => {
   return systemTheme.value;
 });
 
-const menuItems = computed(() => [
-  {
-    value: "theme",
-    label: "Theme",
-    description: themeLabel.value,
-    icon: effectiveTheme.value === "dark" ? cdxIconMoon : cdxIconBright,
-  },
-  {
-    value: "language",
-    label: "Display language",
-    description: languageLabel.value,
-    icon: cdxIconLanguage,
-  },
-]);
+const menuItems = computed(() => {
+  // force reactivity on locale change
+  locale.value;
+  
+  return [
+    {
+      value: "theme",
+      label: t('settings.theme-label'),
+      description: themeLabel.value,
+      icon: effectiveTheme.value === "dark" ? cdxIconMoon : cdxIconBright,
+    },
+    {
+      value: "language",
+      label: t('settings.language-label'),
+      description: languageLabel.value,
+      icon: cdxIconLanguage,
+    },
+  ];
+});
 
 watch(selectedItem, (newValue) => {
   if (newValue === "theme") {
@@ -184,12 +201,21 @@ function restoreTheme() {
   }
 }
 
+function restoreLanguage() {
+  const savedLocale = localStorage.getItem('locale');
+  if (savedLocale) {
+    currentLanguage.value = savedLocale;
+    locale.value = savedLocale;
+  }
+}
+
 const systemTheme = ref(
   window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
 );
 
 onMounted(() => {
   restoreTheme();
+  restoreLanguage();
 
   const darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
   darkModeQuery.addEventListener("change", (e) => {
@@ -222,7 +248,12 @@ function applyTheme(theme) {
 function saveLanguage() {
   currentLanguage.value = tempLanguage.value;
   showLanguageDialog.value = false;
-  // apply selected language later on
+  
+  // save to localStorage
+  localStorage.setItem('locale', tempLanguage.value);
+  
+  // switch locale
+  locale.value = tempLanguage.value;
 }
 </script>
 
@@ -234,14 +265,46 @@ function saveLanguage() {
 
 .dialog-content {
   color: var(--color-base);
+  margin-bottom: calc(var(--spacing-50) - var(--spacing-100));
 }
 
 .radio-description {
   color: var(--color-subtle);
+  font-family: var(--font-family-system-sans);
 }
 
 :deep(.cdx-label__label__text) {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Lato,
-    Helvetica, Arial, sans-serif !important;
+  font-family: var(--font-family-system-sans);
+}
+
+:deep(.cdx-dialog__footer) {
+  padding: var(--spacing-125) var(--spacing-150) var(--spacing-150) !important;
+}
+
+.footer-buttons {
+  display: flex;
+  gap: var(--spacing-75);
+  width: 100%;
+  justify-content: flex-end;
+  margin-top: var(--spacing-50);
+}
+
+:deep(.cancel-button.cdx-button) {
+  border-radius: var(--border-radius-base);
+  border: 1px solid var(--border-color-interactive);
+  background: var(--background-color-interactive-subtle);
+}
+
+.translate-help {
+  color: var(--color-subtle);
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+  margin: 0;
+}
+
+.translate-link {
+  color: var(--color-progressive);
+  text-decoration: none;
+  line-height: var(--line-height-small);
 }
 </style>
