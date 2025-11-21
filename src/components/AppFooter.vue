@@ -15,7 +15,7 @@
           <div class="footer-text">
             <h3 class="footer-title">Broomstick</h3>
             <p class="footer-caption">
-              by
+              {{ $t('footer.by') }}
               <a
                 href="https://meta.wikimedia.org/wiki/Software_Collaboration_for_Wikidata"
                 target="_blank"
@@ -24,7 +24,7 @@
                 >Wikicollabs</a
               >
             </p>
-            <p class="footer-caption">Powered by Wikidata</p>
+            <p class="footer-caption">{{ $t('footer.powered-by') }}</p>
           </div>
         </div>
       </div>
@@ -35,7 +35,7 @@
           rel="noopener"
           class="external-link"
         >
-          About
+          {{ $t('footer.about') }}
           <cdx-icon :icon="cdxIconLinkExternal" size="small" />
         </a>
         <span class="link-separator">·</span>
@@ -45,7 +45,7 @@
           rel="noopener"
           class="external-link"
         >
-          Privacy policy
+          {{ $t('footer.privacy') }}
           <cdx-icon :icon="cdxIconLinkExternal" size="small" />
         </a>
         <span class="link-separator">·</span>
@@ -55,7 +55,7 @@
           rel="noopener"
           class="external-link"
         >
-          License
+          {{ $t('footer.license') }}
           <cdx-icon :icon="cdxIconLinkExternal" size="small" />
         </a>
         <span class="link-separator">·</span>
@@ -65,7 +65,7 @@
           rel="noopener"
           class="external-link"
         >
-          Source code
+          {{ $t('footer.source') }}
           <cdx-icon :icon="cdxIconLinkExternal" size="small" />
         </a>
       </div>
@@ -77,6 +77,9 @@
 import { CdxIcon } from "@wikimedia/codex";
 import { cdxIconLinkExternal } from "@wikimedia/codex-icons";
 import BroomstickIcon from "./BroomstickIcon.vue";
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 </script>
 
 <style scoped>
@@ -90,14 +93,51 @@ import BroomstickIcon from "./BroomstickIcon.vue";
   padding: var(--spacing-100); /* 16px all around on mobile */
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: var(--spacing-200);
+  flex-direction: column;
+
 }
 
-@media (min-width: 640px) {
+.links {
+  width: 100%;
+  display: flex;
+  gap: var(--spacing-25); /* changed from spacing-100 */
+  flex-wrap: wrap;
+  align-items: center; /* align with footer text */
+}
+
+
+/* TABLET PORTRAIT */
+@media (min-width: 640px) and (max-width: 1023px) {
+  
+  .footer-content {
+    padding: var(--spacing-150) var(--spacing-200); /* same as desktop */
+    align-items: flex-end;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: var(--spacing-200);
+  }
+
+  .links {
+    flex-wrap: wrap; /* allow wrapping on tablet */
+    width: auto;
+  }
+}
+/* DESKTOP */
+@media (min-width: 1024px) {
   .footer-content {
     padding: var(--spacing-150) var(--spacing-200); /* 24px vertical, 32px horizontal */
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--spacing-200);
   }
+
+    .links {
+    width: auto;
+  }
+
 }
 
 /* rest of footer styles stay the same */
@@ -122,22 +162,22 @@ import BroomstickIcon from "./BroomstickIcon.vue";
 
 .footer-title {
   margin: 0;
-  font-family: var(--font-family-base);
   font-size: var(--font-size-x-large);
   font-style: normal;
   font-weight: 700;
   line-height: var(--line-height-x-large);
   color: var(--color-base);
+  font-family: var(--font-family-system-sans);
 }
 
 .footer-caption {
   margin: 0;
-  font-family: var(--font-family-base);
   font-size: var(--font-size-small);
   font-weight: 700;
   line-height: var(--line-height-small);
   letter-spacing: 0;
   color: var(--color-subtle);
+  font-family: var(--font-family-system-sans);
 }
 
 .wikicollabs-link {
@@ -148,13 +188,6 @@ import BroomstickIcon from "./BroomstickIcon.vue";
 
 .wikicollabs-link:hover {
   text-decoration: underline;
-}
-
-.links {
-  display: flex;
-  gap: var(--spacing-25); /* changed from spacing-100 */
-  flex-wrap: wrap;
-  align-items: center; /* align with footer text */
 }
 
 .link-separator {
@@ -183,14 +216,5 @@ import BroomstickIcon from "./BroomstickIcon.vue";
   color: var(--color-progressive);
 }
 
-@media (max-width: 768px) {
-  .footer-content {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 
-  .links {
-    width: 100%;
-  }
-}
 </style>
