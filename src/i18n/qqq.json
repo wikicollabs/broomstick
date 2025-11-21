@@ -1,0 +1,101 @@
+{
+  "broomstick": {
+    "tagline": "Main heading on the landing page, describes the purpose of the tool",
+    "subtitle": "Subtitle text that appears below the main heading, containing brief description about how to use Broomstick"
+  },
+  "search": {
+    "button": "Label for the button that executes the search",
+    "heading": "Heading for the search panel section",
+    "language-label": "Label for the Lexeme language selection dropdown",
+    "query-label": "Label for the query type selection dropdown",
+    "language-placeholder": "Placeholder text shown in the language dropdown before selection",
+    "query-placeholder": "Placeholder text shown in the query dropdown before selection",
+    "show-panel": "Button text to expand/show the collapsed search panel",
+    "show-panel-aria-with-filters": "IMPORTANT: {count} is a variable placeholder and must NOT be translated - keep it exactly as {count}. Aria label for button to show search and filter panel with active filter count. Uses plural forms - singular for 1 filter, plural for multiple filters",
+    "show-panel-aria": "Aria label for button to show the search and filter panel",
+    "hide-panel-aria": "Aria label for button to collapse/hide the search panel",
+    "search-form-filter-clear-notice": "Notice message shown when user changes language or gap type after results exist, warning that filters will be cleared"
+  },
+  "results": {
+    "querying": "Heading text shown while the query is in progress",
+    "querying-aria": "Aria label for the progress bar while querying Wikidata"
+  },
+  "errors": {
+    "language-not-found": "Error message shown when user enters an invalid language",
+    "query-not-found": "Error message shown when user enters an invalid query type",
+    "query-failed": "Error message shown when the Wikidata query fails",
+    "lexical-category-not-found": "Error message shown when user enters invalid lexical category in filter"
+  },
+  "table": {
+    "visited-header": "Aria label for the visited status column header in results table",
+    "visited-yes": "Aria label for icon indicating a lexeme has been visited",
+    "visited-no": "Aria label for icon indicating a lexeme has not been visited",
+    "result-count": "IMPORTANT: {count} is a variable placeholder and must NOT be translated - keep it exactly as {count}. Caption showing number of results. Uses plural forms - singular for 1, plural for multiple",
+    "lexeme-id-header": "Column header for Lexeme ID (LID) in results table",
+    "lemma-header": "Column header for Lemma in results table",
+    "category-header": "Column header for lexical category (noun, verb, etc.) in results table",
+    "all-visited": "Message shown when all lexemes in results have been marked as visited",
+    "no-results": "Message shown when query returns no results",
+    "try-query": "Suggestion message shown when no results found, instructing user to clear filters or try different search parameters",
+    "hide-visited": "Button text to toggle on/off to hide Lexemes that have been visited",
+    "hide-visited-aria": "Aria label for button text to toggle on/off to hide Lexemes that have been visited ",
+    "hidden-count": "IMPORTANT: {count} is a variable placeholder and must NOT be translated - keep it exactly as {count}. Text showing how many items are currently hidden. {count} will be replaced with the actual number"
+  },
+    "cdx-table-pagination-status-message-determinate-short": "IMPORTANT: {x}, {y}, {z} are variable placeholders and must NOT be translated - keep them exactly as {x}, {y}, {z}. Short result table status message consisting of rows number",
+    "cdx-table-pagination-status-message-determinate-long": "IMPORTANT: {x}, {y}, {z} are variable placeholders and must NOT be translated - keep them exactly as {x}, {y}, {z}. Long result table status message consisting of rows number",
+    "cdx-table-pager-items-per-page-current": "IMPORTANT: {current} is a variable placeholder and must NOT be translated - keep it exactly as {current}. Chosen number of maximum rows displayed on table by the user",
+    "cdx-table-pager-button-first-page": "Aria label to table first page",
+    "cdx-table-pager-button-last-page": "Aria label to table last page",
+    "cdx-table-pager-button-next-page": "Aria label to table next page",
+    "cdx-table-pager-button-prev-page": "Aria label to table previous page",
+    
+  "footer": {
+    "by": "Preposition before Wikicollabs link, as in 'created by Wikicollabs'",
+    "powered-by": "Text crediting Wikidata as data source",
+    "about": "Link text to About page",
+    "privacy": "Link text to Privacy Policy",
+    "license": "Link text to License information",
+    "source": "Link text to source code repository"
+  },
+  "settings": {
+    "menu-label": "Label for settings menu button",
+    "theme-label": "Label for theme selection option in settings",
+    "theme-auto": "Option to automatically detect theme based on system preference",
+    "theme-auto-description": "Description text explaining the automatic theme option",
+    "theme-light": "Option to use light theme",
+    "theme-dark": "Option to use dark theme",
+    "language-label": "Label for display language selection in settings",
+    "close": "Button text to close settings dialog",
+    "apply": "Button text to apply changes in settings dialog",
+    "cancel": "Button text to cancel changes in settings dialog",
+    "translate-help": "Text encouraging users to contribute translations, appears above the link",
+    "translate-link": "Link text to translatewiki where users can help translate the application"
+  },
+  "queries": {
+  "general": "Group label for general/basic query types in the query dropdown",
+  "senses": "Group label for Sense-related queries in the query dropdown",
+  "forms": "Group label for Forms-related queries in the query dropdown",
+  "misplacements": "Group label for data quality/misplacement queries in the query dropdown",
+  "is-empty": "Query option to find completely empty Lexemes with no data",
+  "missing-senses": "Query option to find Lexemes that have no Senses defined",
+  "missing-forms": "Query option to find Lexemes that have no Forms defined",
+  "missing-external-identifiers": "Query option to find Lexemes with no external identifier properties",
+  "missing-usage-example": "Query option to find Lexemes missing usage example property (P5831)",
+  "missing-item-for-sense": "Query option to find Lexemes missing item for this sense (P5137), demonym of (P6271), or hyperonym (P6593) properties",
+  "missing-predicate-troponym": "Query option to find Lexemes missing predicate for (P9970) or troponym of (P5975) properties",
+  "missing-ipa": "Query option to find Lexemes missing IPA transcription property (P898)",
+  "missing-pronunciation-audio": "Query option to find Lexemes missing pronunciation audio property (P443)",
+  "missing-grammatical-features": "Query option to find Lexemes that have no grammatical features defined",
+  "misplaced-item-for-sense": "Query option to find Lexemes with Item for this sense (P5137) incorrectly placed at Lexeme level instead of Sense level"
+ },
+ "filters": {
+  "heading": "Section heading for the filter controls area",
+  "clear-all": "Button text to reset all active filters to their default state",
+  "text-placeholder": "Placeholder text shown in text input for filtering by LID or Lemma",
+  "text-label-aria": "Aria label for the text input filter field",
+  "category-all": "Dropdown option to show all lexical categories (removes category filter)",
+  "category-label": "Label for lexical category filter dropdown",
+  "lexical-category-placeholder": "Placeholder text shown in category dropdown before selection"
+}
+
+}
