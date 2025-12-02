@@ -7,19 +7,21 @@
 -->
 
 <template>
-  <div class="results-wrapper" :class="{ 'all-hidden': allVisitedAndHidden }">
+  <div class="results-wrapper" :class="{ 'all-hidden': allVisitedAndHidden, 'connection-error': props.connectionError  }">
     <CdxTable
       :caption="tableCaption"
       :columns="
         results.length === 0 ||
-        (hideVisited && visitedLexemes.size === props.results.length)
+        (hideVisited && filteredResults.length === 0) ||
+          props.connectionError
           ? []
           : columns
       "
       :data="tableData"
       :paginate="
         results.length > 0 &&
-        !(hideVisited && visitedLexemes.size === props.results.length)
+        !(hideVisited && filteredResults.length === 0) &&
+        !props.connectionError
       "
       :pagination-size-options="paginationOptions"
       :pagination-size-default="200"
@@ -27,21 +29,21 @@
       :use-row-headers="false"
     >
     <template #header>
-        <div v-if="results.length > 0" class="visibility-controls">
-      <span v-if="hideVisited && hiddenCount > 0" class="hidden-count">
-        {{ $t('table.hidden-count', { count: hiddenCount }) }}
+        <div v-if="results.length > 0 && !props.connectionError" class="visibility-controls">
+      <span v-if="hideVisited" class="hidden-count">
+        {{ $i18n('table-hidden-count', hiddenCount) }}
       </span>
       <CdxButton
         class="visibility-toggle"
         :class="{ 'is-hidden': hideVisited }"
         action="progressive"
         weight="quiet"
-        :aria-label="$t('table.hide-visited-aria')"
+        :aria-label="$i18n('table-hide-visited-aria')"
         :aria-pressed="hideVisited"
         @click="toggleHideVisited"
       >
         <CdxIcon :icon="hideVisited ? cdxIconEyeClosed : cdxIconEye" />
-        <span class="toggle-text">{{ $t('table.hide-visited') }}</span>
+        <span class="toggle-text">{{ $i18n('table-hide-visited') }}</span>
       </CdxButton>
     </div>
     </template>
@@ -51,15 +53,16 @@
           :icon="cdxIconSuccess"
           size="medium"
           :style="{ color: 'var(--color-subtle)' }"
-          :aria-label="$t('table.visited-yes')"
+          :aria-label="$i18n('table-visited-yes')"
           class="visited-icon"
+          data-visited="true"
         />
         <CdxIcon
           v-else
-          :icon="cdxIconBright"
+          :icon="cdxIconNotBright"
           size="medium"
           :style="{ color: 'transparent' }"
-          :aria-label="$t('table.visited-no')"
+          :aria-label="$i18n('table-visited-no')"
         />
       </template>
 
@@ -69,7 +72,7 @@
           target="_blank"
           rel="noopener"
           class="external-link"
-          @click="markVisited(row.lexemeId)"
+          @click.stop="markVisited(row.lexemeId)"
         >
           <span class="link-text">
             <span v-if="highlightText(row.lexemeId).matched">{{ highlightText(row.lexemeId).before }}<span class="highlighted-text">{{ highlightText(row.lexemeId).matched }}</span>{{ highlightText(row.lexemeId).after }}</span>
@@ -86,51 +89,73 @@
         <span v-else>{{ row.lemma }}</span>
       </template>
 
-      <template #empty-state>
-        <div class="empty-state">
-          <template
-            v-if="hideVisited && visitedLexemes.size === props.results.length"
-          >
-            <p>{{ $t('table.all-visited') }}</p>
-          </template>
-          <template v-else>
-            <p>{{ $t('table.no-results') }}</p>
-            <p>{{ $t('table.try-query') }}</p>
-          </template>
-        </div>
-      </template>
+<template #empty-state>
+  <div class="empty-state">
+    <template v-if="props.connectionError">
+      <h3>{{ $i18n('errors-unable-to-connect') }}</h3>
+      <p>{{ $i18n('errors-reload-prompt') }}</p>
+      <CdxButton 
+        action="progressive" 
+        weight="primary"
+        @click="reloadPage"
+      >
+        {{ $i18n('errors-reload-page') }}
+      </CdxButton>
+    </template>
+    <template v-else-if="hideVisited && filteredResults.length === 0">
+      <p>{{ $i18n('table-all-visited') }}</p>
+    </template>
+    <template v-else>
+      <p>{{ $i18n('table-no-results') }}</p>
+      <p>{{ $i18n('table-try-query') }}</p>
+    </template>
+  </div>
+</template>
     </CdxTable>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, getCurrentInstance, watch, nextTick } from "vue";
 import { CdxTable, CdxIcon, CdxButton } from "@wikimedia/codex";
 import {
   cdxIconLinkExternal,
   cdxIconSuccess,
   cdxIconEye,
   cdxIconEyeClosed,
-  cdxIconBright,
+  cdxIconNotBright,
 } from "@wikimedia/codex-icons";
-import { useI18n } from 'vue-i18n';
+const instance = getCurrentInstance();
+const $i18n = instance?.appContext.config.globalProperties.$i18n;
 
-const { t } = useI18n();
+const reloadPage = () => {
+  window.location.reload();
+};
 
 const props = defineProps({
   results: {
     type: Array,
     required: true,
   },
-   textFilter: {
+  totalCount: {
+    type: Number,
+    required: true,
+  },
+  textFilter: {
     type: String,
     default: '',
+  },
+  connectionError: {
+    type: Boolean,
+    default: false,
   },
 });
 
 const sortState = ref({});
 const visitedLexemes = ref(new Set());
 const hideVisited = ref(false);
+
+
 
 const columns = computed(() => [
   {
@@ -142,31 +167,51 @@ const columns = computed(() => [
   },
   {
     id: "lexemeId",
-    label: t('table.lexeme-id-header'),
+    label: $i18n('table-lexeme-id-header'),
     allowSort: true,
     width: "12.5rem",
     minWidth: "12.5rem",
   },
   {
     id: "lemma",
-    label: t('table.lemma-header'),
+    label: $i18n('table-lemma-header'),
     allowSort: true,
     minWidth: "12.5rem",
   },
   {
     id: "lexicalCategory",
-    label: t('table.category-header'),
+    label: $i18n('table-category-header'),
     allowSort: true,
     minWidth: "12.5rem",
   },
 ]);
 
 onMounted(() => {
+  // restore from sessionStorage
+  const savedVisited = sessionStorage.getItem('broomstick_visited');
+  if (savedVisited) {
+    visitedLexemes.value = new Set(JSON.parse(savedVisited));
+  }
+  
+  const savedHideVisited = sessionStorage.getItem('broomstick_hide_visited');
+  if (savedHideVisited) {
+    hideVisited.value = savedHideVisited === 'true';
+  }
+
   // add aria-label to visited column header after table renders
   const visitedHeader = document.querySelector(".cdx-table th:first-child");
   if (visitedHeader) {
-    visitedHeader.setAttribute("aria-label", t('table.visited-header'));
+    visitedHeader.setAttribute("aria-label", $i18n('table-visited-header'));
   }
+});
+
+// save to sessionStorage on changes
+watch(visitedLexemes, (newSet) => {
+  sessionStorage.setItem('broomstick_visited', JSON.stringify([...newSet]));
+}, { deep: true });
+
+watch(hideVisited, (newVal) => {
+  sessionStorage.setItem('broomstick_hide_visited', String(newVal));
 });
 
 const paginationOptions = [
@@ -179,26 +224,37 @@ const paginationOptions = [
 ];
 
 const tableCaption = computed(() => {
-  const count = props.results.length;
-  return t('table.result-count', { count }, count);
+  if (props.connectionError) return '';
+  const count = props.totalCount; // use total instead of filtered
+  return $i18n('table-result-count', count, count);
 });
 
 const hiddenCount = computed(() => {
+  if (!hideVisited.value) return 0;
   return visitedLexemes.value.size;
 });
 
 const filteredResults = computed(() => {
   if (!hideVisited.value) return props.results;
-  return props.results.filter((r) => !visitedLexemes.value.has(r.lexemeId));
+  
+  
+  const filtered = props.results.filter((r) => {
+    const isVisited = visitedLexemes.value.has(r.lexemeId);
+    return !isVisited;
+  });
+  
+  return filtered;
 });
 
 const tableData = computed(() => {
+  
   let data = filteredResults.value.map((result) => ({
     visited: "",
     lexemeId: result.lexemeId,
     lemma: result.lemma,
     lexicalCategory: result.lexicalCategory,
   }));
+
 
   const sortColumn = Object.keys(sortState.value)[0];
 
@@ -222,7 +278,7 @@ const tableData = computed(() => {
 
 const allVisitedAndHidden = computed(() => {
   return (
-    hideVisited.value && visitedLexemes.value.size === props.results.length
+    hideVisited && filteredResults.value.length === 0
   );
 });
 
@@ -245,7 +301,9 @@ const highlightText = (text) => {
 
 
 function markVisited(lexemeId) {
-  visitedLexemes.value.add(lexemeId);
+  setTimeout(() => {
+    visitedLexemes.value.add(lexemeId);
+  }, 100);
 }
 
 function isVisited(lexemeId) {
@@ -255,6 +313,7 @@ function isVisited(lexemeId) {
 function toggleHideVisited() {
   hideVisited.value = !hideVisited.value;
 }
+
 </script>
 
 <style scoped>
@@ -456,16 +515,12 @@ function toggleHideVisited() {
 }
 
 /* NON-visited row hover state */
-:deep(
-    tbody tr:not(:has(td:first-child .cdx-icon[aria-label="Visited"])):hover
-  ) {
+:deep(tbody tr:not(:has(td:first-child .cdx-icon[data-visited="true"])):hover) {
   background-color: var(--background-color-interactive-subtle) !important;
 }
 
 /* NON-visited row hover - target td elements */
-:deep(
-    tbody tr:not(:has(td:first-child .cdx-icon[aria-label="Visited"])):hover td
-  ) {
+:deep(tbody tr:not(:has(td:first-child .cdx-icon[data-visited="true"])):hover td) {
   background-color: var(--background-color-interactive-subtle) !important;
 }
 
@@ -486,5 +541,34 @@ function toggleHideVisited() {
 
 .highlighted-text {
   background-color: var(--background-color-progressive-subtle--active);
+}
+
+/* hide table visual structure when showing connection error */
+
+
+/* hide table header when showing connection error */
+.results-wrapper.connection-error :deep(.cdx-table__header) {
+  display: none !important;
+}
+
+.results-wrapper.connection-error :deep(.cdx-table thead) {
+  display: none !important;
+}
+
+.results-wrapper.connection-error :deep(.cdx-table) {
+  border-top: none !important;
+}
+
+.empty-state h3 {
+  margin: 0 0 var(--spacing-100) 0;
+}
+
+/* only style button in connection error state */
+.results-wrapper.connection-error .empty-state button {
+  align-self: center;
+  margin-top: var(--spacing-75);
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
 }
 </style>
