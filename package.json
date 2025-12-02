@@ -11,7 +11,8 @@
   "dependencies": {
     "@wikimedia/codex": "^2.3.2",
     "@wikimedia/codex-design-tokens": "^2.3.2",
-    "@wikimedia/codex-icons": "^2.3.2"
+    "@wikimedia/codex-icons": "^2.3.2",
+    "vue-banana-i18n": "^2.3.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.1",
