@@ -12,11 +12,11 @@
       class="language-type-field"
       :status="languageError ? 'error' : 'default'"
     >
-      <template #label>{{ $t('search.language-label') }}</template>
+      <template #label>{{ $i18n('search-language-label') }}</template>
       <cdx-combobox
         v-model:selected="selectedLanguageValue"
         :menu-items="filteredLanguageOptions"
-        :placeholder="$t('search.language-placeholder')"
+        :placeholder="$i18n('search-language-placeholder')"
         @input="onLanguageInput"
         @blur="onLanguageBlur"
         @focus="onLanguageFocus"
@@ -31,12 +31,12 @@
       class="gap-type-field"
       :status="gapTypeError ? 'error' : 'default'"
     >
-      <template #label>{{ $t('search.query-label') }}</template>
+      <template #label>{{ $i18n('search-query-label') }}</template>
       <cdx-combobox
         :selected="getDisplayValue(selectedGapTypeValue)"
         :menu-items="filteredGapTypeOptions"
         @update:selected="onQuerySelected"
-        :placeholder="$t('search.query-placeholder')"
+        :placeholder="$i18n('search-query-placeholder')"
         @input="onGapTypeInput"
         @blur="onGapTypeBlur"
         @focus="onGapTypeFocus"
@@ -56,7 +56,7 @@
       class="search-button"
     >
       <cdx-icon :icon="cdxIconSearch" />
-      {{ $t('search.button') }}
+      {{ $i18n('search-button') }}
     </cdx-button>
 
     <cdx-message 
@@ -65,13 +65,13 @@
   inline
   class="selection-change-notice"
 >
-  {{ $t('search.search-form-filter-clear-notice') }}
+  {{ $i18n('search-search-form-filter-clear-notice') }}
 </cdx-message>
   </div>
 </template>
 
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed, ref, watch, getCurrentInstance } from "vue";
 import { CdxField, CdxCombobox, CdxButton, CdxIcon, CdxMessage } from "@wikimedia/codex";
 import { cdxIconSearch, cdxIconError } from "@wikimedia/codex-icons";
 import { LANGUAGES } from "../data/languages.js";
@@ -79,9 +79,8 @@ import {
   getQueryOptionsForLanguage,
   getAllQueryValues,
 } from "../data/queries.js";
-import { useI18n } from 'vue-i18n';
-
-const { t } = useI18n();
+const instance = getCurrentInstance();
+const $i18n = instance?.appContext.config.globalProperties.$i18n;
 
 const props = defineProps({
   language: {
@@ -122,7 +121,15 @@ const languageOptions = LANGUAGES.map((lang) => ({
 }));
 
 const gapTypeOptions = computed(() => {
-  return getQueryOptionsForLanguage(props.language, t);
+  const rawOptions = getQueryOptionsForLanguage(props.language);
+  // translate the category labels and item labels here
+  return rawOptions.map(group => ({
+    label: $i18n(group.label), // translate category
+    items: group.items.map(item => ({
+      value: item.value,
+      label: item.params ? $i18n(item.label, ...item.params) : $i18n(item.label)
+    }))
+  }));
 });
 
 const languageSearchTerm = ref("");
@@ -176,7 +183,7 @@ const languageError = computed(() => {
 
   const validValues = languageOptions.map((opt) => opt.value);
   if (!validValues.includes(props.language)) {
-    return t('errors.language-not-found');
+    return $i18n('errors-language-not-found');
   }
   return "";
 });
@@ -187,7 +194,7 @@ const gapTypeError = computed(() => {
 
   const validValues = getAllQueryValues();
   if (!validValues.includes(props.gapType)) {
-    return t('errors.query-not-found');
+    return $i18n('errors-query-not-found');
   }
   return "";
 });
