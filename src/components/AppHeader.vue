@@ -10,16 +10,17 @@
   <header class="app-header">
     <div class="header-content">
       <div class="logo">
-        <BroomstickLogo
-          class="header-logo"
-          alt="broomstick"
-          tabindex="0"
-          role="button"
-          @click="$emit('home')"
-          @keydown.enter="$emit('home')"
-          @keydown.space.prevent="$emit('home')"
-          style="cursor: pointer"
-        />
+      <BroomstickLogo
+        ref="logoRef"
+        class="header-logo"
+        alt="broomstick"
+        tabindex="0"
+        role="button"
+        @click="goHome"
+        @keydown.enter="goHome"
+        @keydown.space.prevent="goHome"
+        style="cursor: pointer"
+      />
       </div>
       <settings-menu />
     </div>
@@ -27,9 +28,23 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import SettingsMenu from "./SettingsMenu.vue";
 import BroomstickLogo from "./BroomstickLogo.vue";
+const logoRef = ref(null);
 const emit = defineEmits(["home"]);
+
+const goHome = () => {
+  window.history.pushState({}, '', window.location.pathname);
+  emit('home');
+};
+
+defineExpose({
+  focusLogo: () => {
+    const el = logoRef.value?.$el || logoRef.value;
+    el?.focus?.();
+  }
+});
 </script>
 
 <style scoped>
@@ -59,7 +74,6 @@ const emit = defineEmits(["home"]);
   width: 100%; /* make it fill the header */
   justify-content: space-between;
   align-items: center;
-  /* REMOVED padding and height - not needed */
 }
 
 .logo {
@@ -74,4 +88,5 @@ const emit = defineEmits(["home"]);
   cursor: pointer;
   color: #3056a9;
 }
+
 </style>
