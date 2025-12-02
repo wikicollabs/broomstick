@@ -1,6 +1,6 @@
-import { createI18n } from 'vue-i18n'
-import en from './en.json'
-import id from './id.json'
+import { createI18n } from 'vue-banana-i18n'
+import enMessages from './en.json'
+import idMessages from './id.json'
 import { DISPLAY_LANGUAGES } from './displayLanguages.js'
 
 const getBrowserLanguage = () => {
@@ -9,14 +9,12 @@ const getBrowserLanguage = () => {
   return supportedCodes.includes(browserLang) ? browserLang : 'en';
 };
 
-const i18n = createI18n({
-  legacy: false,
-  locale: localStorage?.getItem('locale') || getBrowserLanguage(),
-  fallbackLocale: 'en',
-  messages: {
-    en,
-    id
-  }
-})
+const messages = {
+  en: enMessages,
+  id: idMessages
+};
 
-export default i18n
+export default createI18n({
+  locale: localStorage?.getItem('locale') || getBrowserLanguage(),
+  messages: messages
+});
