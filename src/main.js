@@ -16,9 +16,9 @@ import '@wikimedia/codex/dist/codex.style.css'
 
 const app = createApp(App);
 
+app.use(i18n);
+
 app.provide('CdxI18nFunction', (key, ...params) => {
-  
-  // Codex keys we use for translating
   const translatedKeys = [
     'cdx-table-pagination-status-message-determinate-short',
     'cdx-table-pagination-status-message-determinate-long',
@@ -29,31 +29,20 @@ app.provide('CdxI18nFunction', (key, ...params) => {
     'cdx-table-pager-button-prev-page'
   ];
   
-  // if it's not a key we care about, return empty string or key itself
-  // this prevents warnings for keys we're intentionally not translating
   if (!translatedKeys.includes(key)) {
     return key; 
   }
   
   const unwrapRef = (val) => val?.value !== undefined ? val.value : val;
+  const unwrappedParams = params.map(unwrapRef);
   
-  if (key.includes('pagination-status')) {
-    return i18n.global.t(key, { 
-      x: unwrapRef(params[0]),
-      y: unwrapRef(params[1]),
-      z: unwrapRef(params[2])
-    });
-  } else if (key.includes('items-per-page')) {
-    return i18n.global.t(key, { 
-      current: unwrapRef(params[0])
-    });
-  }
-  
-  return i18n.global.t(key);
+  return app.config.globalProperties.$i18n(key, ...unwrappedParams);
 });
 
+
+
 // version-based localStorage invalidation
-const APP_VERSION = '1.1.1';
+const APP_VERSION = '1.2.0';
 const storedVersion = localStorage.getItem('broomstick_version');
 
 if (storedVersion !== APP_VERSION) {
@@ -61,6 +50,8 @@ if (storedVersion !== APP_VERSION) {
   localStorage.setItem('broomstick_version', APP_VERSION);
   console.log(`localStorage cleared - version updated to ${APP_VERSION}`);
 }
+
+
 
 // apply theme immediately to prevent flash
 if (localStorage?.getItem('theme')) {
@@ -87,4 +78,4 @@ else {
 }
 
 
-app.use(i18n).mount('#app')
+app.mount('#app');
