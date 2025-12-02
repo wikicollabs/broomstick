@@ -254,38 +254,38 @@ export function getQueryOptionsForLanguage(selectedLanguage) {
   })).filter((group) => group.items.length > 0); // remove empty groups
 }
 */
-export function getQueryOptionsForLanguage(language, t) {
-  // all languages get these queries
+export function getQueryOptionsForLanguage(language) {
+  // just return message keys, not translations
   const allLanguagesQueries = [
     {
-      label: t('queries.general'),
+      label: 'queries-general',
       items: [
-        { value: 'is-empty', label: t('queries.is-empty') },
-        { value: 'missing-senses', label: t('queries.missing-senses') },
-        { value: 'missing-forms', label: t('queries.missing-forms') },
-        { value: 'missing-external-identifiers', label: t('queries.missing-external-identifiers') },
-        { value: 'missing-usage-example', label: t('queries.missing-usage-example') }
+        { value: 'is-empty', label: 'queries-is-empty' },
+        { value: 'missing-senses', label: 'queries-missing-senses' },
+        { value: 'missing-forms', label: 'queries-missing-forms' },
+        { value: 'missing-external-identifiers', label: 'queries-missing-external-identifiers' },
+        { value: 'missing-usage-example', label: 'queries-missing-usage-example', params: ['(P5831)']  }
       ]
     },
     {
-      label: t('queries.senses'),
+      label: 'queries-senses',
       items: [
-        { value: 'missing-item-for-sense', label: t('queries.missing-item-for-sense') },
-        { value: 'missing-predicate-troponym', label: t('queries.missing-predicate-troponym') }
+        { value: 'missing-item-for-sense', label: 'queries-missing-item-for-sense', params: ['(P5137)', '(P6271)', '(P6593)'] },
+        { value: 'missing-predicate-troponym', label: 'queries-missing-predicate-troponym', params: ['(P9970)', '(P5975)']  }
       ]
     },
     {
-      label: t('queries.forms'),
+      label: 'queries-forms',
       items: [
-        { value: 'missing-ipa', label: t('queries.missing-ipa') },
-        { value: 'missing-pronunciation-audio', label: t('queries.missing-pronunciation-audio') },
-        { value: 'missing-grammatical-features', label: t('queries.missing-grammatical-features') }
+        { value: 'missing-ipa', label: 'queries-missing-ipa', params: ['(P898)']  },
+        { value: 'missing-pronunciation-audio', label: 'queries-missing-pronunciation-audio', params: ['(P443)']  },
+        { value: 'missing-grammatical-features', label: 'queries-missing-grammatical-features' }
       ]
     },
     {
-      label: t('queries.misplacements'),
+      label: 'queries-misplacements',
       items: [
-        { value: 'misplaced-item-for-sense', label: t('queries.misplaced-item-for-sense') }
+        { value: 'misplaced-item-for-sense', label: 'queries-misplaced-item-for-sense', params: ['(P5137)']  }
       ]
     }
   ];
@@ -293,15 +293,6 @@ export function getQueryOptionsForLanguage(language, t) {
   return allLanguagesQueries;
 }
 
-// helper function in queries.js
-export function getQueryIdFromValue(value, t) {
-  const options = getQueryOptionsForLanguage('', t); // language doesn't matter here
-  for (const group of options) {
-    const item = group.items.find(i => i.value === value);
-    if (item) return item.id;
-  }
-  return value;
-}
 
 // get sparql by query value
 export function getQuerySparql(queryValue, languageQid, languageCode) {
