@@ -8,14 +8,25 @@
 
 <template>
   <div class="app">
-    <AppHeader @home="currentView = 'landing'" />
+  <CdxMessage 
+  v-if="showToast" 
+  type="success" 
+  class="language-toast"
+  ref="toastRef"
+  tabindex="0"
+  @keydown.escape="dismissToast"
+>
+        {{ toastMessage }}
+      </CdxMessage>
+    <AppHeader @home="currentView = 'landing'" ref="headerRef" />
 
     <main class="main-content">
+
       <div v-if="currentView === 'landing'" class="landing-view">
         <div class="body-frame">
           <section class="section-text">
-            <h1>{{ $t('broomstick.tagline') }}</h1>
-            <p class="subtitle">{{ $t('broomstick.subtitle') }}</p>
+            <h1>{{ $i18n('broomstick-tagline') }}</h1>
+            <p class="subtitle">{{ $i18n('broomstick-subtitle') }}</p>
           </section>
           <section class="section-form">
             <div class="landing-search-panel">
@@ -38,13 +49,13 @@
               @click="isPanelCollapsed = false"
               class="expand-button"
               :aria-label="activeFilterCount > 0 
-                ? $t('search.show-panel-aria-with-filters', { count: activeFilterCount })
-                : $t('search.show-panel-aria')"
+                ? $i18n('search-show-panel-aria-with-filters',activeFilterCount)
+                : $i18n('search-show-panel-aria')"
             >
               <CdxIcon :icon="cdxIconExpand" />
               {{ activeFilterCount > 0 
-                  ? `${$t('search.show-panel')} (${activeFilterCount})`
-                  : $t('search.show-panel') }}
+                  ? `${$i18n('search-show-panel')} (${activeFilterCount})`
+                  : $i18n('search-show-panel') }}
             </CdxButton>
             <h1>{{ searchedLanguage }}, {{ getQueryLabel(searchedGapType) }}</h1>
           </div>
@@ -52,11 +63,11 @@
           <div class="search-layout">
             <div v-show="!isPanelCollapsed" class="results-search-panel">
               <div class="search-header">
-                <h3 class="search-heading">{{ $t('search.heading') }}</h3>
+                <h3 class="search-heading">{{ $i18n('search-heading') }}</h3>
                 <CdxButton
                   @click="collapsePanel"
                   class="collapse-button"
-                  :aria-label="$t('search.hide-panel-aria')"
+                  :aria-label="$i18n('search-hide-panel-aria')"
                 >
                   <CdxIcon :icon="cdxIconCollapse" />
                 </CdxButton>
@@ -75,14 +86,14 @@
 
               <div v-if="results.length > 0" class="filters-section">
                 <div class="filters-header">
-                  <h3>{{ $t('filters.heading') }}{{ activeFilterCount > 0 ? ` (${activeFilterCount})` : '' }}</h3>
+                  <h3>{{ $i18n('filters-heading') }}{{ activeFilterCount > 0 ? ` (${activeFilterCount})` : '' }}</h3>
                     <CdxButton
                       weight="quiet"
                       :disabled="!hasActiveFilters"
                       @click="clearFilters"
                       class="clear-filters-button"
                     >
-                      {{ $t('filters.clear-all') }}
+                      {{ $i18n('filters-clear-all') }}
                     </CdxButton>
                 </div>
               
@@ -92,20 +103,20 @@
                     input-type="search"
                     :start-icon="cdxIconSearch"
                     :clearable="true"
-                    :placeholder="$t('filters.text-placeholder')"
-                    :aria-label="$t('filters.text-label-aria')"
+                    :placeholder="$i18n('filters-text-placeholder')"
+                    :aria-label="$i18n('filters-text-label-aria')"
                   />
                       <cdx-field
                         :status="categoryFilterError ? 'error' : 'default'"
                       >
                         <template #label>
-                          {{ $t('filters.category-label') }}
+                          {{ $i18n('filters-category-label') }}
                         </template>
 <cdx-combobox
 :key="$i18n.locale"
   v-model:selected="categoryFilter"
   :menu-items="filteredCategoryMenuItems"
-  :placeholder="$t('filters.lexical-category-placeholder')"
+  :placeholder="$i18n('filters-lexical-category-placeholder')"
   @input="onCategoryInput"
   @blur="categoryFilterBlurred = true"
 />
@@ -124,8 +135,8 @@
 
             <div class="results-area">
               <div v-if="isLoading" class="loading-state">
-                <h3>{{ $t('results.querying') }}</h3>
-                <CdxProgressBar :aria-label="$t('results.querying-aria')" />
+                <h3>{{ $i18n('results-querying') }}</h3>
+                <CdxProgressBar :aria-label="$i18n('results-querying-aria')" />
               </div>
 
               <CdxMessage v-else-if="error" type="error">
@@ -135,7 +146,9 @@
               <div v-else>
                 <ResultsTable 
                   :results="filteredResults"
+                  :total-count="results.length"
                   :text-filter="textFilter"
+                  :connection-error="connectionError"
                 />
               </div>
             </div>
@@ -149,18 +162,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from "vue";
+import { ref, onMounted, computed, watch, getCurrentInstance, nextTick} from "vue";
 import { CdxButton, CdxIcon, CdxProgressBar, CdxMessage, CdxTextInput, CdxSelect, CdxLabel, CdxCombobox, CdxField } from "@wikimedia/codex";
 import { cdxIconCollapse, cdxIconExpand, cdxIconSearch} from "@wikimedia/codex-icons";
 import AppHeader from "./components/AppHeader.vue";
 import SearchForm from "./components/SearchForm.vue";
 import ResultsTable from "./components/ResultsTable.vue";
 import AppFooter from "./components/AppFooter.vue";
-import { getLanguageQid, getLanguageCode } from "./data/languages.js";
-import { QUERY_GROUPS, getQuerySparql } from "./data/queries.js";
-import { useI18n } from 'vue-i18n';
+import { getLanguageQid, getLanguageCode, LANGUAGES } from "./data/languages.js";
+import { QUERY_GROUPS, getQuerySparql, getQueryOptionsForLanguage} from "./data/queries.js";
 
-const { t } = useI18n();
+const instance = getCurrentInstance();
+const $i18n = instance?.appContext.config.globalProperties.$i18n;
+
+const isRestoringFromUrl = ref(false);
 
 const currentView = ref("landing");
 const isPanelCollapsed = ref(false);
@@ -171,12 +186,18 @@ const searchedLanguage = ref("English (en)");
 const searchedGapType = ref("is-empty");
 const textFilter = ref('');
 const categoryFilter = ref('');
+const toastRef = ref(null);
+const headerRef = ref(null);
 
 const isLoading = ref(false);
 const error = ref(null);
+const connectionError = ref(false);
 const results = ref([]);
 const categoryFilterBlurred = ref(false);
 const categorySearchTerm = ref('');
+
+const showToast = ref(false);
+const toastMessage = ref('');
 
 // save to localStorage whenever search executes
 function saveLastSearch() {
@@ -196,20 +217,55 @@ function restoreLastSearch() {
 function getQueryLabel(queryValue) {
   if (!queryValue) return '';
   
-  // just translate using the value as the key
-  return t(`queries.${queryValue}`);
+  // get the query definition to find params
+  const allGroups = getQueryOptionsForLanguage(searchedLanguage.value);
+  for (const group of allGroups) {
+    const query = group.items.find(item => item.value === queryValue);
+    if (query) {
+      return query.params 
+        ? $i18n(query.label, ...query.params) 
+        : $i18n(query.label);
+    }
+  }
+  
+  // fallback
+  return $i18n(`queries-${queryValue}`);
 }
 
 // call restore on mount
 onMounted(() => {
-  restoreLastSearch();
+  restoreLastSearch(); // restore from localStorage first
+  restoreFromUrl(); // then check url params and override if present
+
+    // check for language change toast
+  const toastLang = localStorage.getItem('language_change_toast');
+    if (toastLang) {
+      showToast.value = true;
+      toastMessage.value = $i18n('settings-language-changed', toastLang);
+      localStorage.removeItem('language_change_toast');
+      
+      setTimeout(() => {
+        dismissToast();
+      }, 4000);
+    }
+
+
   if (!categoryFilter.value) {
-    categoryFilter.value = t('filters.category-all');
+    categoryFilter.value = $i18n('filters-category-all');
   }
 });
 
+function dismissToast() {
+  const toastEl = toastRef.value?.$el || toastRef.value;
+  toastEl?.classList.add('fade-out');
+  
+  setTimeout(() => {
+    showToast.value = false;
+  }, 100);
+}
+
 // watch for display language changes and update the "all" filter value
-watch(() => t('filters.category-all'), (newAllLabel, oldAllLabel) => {
+watch(() => $i18n('filters-category-all'), (newAllLabel, oldAllLabel) => {
   // if the filter was set to the old "all" label, update it to the new one
   if (categoryFilter.value === oldAllLabel) {
     categoryFilter.value = newAllLabel;
@@ -222,12 +278,12 @@ async function executeSearch() {
   const querySparql = getQuerySparql(selectedGapType.value, languageQid, languageCode);
 
   if (!languageQid) {
-    error.value = t('errors.language-not-found');
+    error.value = $i18n('errors-language-not-found');
     return;
   }
 
   if (!querySparql) {
-    error.value = t('errors.query-not-found');
+    error.value = $i18n('errors-query-not-found');
     return;
   }
 
@@ -235,10 +291,18 @@ async function executeSearch() {
   searchedGapType.value = selectedGapType.value;
   saveLastSearch();
 
+    // push url params immediately when search starts
+  const params = new URLSearchParams({
+    lang: languageCode,
+    query: selectedGapType.value,
+  });
+  history.pushState(null, "", `?${params.toString()}`);
+
   error.value = null;
+  connectionError.value = false;
   isLoading.value = true;
   textFilter.value = '';
-  categoryFilter.value = t('filters.category-all');
+  categoryFilter.value = $i18n('filters-category-all');
   currentView.value = "search";
   isPanelCollapsed.value = window.innerWidth < 640;
   results.value = [];
@@ -289,13 +353,69 @@ async function executeSearch() {
       lemma: item.lemmas.join(" / "),
       lexicalCategory: item.lexicalCategory,
     }));
+
+    // cache successful search results
+    const searchState = {
+      results: results.value,
+      searchedLanguage: searchedLanguage.value,
+      searchedGapType: searchedGapType.value,
+      languageCode: languageCode,
+      queryValue: selectedGapType.value,
+      timestamp: Date.now()
+    };
+    localStorage.setItem('broomstick_last_results', JSON.stringify(searchState));
+
   } catch (err) {
     console.error("Query error:", err);
-    error.value = t('errors.query-failed');
+    connectionError.value = true;
   } finally {
     isLoading.value = false;
   }
 }
+
+const restoreFromUrl = () => {
+  const params = new URLSearchParams(window.location.search);
+  const langCode = params.get('lang');
+  const query = params.get('query');
+  
+  if (langCode && query) {
+    const langObj = LANGUAGES.find(l => l.code === langCode);
+    if (langObj) {
+      selectedLanguage.value = langObj.display;
+      selectedGapType.value = query;
+      
+      const skipRequery = localStorage.getItem('broomstick_skip_requery');
+      const cachedResults = localStorage.getItem('broomstick_last_results');
+      
+      if (skipRequery === 'true' && cachedResults) {
+        try {
+          const cached = JSON.parse(cachedResults);
+          
+          // verify cache matches current url params
+          if (cached.languageCode === langCode && cached.queryValue === query) {
+            // restore from cache
+            results.value = cached.results;
+            searchedLanguage.value = cached.searchedLanguage;
+            searchedGapType.value = cached.searchedGapType;
+            currentView.value = 'search';
+            isPanelCollapsed.value = window.innerWidth < 640;
+            categoryFilter.value = $i18n('filters-category-all');
+            
+            localStorage.removeItem('broomstick_skip_requery');
+            return; // done, no need to requery
+          }
+        } catch (e) {
+          console.error('failed to restore cached results:', e);
+        }
+      }
+      
+      // either no skip flag, no cache, or cache didn't match - do normal search
+      localStorage.removeItem('broomstick_skip_requery');
+      currentView.value = 'search';
+      executeSearch();
+    }
+  }
+};
 
 function collapsePanel() {
   // blur any focused element inside the search panel
@@ -318,7 +438,7 @@ const filteredResults = computed(() => {
   }
   
   // category filter - check against translated "all" label
-  if (categoryFilter.value && categoryFilter.value !== t('filters.category-all')) {
+  if (categoryFilter.value && categoryFilter.value !== $i18n('filters-category-all')) {
     filtered = filtered.filter(r => r.lexicalCategory === categoryFilter.value);
   }
   
@@ -339,7 +459,7 @@ const allCategoryMenuItems = computed(() => {
     return countDiff !== 0 ? countDiff : a.localeCompare(b);
   });
   
-  const allLabel = t('filters.category-all');
+  const allLabel = $i18n('filters-category-all');
   return [
     { label: allLabel, value: allLabel },
     ...categories.map(cat => ({ label: cat, value: cat }))
@@ -356,11 +476,11 @@ const filteredCategoryMenuItems = computed(() => {
 
 const categoryFilterError = computed(() => {
   if (!categoryFilterBlurred.value) return '';
-  if (categoryFilter.value === t('filters.category-all') || !categoryFilter.value) return '';
+  if (categoryFilter.value === $i18n('filters-category-all') || !categoryFilter.value) return '';
   
   const validCategories = results.value.map(r => r.lexicalCategory);
   if (!validCategories.includes(categoryFilter.value)) {
-    return t('errors.lexical-category-not-found');
+    return $i18n('errors-lexical-category-not-found');
   }
   return '';
 });
@@ -368,7 +488,7 @@ const categoryFilterError = computed(() => {
 const activeFilterCount = computed(() => {
   let count = 0;
   if (textFilter.value) count++;
-  if (categoryFilter.value && categoryFilter.value !== t('filters.category-all')) count++;
+  if (categoryFilter.value && categoryFilter.value !== $i18n('filters-category-all')) count++;
   return count;
 });
 
@@ -382,13 +502,13 @@ function onCategoryInput(event) {
 
 function clearFilters() {
   textFilter.value = '';
-  categoryFilter.value = t('filters.category-all');
+  categoryFilter.value = $i18n('filters-category-all');
   categorySearchTerm.value = '';
 }
 
 const hasActiveFilters = computed(() => {
   return textFilter.value.trim() !== '' || 
-         (categoryFilter.value !== '' && categoryFilter.value !== t('filters.category-all'));
+         (categoryFilter.value !== '' && categoryFilter.value !== $i18n('filters-category-all'));
 });
 </script>
 
@@ -753,5 +873,63 @@ const hasActiveFilters = computed(() => {
 .category-filter-error :deep(.cdx-message__content) {
   margin-left: 0;
   line-height: var(--line-height-small);
+}
+
+
+.language-toast {
+  position: fixed;
+  top: calc(3.375rem + var(--spacing-100));
+  right: var(--spacing-100);
+  left: var(--spacing-100);
+  line-height: var(--line-height-small);
+  font-size: var(--font-size-medium);
+  z-index: 99;
+
+}
+
+.language-toast :deep(.cdx-message) {
+  padding: var(--spacing-75);
+  align-items: flex-start;
+}
+
+.language-toast :deep(.cdx-message__content) {
+  flex: 1;
+  min-width: 0;
+  word-wrap: break-word;
+}
+
+.language-toast :deep(.cdx-message__icon) {
+  min-width: 1rem;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+/* tablet and desktop: constrain width */
+@media (min-width: 640px) {
+  .language-toast {
+    top: calc(4rem + var(--spacing-100));
+    right: var(--spacing-200);
+    max-width: 24rem;
+    left: auto;
+    z-index: 99;
+  }
+}
+
+
+.language-toast {
+  transition: opacity var(--transition-duration-base) var(--transition-timing-function-system);
+}
+
+.language-toast.fade-out {
+  opacity: 0;
+}
+
+.language-toast:focus {
+  outline: none;
+}
+
+.language-toast:focus-visible {
+  outline: auto;
 }
 </style>
