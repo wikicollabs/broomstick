@@ -9,8 +9,48 @@
 import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
+import i18n from './i18n'
 import '@wikimedia/codex-design-tokens/theme-wikimedia-ui.css'
 import '@wikimedia/codex/dist/codex.style.css'
+
+
+const app = createApp(App);
+
+app.use(i18n);
+
+app.provide('CdxI18nFunction', (key, ...params) => {
+  const translatedKeys = [
+    'cdx-table-pagination-status-message-determinate-short',
+    'cdx-table-pagination-status-message-determinate-long',
+    'cdx-table-pager-items-per-page-current',
+    'cdx-table-pager-button-first-page',
+    'cdx-table-pager-button-last-page',
+    'cdx-table-pager-button-next-page',
+    'cdx-table-pager-button-prev-page'
+  ];
+  
+  if (!translatedKeys.includes(key)) {
+    return key; 
+  }
+  
+  const unwrapRef = (val) => val?.value !== undefined ? val.value : val;
+  const unwrappedParams = params.map(unwrapRef);
+  
+  return app.config.globalProperties.$i18n(key, ...unwrappedParams);
+});
+
+
+
+// version-based localStorage invalidation
+const APP_VERSION = '1.2.0';
+const storedVersion = localStorage.getItem('broomstick_version');
+
+if (storedVersion !== APP_VERSION) {
+  localStorage.clear();
+  localStorage.setItem('broomstick_version', APP_VERSION);
+  console.log(`localStorage cleared - version updated to ${APP_VERSION}`);
+}
+
 
 
 // apply theme immediately to prevent flash
@@ -37,4 +77,5 @@ else {
   }
 }
 
-createApp(App).mount('#app')
+
+app.mount('#app');

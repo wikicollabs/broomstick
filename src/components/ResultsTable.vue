@@ -7,39 +7,62 @@
 -->
 
 <template>
-  <div class="results-wrapper" :class="{ 'all-hidden': allVisitedAndHidden }">
+  <div class="results-wrapper" :class="{ 'all-hidden': allVisitedAndHidden, 'connection-error': props.connectionError  }">
     <CdxTable
       :caption="tableCaption"
       :columns="
         results.length === 0 ||
-        (hideVisited && visitedLexemes.size === props.results.length)
+        (hideVisited && filteredResults.length === 0) ||
+          props.connectionError
           ? []
           : columns
       "
       :data="tableData"
       :paginate="
         results.length > 0 &&
-        !(hideVisited && visitedLexemes.size === props.results.length)
+        !(hideVisited && filteredResults.length === 0) &&
+        !props.connectionError
       "
       :pagination-size-options="paginationOptions"
       :pagination-size-default="200"
       v-model:sort="sortState"
       :use-row-headers="false"
     >
+    <template #header>
+        <div v-if="results.length > 0 && !props.connectionError" class="visibility-controls">
+      <span v-if="hideVisited" class="hidden-count">
+        {{ $i18n('table-hidden-count', hiddenCount) }}
+      </span>
+      <CdxButton
+        class="visibility-toggle"
+        :class="{ 'is-hidden': hideVisited }"
+        action="progressive"
+        weight="quiet"
+        :aria-label="$i18n('table-hide-visited-aria')"
+        :aria-pressed="hideVisited"
+        @click="toggleHideVisited"
+      >
+        <CdxIcon :icon="hideVisited ? cdxIconEyeClosed : cdxIconEye" />
+        <span class="toggle-text">{{ $i18n('table-hide-visited') }}</span>
+      </CdxButton>
+    </div>
+    </template>
       <template #item-visited="{ row }">
         <CdxIcon
           v-if="isVisited(row.lexemeId)"
           :icon="cdxIconSuccess"
           size="medium"
           :style="{ color: 'var(--color-subtle)' }"
-          aria-label="Visited"
+          :aria-label="$i18n('table-visited-yes')"
+          class="visited-icon"
+          data-visited="true"
         />
         <CdxIcon
           v-else
-          :icon="cdxIconBright"
+          :icon="cdxIconNotBright"
           size="medium"
           :style="{ color: 'transparent' }"
-          aria-label="Not visited"
+          :aria-label="$i18n('table-visited-no')"
         />
       </template>
 
@@ -49,64 +72,82 @@
           target="_blank"
           rel="noopener"
           class="external-link"
-          @click="markVisited(row.lexemeId)"
+          @click.stop="markVisited(row.lexemeId)"
         >
-          {{ row.lexemeId }}
+          <span class="link-text">
+            <span v-if="highlightText(row.lexemeId).matched">{{ highlightText(row.lexemeId).before }}<span class="highlighted-text">{{ highlightText(row.lexemeId).matched }}</span>{{ highlightText(row.lexemeId).after }}</span>
+            <span v-else>{{ row.lexemeId }}</span>
+          </span>
           <CdxIcon :icon="cdxIconLinkExternal" class="external-icon" />
         </a>
       </template>
 
-      <template #empty-state>
-        <div class="empty-state">
-          <template
-            v-if="hideVisited && visitedLexemes.size === props.results.length"
-          >
-            <p>All Lexemes have been visited.</p>
-          </template>
-          <template v-else>
-            <p>Lexemes not found.</p>
-            <p>Try another Lexeme language or query.</p>
-          </template>
-        </div>
+      <template #item-lemma="{ row }">
+        <span v-if="highlightText(row.lemma).matched">
+          {{ highlightText(row.lemma).before }}<span class="highlighted-text">{{ highlightText(row.lemma).matched }}</span>{{ highlightText(row.lemma).after }}
+        </span>
+        <span v-else>{{ row.lemma }}</span>
       </template>
-    </CdxTable>
 
-    <div v-if="results.length > 0" class="visibility-controls">
-      <span v-if="hideVisited && hiddenCount > 0" class="hidden-count">
-        {{ hiddenCount }} hidden
-      </span>
-      <CdxButton
-        class="visibility-toggle"
-        :class="{ 'is-hidden': hideVisited }"
-        action="progressive"
-        weight="quiet"
-        :aria-label="hideVisited ? 'Show visited items' : 'Hide visited items'"
-        @click="toggleHideVisited"
+<template #empty-state>
+  <div class="empty-state">
+    <template v-if="props.connectionError">
+      <h3>{{ $i18n('errors-unable-to-connect') }}</h3>
+      <p>{{ $i18n('errors-reload-prompt') }}</p>
+      <CdxButton 
+        action="progressive" 
+        weight="primary"
+        @click="reloadPage"
       >
-        <CdxIcon :icon="hideVisited ? cdxIconEyeClosed : cdxIconEye" />
-        <span class="toggle-text">{{
-          hideVisited ? "Hide visited" : "Hide visited"
-        }}</span>
+        {{ $i18n('errors-reload-page') }}
       </CdxButton>
-    </div>
+    </template>
+    <template v-else-if="hideVisited && filteredResults.length === 0">
+      <p>{{ $i18n('table-all-visited') }}</p>
+    </template>
+    <template v-else>
+      <p>{{ $i18n('table-no-results') }}</p>
+      <p>{{ $i18n('table-try-query') }}</p>
+    </template>
+  </div>
+</template>
+    </CdxTable>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, getCurrentInstance, watch, nextTick } from "vue";
 import { CdxTable, CdxIcon, CdxButton } from "@wikimedia/codex";
 import {
   cdxIconLinkExternal,
   cdxIconSuccess,
   cdxIconEye,
   cdxIconEyeClosed,
-  cdxIconBright,
+  cdxIconNotBright,
 } from "@wikimedia/codex-icons";
+const instance = getCurrentInstance();
+const $i18n = instance?.appContext.config.globalProperties.$i18n;
+
+const reloadPage = () => {
+  window.location.reload();
+};
 
 const props = defineProps({
   results: {
     type: Array,
     required: true,
+  },
+  totalCount: {
+    type: Number,
+    required: true,
+  },
+  textFilter: {
+    type: String,
+    default: '',
+  },
+  connectionError: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -114,7 +155,9 @@ const sortState = ref({});
 const visitedLexemes = ref(new Set());
 const hideVisited = ref(false);
 
-const columns = [
+
+
+const columns = computed(() => [
   {
     id: "visited",
     label: "",
@@ -124,31 +167,51 @@ const columns = [
   },
   {
     id: "lexemeId",
-    label: "LID",
+    label: $i18n('table-lexeme-id-header'),
     allowSort: true,
     width: "12.5rem",
     minWidth: "12.5rem",
   },
   {
     id: "lemma",
-    label: "Lemma",
+    label: $i18n('table-lemma-header'),
     allowSort: true,
     minWidth: "12.5rem",
   },
   {
     id: "lexicalCategory",
-    label: "Lexical category",
+    label: $i18n('table-category-header'),
     allowSort: true,
     minWidth: "12.5rem",
   },
-];
+]);
 
 onMounted(() => {
+  // restore from sessionStorage
+  const savedVisited = sessionStorage.getItem('broomstick_visited');
+  if (savedVisited) {
+    visitedLexemes.value = new Set(JSON.parse(savedVisited));
+  }
+  
+  const savedHideVisited = sessionStorage.getItem('broomstick_hide_visited');
+  if (savedHideVisited) {
+    hideVisited.value = savedHideVisited === 'true';
+  }
+
   // add aria-label to visited column header after table renders
   const visitedHeader = document.querySelector(".cdx-table th:first-child");
   if (visitedHeader) {
-    visitedHeader.setAttribute("aria-label", "Visited status");
+    visitedHeader.setAttribute("aria-label", $i18n('table-visited-header'));
   }
+});
+
+// save to sessionStorage on changes
+watch(visitedLexemes, (newSet) => {
+  sessionStorage.setItem('broomstick_visited', JSON.stringify([...newSet]));
+}, { deep: true });
+
+watch(hideVisited, (newVal) => {
+  sessionStorage.setItem('broomstick_hide_visited', String(newVal));
 });
 
 const paginationOptions = [
@@ -161,26 +224,37 @@ const paginationOptions = [
 ];
 
 const tableCaption = computed(() => {
-  const count = props.results.length;
-  return `${count} ${count === 1 ? "result" : "results"}`;
+  if (props.connectionError) return '';
+  const count = props.totalCount; // use total instead of filtered
+  return $i18n('table-result-count', count, count);
 });
 
 const hiddenCount = computed(() => {
+  if (!hideVisited.value) return 0;
   return visitedLexemes.value.size;
 });
 
 const filteredResults = computed(() => {
   if (!hideVisited.value) return props.results;
-  return props.results.filter((r) => !visitedLexemes.value.has(r.lexemeId));
+  
+  
+  const filtered = props.results.filter((r) => {
+    const isVisited = visitedLexemes.value.has(r.lexemeId);
+    return !isVisited;
+  });
+  
+  return filtered;
 });
 
 const tableData = computed(() => {
+  
   let data = filteredResults.value.map((result) => ({
     visited: "",
     lexemeId: result.lexemeId,
     lemma: result.lemma,
     lexicalCategory: result.lexicalCategory,
   }));
+
 
   const sortColumn = Object.keys(sortState.value)[0];
 
@@ -204,12 +278,32 @@ const tableData = computed(() => {
 
 const allVisitedAndHidden = computed(() => {
   return (
-    hideVisited.value && visitedLexemes.value.size === props.results.length
+    hideVisited && filteredResults.value.length === 0
   );
 });
 
+const highlightText = (text) => {
+  if (!props.textFilter || !text) return text;
+  
+  const filterLower = props.textFilter.toLowerCase();
+  const textLower = text.toLowerCase();
+  const index = textLower.indexOf(filterLower);
+  
+  if (index === -1) return text;
+  
+  const before = text.slice(0, index);
+  const matched = text.slice(index, index + props.textFilter.length);
+  const after = text.slice(index + props.textFilter.length);
+  
+  return { before, matched, after };
+};
+
+
+
 function markVisited(lexemeId) {
-  visitedLexemes.value.add(lexemeId);
+  setTimeout(() => {
+    visitedLexemes.value.add(lexemeId);
+  }, 100);
 }
 
 function isVisited(lexemeId) {
@@ -219,6 +313,7 @@ function isVisited(lexemeId) {
 function toggleHideVisited() {
   hideVisited.value = !hideVisited.value;
 }
+
 </script>
 
 <style scoped>
@@ -226,15 +321,28 @@ function toggleHideVisited() {
   position: relative;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  scroll-padding-top: 3.375rem;
 }
+
+@media (min-width: 640px) {
+  .results-wrapper {
+    scroll-padding-top: 4rem;
+  }
+  }
 
 /* only remove border when empty */
 .results-wrapper :deep(.cdx-table__table__empty-state-content) {
   border: none !important;
+  pointer-events: none !important;
+  user-select: none !important;
+  background-color: transparent !important;
+}
+
+.results-wrapper :deep(.cdx-table__table__empty-state-content:hover) {
+  background-color: transparent !important;
 }
 
 .visibility-controls {
-  position: absolute;
   top: var(--spacing-75);
   right: var(--spacing-75);
   z-index: 1;
@@ -249,13 +357,43 @@ function toggleHideVisited() {
 }
 
 .visibility-toggle {
-  width: 2rem;
   height: 2rem;
   min-width: 2rem;
+  width: 2rem;
   padding: 0 var(--spacing-25);
+  white-space: nowrap;
   background-color: var(--background-color-interactive) !important;
   border: 0.0625rem solid var(--border-color-interactive) !important;
   color: var(--color-base) !important;
+}
+
+/* hidden state styling */
+.visibility-toggle.is-hidden {
+  background-color: var(--background-color-progressive) !important;
+  border-color: transparent !important;
+  color: var(--color-inverted-fixed) !important;
+}
+
+.visibility-toggle :deep(.cdx-icon) {
+  color: inherit !important; /* inherit from button color */
+}
+
+@media (min-width: 640px) {
+  .visibility-toggle {
+    padding: 0 var(--spacing-75);
+    width: auto !important;
+    min-width: auto !important;
+  }
+}
+
+.toggle-text {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .toggle-text {
+    display: inline;
+  }
 }
 
 :deep(.cdx-table__header) {
@@ -272,46 +410,16 @@ function toggleHideVisited() {
 }
 
 /* disable ALL hover states when all items hidden */
-.all-hidden :deep(tr:has(td:first-child .cdx-icon[aria-label="Visited"]):hover),
+.all-hidden :deep(tr:has(td:first-child .visited-icon):hover),
 .all-hidden
-  :deep(tr:has(td:first-child .cdx-icon[aria-label="Visited"]):hover td),
+  :deep(tr:has(td:first-child .visited-icon):hover td),
 .all-hidden
-  :deep(
-    tbody tr:not(:has(td:first-child .cdx-icon[aria-label="Visited"])):hover
-  ),
+  :deep(tbody tr:not(:has(td:first-child .visited-icon)):hover),
 .all-hidden
-  :deep(
-    tbody tr:not(:has(td:first-child .cdx-icon[aria-label="Visited"])):hover td
-  ) {
+  :deep(tbody tr:not(:has(td:first-child .visited-icon)):hover td) {
   background-color: var(--background-color-base) !important;
 }
 
-/* hidden state styling */
-.visibility-toggle.is-hidden {
-  background-color: var(--background-color-progressive) !important;
-  border-color: transparent !important;
-  color: var(--color-inverted-fixed) !important;
-}
-
-.visibility-toggle :deep(.cdx-icon) {
-  color: inherit !important; /* inherit from button color */
-}
-
-@media (min-width: 640px) {
-  .visibility-toggle {
-    width: 8.9375rem;
-  }
-}
-
-.toggle-text {
-  display: none;
-}
-
-@media (min-width: 640px) {
-  .toggle-text {
-    display: inline;
-  }
-}
 
 .external-link {
   font-weight: 700;
@@ -319,6 +427,7 @@ function toggleHideVisited() {
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
+  text-decoration: none;
 }
 
 .external-link:hover {
@@ -343,9 +452,27 @@ function toggleHideVisited() {
   margin: 0;
 }
 
+:deep(.cdx-table__table__empty-state-content) {
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  width: auto !important;
+  max-width: 100% !important;
+}
+
 :deep(.cdx-table table) {
   table-layout: auto;
+}
+
+.results-wrapper.has-data :deep(.cdx-table table) {
   width: max-content;
+}
+
+.results-wrapper.all-hidden {
+  overflow-x: visible;
+}
+
+.results-wrapper.all-hidden :deep(.cdx-table table) {
+  width: 100%;
 }
 
 :deep(.cdx-table td),
@@ -372,47 +499,76 @@ function toggleHideVisited() {
 }
 
 /* visited row default state */
-:deep(tr:has(td:first-child .cdx-icon[aria-label="Visited"])) {
+:deep(tr:has(td:first-child .visited-icon)) {
   background-color: var(--background-color-neutral) !important;
   color: var(--color-subtle) !important;
 }
 
 /* visited row hover state */
-:deep(tr:has(td:first-child .cdx-icon[aria-label="Visited"]):hover) {
+:deep(tr:has(td:first-child .visited-icon):hover) {
   background-color: var(--background-color-neutral-subtle) !important;
 }
 
 /* visited row hover - target td elements directly */
-:deep(tr:has(td:first-child .cdx-icon[aria-label="Visited"]):hover td) {
+:deep(tr:has(td:first-child .visited-icon):hover td) {
   background-color: var(--background-color-neutral-subtle) !important;
 }
 
 /* NON-visited row hover state */
-:deep(
-    tbody tr:not(:has(td:first-child .cdx-icon[aria-label="Visited"])):hover
-  ) {
+:deep(tbody tr:not(:has(td:first-child .cdx-icon[data-visited="true"])):hover) {
   background-color: var(--background-color-interactive-subtle) !important;
 }
 
 /* NON-visited row hover - target td elements */
-:deep(
-    tbody tr:not(:has(td:first-child .cdx-icon[aria-label="Visited"])):hover td
-  ) {
+:deep(tbody tr:not(:has(td:first-child .cdx-icon[data-visited="true"])):hover td) {
   background-color: var(--background-color-interactive-subtle) !important;
 }
 
 /* visited row links */
-:deep(tr:has(td:first-child .cdx-icon[aria-label="Visited"]) a) {
+:deep(tr:has(td:first-child .visited-icon) a) {
   color: var(--color-visited) !important;
 }
 
 /* visited row link icons */
-:deep(tr:has(td:first-child .cdx-icon[aria-label="Visited"]) a .cdx-icon) {
+:deep(tr:has(td:first-child .visited-icon) a .cdx-icon) {
   color: var(--color-visited) !important;
 }
 
 /* visited row link hover underline */
-:deep(tr:has(td:first-child .cdx-icon[aria-label="Visited"]) a:hover) {
+:deep(tr:has(td:first-child .visited-icon) a:hover) {
   text-decoration: underline;
+}
+
+.highlighted-text {
+  background-color: var(--background-color-progressive-subtle--active);
+}
+
+/* hide table visual structure when showing connection error */
+
+
+/* hide table header when showing connection error */
+.results-wrapper.connection-error :deep(.cdx-table__header) {
+  display: none !important;
+}
+
+.results-wrapper.connection-error :deep(.cdx-table thead) {
+  display: none !important;
+}
+
+.results-wrapper.connection-error :deep(.cdx-table) {
+  border-top: none !important;
+}
+
+.empty-state h3 {
+  margin: 0 0 var(--spacing-100) 0;
+}
+
+/* only style button in connection error state */
+.results-wrapper.connection-error .empty-state button {
+  align-self: center;
+  margin-top: var(--spacing-75);
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
 }
 </style>

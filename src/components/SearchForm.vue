@@ -12,11 +12,11 @@
       class="language-type-field"
       :status="languageError ? 'error' : 'default'"
     >
-      <template #label>Lexeme language</template>
+      <template #label>{{ $i18n('search-language-label') }}</template>
       <cdx-combobox
         v-model:selected="selectedLanguageValue"
         :menu-items="filteredLanguageOptions"
-        placeholder="Choose a language"
+        :placeholder="$i18n('search-language-placeholder')"
         @input="onLanguageInput"
         @blur="onLanguageBlur"
         @focus="onLanguageFocus"
@@ -31,11 +31,12 @@
       class="gap-type-field"
       :status="gapTypeError ? 'error' : 'default'"
     >
-      <template #label>Find Lexeme that</template>
+      <template #label>{{ $i18n('search-query-label') }}</template>
       <cdx-combobox
-        v-model:selected="selectedGapTypeValue"
+        :selected="getDisplayValue(selectedGapTypeValue)"
         :menu-items="filteredGapTypeOptions"
-        placeholder="Choose an option"
+        @update:selected="onQuerySelected"
+        :placeholder="$i18n('search-query-placeholder')"
         @input="onGapTypeInput"
         @blur="onGapTypeBlur"
         @focus="onGapTypeFocus"
@@ -55,20 +56,31 @@
       class="search-button"
     >
       <cdx-icon :icon="cdxIconSearch" />
-      Search
+      {{ $i18n('search-button') }}
     </cdx-button>
+
+    <cdx-message 
+  v-if="hasChangedSelection && resultsExist && activeFilterCount > 0"
+  type="notice"
+  inline
+  class="selection-change-notice"
+>
+  {{ $i18n('search-search-form-filter-clear-notice') }}
+</cdx-message>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
-import { CdxField, CdxCombobox, CdxButton, CdxIcon } from "@wikimedia/codex";
+import { computed, ref, watch, getCurrentInstance } from "vue";
+import { CdxField, CdxCombobox, CdxButton, CdxIcon, CdxMessage } from "@wikimedia/codex";
 import { cdxIconSearch, cdxIconError } from "@wikimedia/codex-icons";
 import { LANGUAGES } from "../data/languages.js";
 import {
   getQueryOptionsForLanguage,
   getAllQueryValues,
 } from "../data/queries.js";
+const instance = getCurrentInstance();
+const $i18n = instance?.appContext.config.globalProperties.$i18n;
 
 const props = defineProps({
   language: {
@@ -77,13 +89,28 @@ const props = defineProps({
   },
   gapType: {
     type: String,
-    default: "is empty",
+    default: "is-empty",
   },
 
   disabled: {
     type: Boolean,
     default: false,
   },
+
+  activeFilterCount: {
+  type: Number,
+  default: 0
+},
+
+  resultsExist: Boolean
+});
+
+const hasChangedSelection = ref(false);
+
+watch([() => props.language, () => props.gapType], () => {
+  if (props.resultsExist) {
+    hasChangedSelection.value = true;
+  }
 });
 
 const emit = defineEmits(["update:language", "update:gapType", "search"]);
@@ -94,7 +121,15 @@ const languageOptions = LANGUAGES.map((lang) => ({
 }));
 
 const gapTypeOptions = computed(() => {
-  return getQueryOptionsForLanguage(props.language);
+  const rawOptions = getQueryOptionsForLanguage(props.language);
+  // translate the category labels and item labels here
+  return rawOptions.map(group => ({
+    label: $i18n(group.label), // translate category
+    items: group.items.map(item => ({
+      value: item.value,
+      label: item.params ? $i18n(item.label, ...item.params) : $i18n(item.label)
+    }))
+  }));
 });
 
 const languageSearchTerm = ref("");
@@ -148,7 +183,7 @@ const languageError = computed(() => {
 
   const validValues = languageOptions.map((opt) => opt.value);
   if (!validValues.includes(props.language)) {
-    return "Language not found. Try choosing another language.";
+    return $i18n('errors-language-not-found');
   }
   return "";
 });
@@ -159,7 +194,7 @@ const gapTypeError = computed(() => {
 
   const validValues = getAllQueryValues();
   if (!validValues.includes(props.gapType)) {
-    return "Query type not found. Try choosing another query.";
+    return $i18n('errors-query-not-found');
   }
   return "";
 });
@@ -167,7 +202,6 @@ const gapTypeError = computed(() => {
 const isSearchDisabled = computed(() => {
   if (!props.language || !props.gapType) return true;
   if (props.disabled) return true;
-  console.log("disabled prop:", props.disabled);
 
   const validLanguages = languageOptions.map((opt) => opt.value);
   const validGapTypes = getAllQueryValues();
@@ -192,6 +226,24 @@ function onGapTypeInput(event) {
   if (gapTypeBlurred.value && event.target.value === "") {
     gapTypeBlurred.value = false;
   }
+}
+
+// finds the translated label for display
+function getDisplayValue(value) {
+  if (!value) return '';
+  
+  for (const group of filteredGapTypeOptions.value) {
+    const item = group.items.find(i => i.value === value);
+    if (item) return item.label; // this is already translated from getQueryOptionsForLanguage
+  }
+  return value;
+}
+
+// handles selection, emits the VALUE (for sparql lookup)
+function onQuerySelected(selectedValue) {
+  
+  // combobox sends the value directly, just emit it
+  emit("update:gapType", selectedValue);
 }
 
 function onLanguageBlur() {
@@ -219,6 +271,7 @@ function onGapTypeFocus() {
 }
 
 function handleSearch() {
+  hasChangedSelection.value = false;
   languageBlurred.value = true;
   gapTypeBlurred.value = true;
 
@@ -256,7 +309,7 @@ function handleSearch() {
 .error-message {
   display: flex;
   align-items: center;
-  gap: var(--spacing-25);
+  gap: var(--spacing-50);
   color: var(--color-error);
   font-size: var(--font-size-medium);
   font-weight: 700 !important;
@@ -265,6 +318,37 @@ function handleSearch() {
 
 .error-message :deep(.cdx-icon) {
   color: var(--color-error);
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+}
+
+.error-message :deep(.cdx-message__content) {
+  margin-left: 0;
+  line-height: var(--line-height-small);
+
+}
+
+.selection-change-notice {
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--spacing-50);
+  color: var(--color-base);
+  font-size: var(--font-size-medium);
+  font-weight: 700 !important;
+}
+
+.selection-change-notice :deep(.cdx-icon) {
+  color: var(--color-notice);
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+}
+
+.selection-change-notice :deep(.cdx-message__content) {
+  margin-left: 0;
+  line-height: var(--line-height-small);
 }
 
 :deep(.cdx-field) {
