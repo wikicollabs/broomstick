@@ -15,7 +15,7 @@
           <div class="footer-text">
             <h3 class="footer-title">Broomstick</h3>
             <p class="footer-caption">
-              {{ $t('footer.by') }}
+              {{ $i18n('footer-by') }}
               <a
                 href="https://meta.wikimedia.org/wiki/Software_Collaboration_for_Wikidata"
                 target="_blank"
@@ -24,7 +24,7 @@
                 >Wikicollabs</a
               >
             </p>
-            <p class="footer-caption">{{ $t('footer.powered-by') }}</p>
+            <p class="footer-caption">{{ $i18n('footer-powered-by') }}</p>
           </div>
         </div>
       </div>
@@ -35,7 +35,7 @@
           rel="noopener"
           class="external-link"
         >
-          {{ $t('footer.about') }}
+          {{ $i18n('footer-about') }}
           <cdx-icon :icon="cdxIconLinkExternal" size="small" />
         </a>
         <span class="link-separator">·</span>
@@ -45,7 +45,7 @@
           rel="noopener"
           class="external-link"
         >
-          {{ $t('footer.privacy') }}
+          {{ $i18n('footer-privacy') }}
           <cdx-icon :icon="cdxIconLinkExternal" size="small" />
         </a>
         <span class="link-separator">·</span>
@@ -55,7 +55,7 @@
           rel="noopener"
           class="external-link"
         >
-          {{ $t('footer.license') }}
+          {{ $i18n('footer-license') }}
           <cdx-icon :icon="cdxIconLinkExternal" size="small" />
         </a>
         <span class="link-separator">·</span>
@@ -65,7 +65,7 @@
           rel="noopener"
           class="external-link"
         >
-          {{ $t('footer.source') }}
+          {{ $i18n('footer-source') }}
           <cdx-icon :icon="cdxIconLinkExternal" size="small" />
         </a>
       </div>
@@ -77,9 +77,10 @@
 import { CdxIcon } from "@wikimedia/codex";
 import { cdxIconLinkExternal } from "@wikimedia/codex-icons";
 import BroomstickIcon from "./BroomstickIcon.vue";
-import { useI18n } from 'vue-i18n';
+import { getCurrentInstance } from 'vue';
 
-const { t } = useI18n();
+const instance = getCurrentInstance();
+const $i18n = instance?.appContext.config.globalProperties.$i18n;
 </script>
 
 <style scoped>
@@ -94,7 +95,7 @@ const { t } = useI18n();
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: var(--spacing-200);
+  gap: var(--spacing-150);
   flex-direction: column;
 
 }
@@ -116,7 +117,7 @@ const { t } = useI18n();
     align-items: flex-end;
     flex-direction: row;
     justify-content: space-between;
-    gap: var(--spacing-200);
+    gap: var(--spacing-150);
   }
 
   .links {
@@ -131,7 +132,7 @@ const { t } = useI18n();
     flex-direction: row;
     align-items: flex-end;
     justify-content: space-between;
-    gap: var(--spacing-200);
+    gap: var(--spacing-150);
   }
 
     .links {
