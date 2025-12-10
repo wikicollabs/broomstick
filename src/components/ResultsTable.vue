@@ -10,6 +10,7 @@
   <div class="results-wrapper" :class="{ 'all-hidden': allVisitedAndHidden, 'connection-error': props.connectionError  }">
     <CdxTable
       :caption="tableCaption"
+      tabindex="-1"
       :columns="
         results.length === 0 ||
         (hideVisited && filteredResults.length === 0) ||
@@ -38,7 +39,7 @@
         :class="{ 'is-hidden': hideVisited }"
         action="progressive"
         weight="quiet"
-        :aria-label="$i18n('table-hide-visited-aria')"
+        :aria-label="`${$i18n('table-hide-visited-aria')} ${hideVisited ? $i18n('state-on') : $i18n('state-off')}`"
         :aria-pressed="hideVisited"
         @click="toggleHideVisited"
       >
@@ -46,6 +47,15 @@
         <span class="toggle-text">{{ $i18n('table-hide-visited') }}</span>
       </CdxButton>
     </div>
+
+    <div 
+        class="visually-hidden" 
+        role="status" 
+        aria-live="polite" 
+        aria-atomic="true"
+      >
+        {{ visibilityStatusMessage }}
+      </div>
     </template>
       <template #item-visited="{ row }">
         <CdxIcon
@@ -53,22 +63,23 @@
           :icon="cdxIconSuccess"
           size="medium"
           :style="{ color: 'var(--color-subtle)' }"
-          :aria-label="$i18n('table-visited-yes')"
           class="visited-icon"
           data-visited="true"
+          aria-hidden="true"
         />
         <CdxIcon
           v-else
           :icon="cdxIconNotBright"
           size="medium"
           :style="{ color: 'transparent' }"
-          :aria-label="$i18n('table-visited-no')"
+          aria-hidden="true"
         />
       </template>
 
       <template #item-lexemeId="{ row }">
         <a
           :href="`https://www.wikidata.org/wiki/Lexeme:${row.lexemeId}`"
+          :aria-label="`${isVisited(row.lexemeId) ? $i18n('table-visited-yes') : $i18n('table-visited-no')}, ${row.lemma}, ${row.lexemeId}, ${row.lexicalCategory}`"
           target="_blank"
           rel="noopener"
           class="external-link"
@@ -90,7 +101,7 @@
       </template>
 
 <template #empty-state>
-  <div class="empty-state">
+  <div class="empty-state" role="status" aria-live="polite">
     <template v-if="props.connectionError">
       <h3>{{ $i18n('errors-unable-to-connect') }}</h3>
       <p>{{ $i18n('errors-reload-prompt') }}</p>
@@ -98,6 +109,7 @@
         action="progressive" 
         weight="primary"
         @click="reloadPage"
+        :aria-label="$i18n('errors-reload-page')"
       >
         {{ $i18n('errors-reload-page') }}
       </CdxButton>
@@ -203,6 +215,18 @@ onMounted(() => {
   if (visitedHeader) {
     visitedHeader.setAttribute("aria-label", $i18n('table-visited-header'));
   }
+
+  updateHeaderAriaLabels();
+  updateRowsPerPageAriaLabel();
+
+  // watch for dropdown state changes to update aria-label
+  const selectWrapper = document.querySelector('.cdx-select-vue');
+  if (selectWrapper) {
+    const observer = new MutationObserver(() => {
+      updateRowsPerPageAriaLabel();
+    });
+    observer.observe(selectWrapper, { attributes: true, attributeFilter: ['class'] });
+  }
 });
 
 // save to sessionStorage on changes
@@ -213,6 +237,8 @@ watch(visitedLexemes, (newSet) => {
 watch(hideVisited, (newVal) => {
   sessionStorage.setItem('broomstick_hide_visited', String(newVal));
 });
+
+watch(sortState, updateHeaderAriaLabels, { deep: true });
 
 const paginationOptions = [
   { value: 10 },
@@ -231,7 +257,7 @@ const tableCaption = computed(() => {
 
 const hiddenCount = computed(() => {
   if (!hideVisited.value) return 0;
-  return visitedLexemes.value.size;
+  return props.results.filter((r) => visitedLexemes.value.has(r.lexemeId)).length;
 });
 
 const filteredResults = computed(() => {
@@ -276,10 +302,56 @@ const tableData = computed(() => {
   return data;
 });
 
+const visibilityStatusMessage = computed(() => {
+  if (!hideVisited.value) return '';
+  
+  const count = hiddenCount.value;
+  if (count === 0) {
+    return $i18n('table-visibility-none-hidden');
+  }
+  return $i18n('table-visibility-hidden-announce', count, count);
+});
+
 const allVisitedAndHidden = computed(() => {
   return (
     hideVisited && filteredResults.value.length === 0
   );
+});
+
+const lidSortAriaLabel = computed(() => {
+  const sortColumn = Object.keys(sortState.value)[0];
+  const sortOrder = sortColumn ? sortState.value[sortColumn] : null;
+  
+  if (sortColumn !== 'lexemeId') {
+    return $i18n('table-header-lid-default');
+  }
+  return sortOrder === 'asc' 
+    ? $i18n('table-header-lid-ascending')
+    : $i18n('table-header-lid-descending');
+});
+
+const lemmaSortAriaLabel = computed(() => {
+  const sortColumn = Object.keys(sortState.value)[0];
+  const sortOrder = sortColumn ? sortState.value[sortColumn] : null;
+  
+  if (sortColumn !== 'lemma') {
+    return $i18n('table-header-lemma-default');
+  }
+  return sortOrder === 'asc' 
+    ? $i18n('table-header-lemma-ascending')
+    : $i18n('table-header-lemma-descending');
+});
+
+const lexicalCategorySortAriaLabel = computed(() => {
+  const sortColumn = Object.keys(sortState.value)[0];
+  const sortOrder = sortColumn ? sortState.value[sortColumn] : null;
+  
+  if (sortColumn !== 'lexicalCategory') {
+    return $i18n('table-header-lexcat-default');
+  }
+  return sortOrder === 'asc' 
+    ? $i18n('table-header-lexcat-ascending')
+    : $i18n('table-header-lexcat-descending');
 });
 
 const highlightText = (text) => {
@@ -312,6 +384,28 @@ function isVisited(lexemeId) {
 
 function toggleHideVisited() {
   hideVisited.value = !hideVisited.value;
+}
+
+
+function updateHeaderAriaLabels() {
+  nextTick(() => {
+    const buttons = document.querySelectorAll(".cdx-table th button");
+    if (buttons[0]) buttons[0].setAttribute("aria-label", lidSortAriaLabel.value);
+    if (buttons[1]) buttons[1].setAttribute("aria-label", lemmaSortAriaLabel.value);
+    if (buttons[2]) buttons[2].setAttribute("aria-label", lexicalCategorySortAriaLabel.value);
+  });
+}
+
+function updateRowsPerPageAriaLabel() {
+  nextTick(() => {
+    const combobox = document.querySelector('.cdx-select-vue__handle[role="combobox"]');
+    if (combobox) {
+      const displayedText = combobox.querySelector('span span')?.textContent;
+      if (displayedText) {
+        combobox.setAttribute('aria-label', displayedText);
+      }
+    }
+  });
 }
 
 </script>
@@ -372,6 +466,10 @@ function toggleHideVisited() {
   background-color: var(--background-color-progressive) !important;
   border-color: transparent !important;
   color: var(--color-inverted-fixed) !important;
+}
+
+.visibility-toggle.is-hidden:focus-visible {
+  outline: 2px solid var(--color-base);
 }
 
 .visibility-toggle :deep(.cdx-icon) {
@@ -450,6 +548,7 @@ function toggleHideVisited() {
 
 .empty-state p {
   margin: 0;
+  color: var(--color-base);
 }
 
 :deep(.cdx-table__table__empty-state-content) {
@@ -561,6 +660,7 @@ function toggleHideVisited() {
 
 .empty-state h3 {
   margin: 0 0 var(--spacing-100) 0;
+  color: var(--color-emphasized);
 }
 
 /* only style button in connection error state */
@@ -570,5 +670,18 @@ function toggleHideVisited() {
   pointer-events: auto;
   position: relative;
   z-index: 1;
+}
+
+/* style for screen reader only */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 </style>
