@@ -26,7 +26,8 @@ app.provide('CdxI18nFunction', (key, ...params) => {
     'cdx-table-pager-button-first-page',
     'cdx-table-pager-button-last-page',
     'cdx-table-pager-button-next-page',
-    'cdx-table-pager-button-prev-page'
+    'cdx-table-pager-button-prev-page',
+    'cdx-dialog-close-button-label'
   ];
   
   if (!translatedKeys.includes(key)) {
@@ -42,13 +43,12 @@ app.provide('CdxI18nFunction', (key, ...params) => {
 
 
 // version-based localStorage invalidation
-const APP_VERSION = '1.2.0';
+const APP_VERSION = '1.4.0';
 const storedVersion = localStorage.getItem('broomstick_version');
 
 if (storedVersion !== APP_VERSION) {
   localStorage.clear();
   localStorage.setItem('broomstick_version', APP_VERSION);
-  console.log(`localStorage cleared - version updated to ${APP_VERSION}`);
 }
 
 

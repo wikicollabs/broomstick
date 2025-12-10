@@ -17,12 +17,13 @@
         v-model:selected="selectedLanguageValue"
         :menu-items="filteredLanguageOptions"
         :placeholder="$i18n('search-language-placeholder')"
+        :aria-label="$i18n('search-language-label')"
         @input="onLanguageInput"
         @blur="onLanguageBlur"
         @focus="onLanguageFocus"
       />
     </cdx-field>
-    <div v-if="languageError" class="error-message">
+    <div v-if="languageError" class="error-message" ref="languageErrorRef" tabindex="-1">
       <cdx-icon :icon="cdxIconError" size="small" />
       {{ languageError }}
     </div>
@@ -37,12 +38,13 @@
         :menu-items="filteredGapTypeOptions"
         @update:selected="onQuerySelected"
         :placeholder="$i18n('search-query-placeholder')"
+        :aria-label="$i18n('search-query-label')"
         @input="onGapTypeInput"
         @blur="onGapTypeBlur"
         @focus="onGapTypeFocus"
       />
     </cdx-field>
-    <div v-if="gapTypeError" class="error-message">
+    <div v-if="gapTypeError" class="error-message" ref="gapTypeErrorRef" tabindex="-1">
       <cdx-icon :icon="cdxIconError" size="small" />
       {{ gapTypeError }}
     </div>
@@ -52,6 +54,8 @@
       weight="primary"
       type="button"
       :disabled="isSearchDisabled"
+      :aria-label="$i18n('search-button')"
+      :aria-disabled="isSearchDisabled"
       @click="handleSearch"
       class="search-button"
     >
@@ -64,14 +68,15 @@
   type="notice"
   inline
   class="selection-change-notice"
+  role="status"
 >
-  {{ $i18n('search-search-form-filter-clear-notice') }}
+  {{ $i18n('search-form-filter-clear-notice') }}
 </cdx-message>
   </div>
 </template>
 
 <script setup>
-import { computed, ref, watch, getCurrentInstance } from "vue";
+import { computed, ref, watch, getCurrentInstance, nextTick } from "vue";
 import { CdxField, CdxCombobox, CdxButton, CdxIcon, CdxMessage } from "@wikimedia/codex";
 import { cdxIconSearch, cdxIconError } from "@wikimedia/codex-icons";
 import { LANGUAGES } from "../data/languages.js";
@@ -188,6 +193,19 @@ const languageError = computed(() => {
   return "";
 });
 
+const languageErrorRef = ref(null);
+
+// watch for when the error appears
+watch(languageError, (newError) => {
+  if (newError) {
+    nextTick(() => {
+      languageErrorRef.value?.focus();
+    });
+  }
+});
+
+
+
 const gapTypeError = computed(() => {
   if (!gapTypeBlurred.value) return "";
   if (!props.gapType) return "";
@@ -197,6 +215,16 @@ const gapTypeError = computed(() => {
     return $i18n('errors-query-not-found');
   }
   return "";
+});
+
+const gapTypeErrorRef = ref(null);
+
+watch(gapTypeError, (newError) => {
+  if (newError) {
+    nextTick(() => {
+      gapTypeErrorRef.value?.focus();
+    });
+  }
 });
 
 const isSearchDisabled = computed(() => {

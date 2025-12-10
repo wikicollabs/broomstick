@@ -11,7 +11,7 @@
     <cdx-menu-button
       v-model:selected="selectedItem"
       :menu-items="menuItems"
-      :aria-label="$i18n('settings-menu-label')"
+      :aria-label="$i18n('settings-menu-label-aria')"
     >
       <template #default>
         <cdx-icon :icon="cdxIconMenu" />
@@ -26,25 +26,28 @@
       :primary-action="{
         label: $i18n('settings-apply'),
         actionType: 'progressive',
+        ariaLabel: $i18n('settings-apply'),
+        disabled: !hasThemeChanged,
       }"
       :default-action="{
         label: $i18n('settings-cancel'),
+        ariaLabel: $i18n('settings-cancel'),
       }"
       @primary="saveTheme"
       @default="showThemeDialog = false"
     >
       <div class="dialog-content">
-        <cdx-field>
-          <cdx-radio v-model="tempTheme" name="theme" input-value="auto">
+        <cdx-field :is-fieldset="true"> 
+          <cdx-radio v-model="tempTheme" name="theme" input-value="auto" :aria-label="$i18n('settings-theme-auto-aria')">
             <template #default> {{ $i18n('settings-theme-auto') }} </template>
             <template #description>
               <span class="radio-description">{{ $i18n('settings-theme-auto-description') }}</span>
             </template>
           </cdx-radio>
-          <cdx-radio v-model="tempTheme" name="theme" input-value="light">
+          <cdx-radio v-model="tempTheme" name="theme" input-value="light" :aria-label="$i18n('settings-theme-light')">
             {{ $i18n('settings-theme-light') }}
           </cdx-radio>
-          <cdx-radio v-model="tempTheme" name="theme" input-value="dark">
+          <cdx-radio v-model="tempTheme" name="theme" input-value="dark" :aria-label="$i18n('settings-theme-dark')">
             {{ $i18n('settings-theme-dark') }}
           </cdx-radio>
         </cdx-field>
@@ -56,15 +59,27 @@
       v-model:open="showLanguageDialog"
       :title="$i18n('settings-language-label')"
       :use-close-button="true"
+      :primary-action="{
+        label: $i18n('settings-apply'),
+        actionType: 'progressive',
+        disabled: !hasLanguageChanged,
+        ariaLabel: $i18n('settings-apply'),
+      }"
+      :default-action="{
+        label: $i18n('settings-cancel'),
+        ariaLabel: $i18n('settings-cancel'),
+      }"
+      @primary="saveLanguage"
+      @default="showLanguageDialog = false"
     >
       <div class="dialog-content">
-        <cdx-field>
+        <cdx-field :is-fieldset="true">
           <cdx-radio v-for="lang in DISPLAY_LANGUAGES" :key="lang.code" v-model="tempLanguage" name="language" :input-value="lang.code">
             {{ lang.nativeName }}
           </cdx-radio>
         </cdx-field>
       </div>
-            <template #footer>
+            <template #footer-text>
         <p class ="language-reload">
           {{ $i18n('settings-language-reload') }}
         </p>
@@ -79,22 +94,6 @@
             {{ $i18n('settings-translate-link') }}
           </a>
         </p>
-        <div class="footer-buttons">
-          <cdx-button  
-            @click="showLanguageDialog = false"
-            class="cancel-button"
-          >
-            {{ $i18n('settings-cancel') }}
-          </cdx-button>
-          <cdx-button 
-            action="progressive" 
-            weight="primary"
-            :disabled="!hasLanguageChanged"
-            @click="saveLanguage"
-          >
-            {{ $i18n('settings-apply') }}
-          </cdx-button>
-        </div>
       </template>
     </cdx-dialog>
   </div>
@@ -165,12 +164,14 @@ const menuItems = computed(() => {
       value: "theme",
       label: $i18n('settings-theme-label'),
       description: themeLabel.value,
+      ariaLabel: `${$i18n('settings-theme-label')}: ${themeLabel.value}`,
       icon: effectiveTheme.value === "dark" ? cdxIconMoon : cdxIconBright,
     },
     {
       value: "language",
       label: $i18n('settings-language-label'),
       description: languageLabel.value,
+      ariaLabel: `${$i18n('settings-language-label')}: ${languageLabel.value}`,
       icon: cdxIconLanguage,
     },
   ];
@@ -215,6 +216,10 @@ const systemTheme = ref(
   window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
 );
 
+const hasThemeChanged = computed(() => {
+  return tempTheme.value !== currentTheme.value;
+});
+
 const hasLanguageChanged = computed(() => {
   const currentLocale = localStorage.getItem('locale') || 'en';
   return tempLanguage.value !== currentLocale;
@@ -225,11 +230,60 @@ onMounted(() => {
 
   const darkModeQuery = window.matchMedia("(prefers-color-scheme: dark)");
   darkModeQuery.addEventListener("change", (e) => {
-    systemTheme.value = e.matches ? "dark" : "light"; // update reactive value
+    systemTheme.value = e.matches ? "dark" : "light";
     if (currentTheme.value === "auto") {
       applyTheme("auto");
     }
   });
+
+    // WORKAROUND: Codex MenuButton keyboard accessibility issue
+  // 
+  // Problem: MenuButton blocks Enter/Space from reaching Menu's selection logic
+  // - MenuButton.onKeydown returns early for Enter/Space keys
+  // - This prevents Menu.delegateKeyNavigation from handling selection
+  // - Tab key works fine bc it's not blocked
+  // 
+  // Impact: Keyboard users can navigate menu but can't select with Enter/Space
+  // 
+  // This listener catches Enter/Space when menu is expanded and manually triggers
+  // the dialogs, replicating what Menu.handleKeyNavigation should do.
+  // 
+  // TODO: Remove this once Codex fixes MenuButton to delegate Enter/Space to Menu
+  // Related: https://github.com/wikimedia/design-codex/commit/f6c7f1f330cc050cb67a2d9a61d81f2ca85eb121
+
+  
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    
+    const button = e.target.closest('button[aria-haspopup="menu"]');
+    if (!button) return;
+    
+    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+    if (!isExpanded) return;
+    
+    const menuId = button.getAttribute('aria-controls');
+    const menu = document.getElementById(menuId);
+    if (!menu) return;
+    
+    const highlighted = menu.querySelector('.cdx-menu-item--highlighted');
+    if (!highlighted) return;
+    
+    const ariaLabel = highlighted.getAttribute('aria-label');
+    
+    if (ariaLabel?.includes($i18n('settings-theme-label'))) {
+      e.preventDefault();
+      e.stopPropagation();
+      tempTheme.value = currentTheme.value;
+      showThemeDialog.value = true;
+      selectedItem.value = null;
+    } else if (ariaLabel?.includes($i18n('settings-language-label'))) {
+      e.preventDefault();
+      e.stopPropagation();
+      tempLanguage.value = currentLanguage.value;
+      showLanguageDialog.value = true;
+      selectedItem.value = null;
+    }
+  }, true);
 });
 
 function applyTheme(theme) {

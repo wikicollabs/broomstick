@@ -11,7 +11,7 @@
     <div class="footer-content">
       <div class="main-section">
         <div class="footer-branding">
-          <BroomstickIcon class="footer-logo" alt="Broomstick logo" />
+          <BroomstickIcon class="footer-logo" role="img" :aria-label="`Broomstick ${$i18n('logo-alt')}`" />
           <div class="footer-text">
             <h3 class="footer-title">Broomstick</h3>
             <p class="footer-caption">
@@ -21,6 +21,7 @@
                 target="_blank"
                 rel="noopener"
                 class="wikicollabs-link"
+                :aria-label="$i18n('footer-wikicollabs-aria')"
                 >Wikicollabs</a
               >
             </p>
@@ -34,6 +35,7 @@
           target="_blank"
           rel="noopener"
           class="external-link"
+          :aria-label="$i18n('footer-about-aria')"
         >
           {{ $i18n('footer-about') }}
           <cdx-icon :icon="cdxIconLinkExternal" size="small" />
@@ -44,6 +46,7 @@
           target="_blank"
           rel="noopener"
           class="external-link"
+          :aria-label="$i18n('footer-privacy-policy-aria')"
         >
           {{ $i18n('footer-privacy') }}
           <cdx-icon :icon="cdxIconLinkExternal" size="small" />
@@ -54,6 +57,7 @@
           target="_blank"
           rel="noopener"
           class="external-link"
+          :aria-label="$i18n('footer-license-aria')"
         >
           {{ $i18n('footer-license') }}
           <cdx-icon :icon="cdxIconLinkExternal" size="small" />
@@ -64,6 +68,7 @@
           target="_blank"
           rel="noopener"
           class="external-link"
+          :aria-label="$i18n('footer-source-code-aria')"
         >
           {{ $i18n('footer-source') }}
           <cdx-icon :icon="cdxIconLinkExternal" size="small" />

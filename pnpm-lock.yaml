@@ -9,14 +9,14 @@ importers:
   .:
     dependencies:
       '@wikimedia/codex':
-        specifier: ^2.3.2
-        version: 2.3.2(vue@3.5.24)
+        specifier: ^2.3.3
+        version: 2.3.3(vue@3.5.24)
       '@wikimedia/codex-design-tokens':
-        specifier: ^2.3.2
-        version: 2.3.2
+        specifier: ^2.3.3
+        version: 2.3.3
       '@wikimedia/codex-icons':
-        specifier: ^2.3.2
-        version: 2.3.2
+        specifier: ^2.3.3
+        version: 2.3.3
       vue-banana-i18n:
         specifier: ^2.3.0
         version: 2.3.0
@@ -373,16 +373,16 @@ packages:
   '@vue/shared@3.5.24':
     resolution: {integrity: sha512-9cwHL2EsJBdi8NY22pngYYWzkTDhld6fAD6jlaeloNGciNSJL6bLpbxVgXl96X00Jtc6YWQv96YA/0sxex/k1A==}
 
-  '@wikimedia/codex-design-tokens@2.3.2':
-    resolution: {integrity: sha512-g0pk2iORtV620hCJBuhaTIZ/6oqXEm7dol9dQbusCstq/Q+xAR1gvliM8Tmxor+p+XtH8K9fS2Swck7mK6VeeA==}
+  '@wikimedia/codex-design-tokens@2.3.3':
+    resolution: {integrity: sha512-BUuneFuz3NvAwKZFA7Dhbqj0OFS/PjiDW9Q9P69M0o7EaXtPfiyWs5li+9Hi9fk9dHJhbHeuV0DkqoIhaH+DTQ==}
     engines: {node: '>=20.19.1', npm: '>=10.8.1'}
 
-  '@wikimedia/codex-icons@2.3.2':
-    resolution: {integrity: sha512-2oIGBBrK7B+oHhiKjGdkrZdABCymaSAFCRrBOj+83S5oD/q0u+D3IEs/SQ1JT1RuV5pv/iap3mh7StPfLKI1mw==}
+  '@wikimedia/codex-icons@2.3.3':
+    resolution: {integrity: sha512-+lXjEpTrxr4EtlA5tR0kk1QnnoHdbfG/nTTjpUFf4GU0jnz6FJt+icVjTrJ6gt7Ifruag67+PtaMuj0UVQqm2w==}
     engines: {node: '>=20.19.1', npm: '>=10.8.2'}
 
-  '@wikimedia/codex@2.3.2':
-    resolution: {integrity: sha512-kzDg5RZxvlaJEE0JDK+CQjR+83DpY/QEW01BwLalcDKhP/HCujMz2QpsUAV8qaGNArAO/IkIUzBj1+2eL7yKNg==}
+  '@wikimedia/codex@2.3.3':
+    resolution: {integrity: sha512-WfpbPycKg18YxisMnPJmz3Plhid1tbrco+NU8Clb5eP11QvguC/749kvJ6dT5LlGiV2DwGCh5ZZEKs4KqgC8eA==}
     engines: {node: '>=20.19.1', npm: '>=10.8.2'}
     peerDependencies:
       vue: ^3.5.13
@@ -759,14 +759,14 @@ snapshots:
 
   '@vue/shared@3.5.24': {}
 
-  '@wikimedia/codex-design-tokens@2.3.2': {}
+  '@wikimedia/codex-design-tokens@2.3.3': {}
 
-  '@wikimedia/codex-icons@2.3.2': {}
+  '@wikimedia/codex-icons@2.3.3': {}
 
-  '@wikimedia/codex@2.3.2(vue@3.5.24)':
+  '@wikimedia/codex@2.3.3(vue@3.5.24)':
     dependencies:
       '@floating-ui/vue': 1.0.6(vue@3.5.24)
-      '@wikimedia/codex-icons': 2.3.2
+      '@wikimedia/codex-icons': 2.3.3
       vue: 3.5.24
     transitivePeerDependencies:
       - '@vue/composition-api'
