@@ -14,7 +14,7 @@ The tool queries the Wikidata SPARQL endpoint directly and presents results in a
 
 ## Features
 
-- Supports 46 languages (more can be added)
+- Supports 75+ languages (more can be added)
 - Query types organized by category:
   - General: empty Lexemes, missing Senses, missing Forms, missing external identifiers, missing usage examples
   - Senses: missing semantic properties (item for this sense, hyperonyms, troponyms, etc.)
@@ -28,6 +28,7 @@ The tool queries the Wikidata SPARQL endpoint directly and presents results in a
 
 - Vue 3 (Composition API)
 - Vite (build tool)
+- vue-banana-i18n (i18n)
 - Codex (Wikimedia Design System)
 - SPARQL queries against Wikidata Query Service
 
@@ -86,6 +87,12 @@ broomstick/
 │   ├── data/
 │   │   ├── languages.js
 │   │   └── queries.js
+│   ├── i18n/
+│   │   ├── en.json
+│   │   ├── id.json
+│   │   ├── qqq.json
+│   │   ├── displayLanguages.js
+│   │   └── index.js
 │   ├── App.vue
 │   ├── main.js
 │   └── style.css
