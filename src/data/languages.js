@@ -7,6 +7,7 @@
  */
 
 export const LANGUAGES = [
+  { display: 'Anarâškielâ (smn)', code: 'smn', autonym: 'Anarâškielâ', qid: 'Q33462' },
   { display: 'Aragonés (an)', code: 'an', autonym: 'Aragonés', qid: 'Q8765' },
   { display: 'Bahasa Indonesia (id)', code: 'id', autonym: 'Bahasa Indonesia', qid: 'Q9240' },
   { display: 'Bahasa Melayu (ms)', code: 'ms', autonym: 'Bahasa Melayu', qid: 'Q9237' },
@@ -49,6 +50,7 @@ export const LANGUAGES = [
   { display: 'Minangkabau (min)', code: 'min', autonym: 'Minangkabau', qid: 'Q13324' },
   { display: 'Nederlands (nl)', code: 'nl', autonym: 'Nederlands', qid: 'Q7411' },
   { display: 'Nynorsk (nn)', code: 'nn', autonym: 'Nynorsk', qid: 'Q25164' },
+  { display: 'Piemontèis (pms)', code: 'pms', autonym: 'Piemontèis', qid: 'Q15085' },
   { display: 'Polski (pl)', code: 'pl', autonym: 'Polski', qid: 'Q809' },
   { display: 'Português (pt)', code: 'pt', autonym: 'Português', qid: 'Q5146' },
   { display: 'Qhichwa (qu)', code: 'qu', autonym: 'Qhichwa', qid: 'Q5218' },
@@ -67,6 +69,8 @@ export const LANGUAGES = [
   { display: 'Yorùbá (yo)', code: 'yo', autonym: 'Yorùbá', qid: 'Q34311' },
   { display: 'Čeština (cs)', code: 'cs', autonym: 'Čeština', qid: 'Q9056' },
   { display: 'Ελληνικά (el)', code: 'el', autonym: 'Ελληνικά', qid: 'Q36510' },
+  { display: 'кыргызча (ky)', code: 'ky', autonym: 'кыргызча', qid: 'Q9255' },
+  { display: 'македонски (mk)', code: 'mk', autonym: 'македонски', qid: 'Q9296' },
   { display: 'русский (ru)', code: 'ru', autonym: 'русский', qid: 'Q7737' },
   { display: 'Українська (uk)', code: 'uk', autonym: 'Українська', qid: 'Q8798' },
   { display: '\u202Bייִדיש\u202C (yi)', code: 'yi', autonym: 'ייִדיש', qid: 'Q8641' },
