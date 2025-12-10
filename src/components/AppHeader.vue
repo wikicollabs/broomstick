@@ -10,17 +10,17 @@
   <header class="app-header">
     <div class="header-content">
       <div class="logo">
-      <BroomstickLogo
-        ref="logoRef"
-        class="header-logo"
-        alt="broomstick"
-        tabindex="0"
-        role="button"
-        @click="goHome"
-        @keydown.enter="goHome"
-        @keydown.space.prevent="goHome"
-        style="cursor: pointer"
-      />
+        <BroomstickLogo
+          ref="logoRef"
+          class="header-logo"
+          role="button"
+          :aria-label="`Broomstick ${$i18n('logo-alt')}`"
+          tabindex="0"
+          @click="goHome"
+          @keydown.enter="goHome"
+          @keydown.space.prevent="goHome"
+          style="cursor: pointer"
+        />
       </div>
       <settings-menu />
     </div>
