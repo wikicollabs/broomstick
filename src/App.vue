@@ -90,6 +90,7 @@
                     <CdxButton
                       weight="quiet"
                       :disabled="!hasActiveFilters"
+                      :aria-disabled="!hasActiveFilters"
                       @click="clearFilters"
                       class="clear-filters-button"
                     >
@@ -100,6 +101,7 @@
                 <div class="filters-controls">
                   <CdxTextInput
                     v-model="textFilter"
+                    ref="textInputRef"
                     input-type="search"
                     :start-icon="cdxIconSearch"
                     :clearable="true"
@@ -126,6 +128,8 @@
                         type="error"
                         inline
                         class="category-filter-error"
+                        tabindex="0"
+                        ref="categoryFilterErrorRef"
                       >
                         {{ categoryFilterError }}
                       </cdx-message>
@@ -133,11 +137,11 @@
               </div>
             </div>
 
-            <div class="results-area">
-              <div v-if="isLoading" class="loading-state">
-                <h3>{{ $i18n('results-querying') }}</h3>
-                <CdxProgressBar :aria-label="$i18n('results-querying-aria')" />
-              </div>
+          <div class="results-area">
+            <div v-if="isLoading" class="loading-state" role="status" aria-live="assertive">
+              <h3>{{ $i18n('results-querying') }}</h3>
+              <CdxProgressBar :aria-label="$i18n('results-querying-aria')" aria-hidden="true" />
+            </div>
 
               <CdxMessage v-else-if="error" type="error">
                 {{ error }}
@@ -354,17 +358,6 @@ async function executeSearch() {
       lexicalCategory: item.lexicalCategory,
     }));
 
-    // cache successful search results
-    const searchState = {
-      results: results.value,
-      searchedLanguage: searchedLanguage.value,
-      searchedGapType: searchedGapType.value,
-      languageCode: languageCode,
-      queryValue: selectedGapType.value,
-      timestamp: Date.now()
-    };
-    localStorage.setItem('broomstick_last_results', JSON.stringify(searchState));
-
   } catch (err) {
     console.error("Query error:", err);
     connectionError.value = true;
@@ -383,39 +376,13 @@ const restoreFromUrl = () => {
     if (langObj) {
       selectedLanguage.value = langObj.display;
       selectedGapType.value = query;
-      
-      const skipRequery = localStorage.getItem('broomstick_skip_requery');
-      const cachedResults = localStorage.getItem('broomstick_last_results');
-      
-      if (skipRequery === 'true' && cachedResults) {
-        try {
-          const cached = JSON.parse(cachedResults);
-          
-          // verify cache matches current url params
-          if (cached.languageCode === langCode && cached.queryValue === query) {
-            // restore from cache
-            results.value = cached.results;
-            searchedLanguage.value = cached.searchedLanguage;
-            searchedGapType.value = cached.searchedGapType;
-            currentView.value = 'search';
-            isPanelCollapsed.value = window.innerWidth < 640;
-            categoryFilter.value = $i18n('filters-category-all');
-            
-            localStorage.removeItem('broomstick_skip_requery');
-            return; // done, no need to requery
-          }
-        } catch (e) {
-          console.error('failed to restore cached results:', e);
-        }
-      }
-      
-      // either no skip flag, no cache, or cache didn't match - do normal search
-      localStorage.removeItem('broomstick_skip_requery');
       currentView.value = 'search';
       executeSearch();
     }
   }
 };
+
+
 
 function collapsePanel() {
   // blur any focused element inside the search panel
@@ -443,6 +410,30 @@ const filteredResults = computed(() => {
   }
   
   return filtered;
+});
+
+
+const textInputRef = ref(null);
+
+watch(textFilter, (newVal) => {
+  if (newVal && textInputRef.value) {
+    nextTick(() => {
+      const clearIcon = textInputRef.value.$el.querySelector('.cdx-text-input__clear-icon');
+      if (clearIcon) {
+        clearIcon.setAttribute('aria-label', $i18n('filters-text-clear-aria'));
+        clearIcon.setAttribute('role', 'button');
+        clearIcon.setAttribute('tabindex', '0');
+        
+        // add keyboard handler
+        clearIcon.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            clearIcon.click();
+          }
+        });
+      }
+    });
+  }
 });
 
 
@@ -484,6 +475,17 @@ const categoryFilterError = computed(() => {
   }
   return '';
 });
+
+const categoryFilterErrorRef = ref(null);
+
+watch(categoryFilterError, (newError) => {
+  if (newError) {
+    nextTick(() => {
+      categoryFilterErrorRef.value?.$el?.focus();
+    });
+  }
+});
+
 
 const activeFilterCount = computed(() => {
   let count = 0;
