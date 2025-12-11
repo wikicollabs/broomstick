@@ -73,5 +73,8 @@
 	"queries-is-empty": "a l'é veuid",
 	"queries-missing-senses": "a l'ha gnun significà",
 	"queries-missing-forms": "a l'ha gnun-e forme",
-	"queries-missing-external-identifiers": "a l'ha gnun identificativ estern"
+	"queries-missing-external-identifiers": "a l'ha gnun identificativ estern",
+	"queries-missing-usage-example": "esempi d'usagi mancant $1",
+	"queries-missing-item-for-sense": "element mancant për cost significà $1, gentilissi ëd $2, o iperònim $3",
+	"queries-missing-predicate-troponym": "predicà mancant për $1 o tropònim ëd $2"
 }
