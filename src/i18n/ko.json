@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Tensama0415",
 			"YeBoy371"
 		]
 	},
@@ -57,6 +58,7 @@
 	"cdx-dialog-close-button-label": "대화 상자 닫기",
 	"state-on": "켜기",
 	"state-off": "끄기",
+	"footer-powered-by": "위키데이터 제공",
 	"footer-about": "정보",
 	"footer-privacy": "개인정보보호정책",
 	"footer-license": "라이선스",
