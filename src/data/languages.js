@@ -76,6 +76,7 @@ export const LANGUAGES = [
   { display: '\u202Bייִדיש\u202C (yi)', code: 'yi', autonym: 'ייִדיש', qid: 'Q8641' },
   { display: '\u202Bעברית\u202C (he)', code: 'he', autonym: 'עברית', qid: 'Q9288' },
   { display: '\u202Bالعربية\u202C (ar)', code: 'ar', autonym: 'العربية', qid: 'Q13955' },
+  { display: '\u202Bالداريجة \u202C (ary)', code: 'ary', autonym: 'الداريجة ', qid: 'Q56426' },
   { display: '\u202Bفارسی\u202C (fa)', code: 'fa', autonym: 'فارسی', qid: 'Q9168' },
   { display: 'मराठी (mr)', code: 'mr', autonym: 'मराठी', qid: 'Q1571' },
   { display: 'संस्कृतम् (sa)', code: 'sa', autonym: 'संस्कृतम्', qid: 'Q11059' },
