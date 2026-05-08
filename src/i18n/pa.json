@@ -1,0 +1,34 @@
+{
+	"@metadata": {
+		"authors": [
+			"Cabal"
+		]
+	},
+	"search-button": "ਲੱਭੋ",
+	"search-heading": "ਲੱਭੋ",
+	"cdx-table-pager-button-first-page": "ਮੁਢਲਾ ਵਰਕਾ",
+	"cdx-table-pager-button-last-page": "ਅਖ਼ੀਰਲਾ ਵਰਕਾ",
+	"cdx-table-pager-button-next-page": "ਅਗਲਾ ਵਰਕਾ",
+	"cdx-table-pager-button-prev-page": "ਪਿਛਲਾ ਵਰਕਾ",
+	"cdx-dialog-close-button-label": "ਗੱਲਬਾਤ-ਡੱਬਾ ਬੰਦ ਕਰੋ",
+	"state-on": "ਚਾਲੂ ਏ",
+	"state-off": "ਬੰਦ ਏ",
+	"footer-by": "ਵੱਲੋਂ",
+	"footer-about": "ਬਾਰੇ",
+	"footer-privacy": "ਨਿੱਜਤਾ ਨੀਤੀ",
+	"footer-license": "ਲਸੰਸ",
+	"footer-source": "ਸਰੋਤ ਕੋਡ",
+	"settings-menu-label": "ਤਰਜੀਹਾਂ",
+	"settings-theme-label": "ਵਿਸ਼ਾ-ਵਸਤੂ",
+	"settings-theme-auto": "ਆਪਣੇ-ਆਪ",
+	"settings-theme-light": "ਚਾਨਣ",
+	"settings-theme-dark": "ਗੂੜ੍ਹਾ",
+	"settings-close": "ਬੰਦ ਕਰੋ",
+	"settings-apply": "ਲਾਗੂ ਕਰੋ",
+	"settings-cancel": "ਰੱਦ ਕਰੋ",
+	"queries-general": "ਆਮ",
+	"queries-is-empty": "ਖਾਲੀ ਏ",
+	"filters-heading": "ਛਾਨਣੀ",
+	"filters-category-all": "ਸਾਰੇ",
+	"filters-text-clear-aria": "ਖੋਜ ਸ਼ਬਦ ਸਾਫ਼ ਕਰੋ"
+}
