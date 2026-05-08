@@ -57,7 +57,9 @@
                   ? `${$i18n('search-show-panel')} (${activeFilterCount})`
                   : $i18n('search-show-panel') }}
             </CdxButton>
-            <h1>{{ searchedLanguage }}, {{ getQueryLabel(searchedGapType) }}</h1>
+            <h1>
+              <bdi>{{ searchedLanguage }}</bdi>{{ getLocaleSeparator() }} <bdi>{{ getQueryLabel(searchedGapType) }}</bdi>
+            </h1>
           </div>
 
           <div class="search-layout">
@@ -178,6 +180,8 @@ import { QUERY_GROUPS, getQuerySparql, getQueryOptionsForLanguage} from "./data/
 
 const instance = getCurrentInstance();
 const $i18n = instance?.appContext.config.globalProperties.$i18n;
+
+const locale = computed(() => localStorage.getItem('locale') || 'en');
 
 const isRestoringFromUrl = ref(false);
 
@@ -493,6 +497,16 @@ const activeFilterCount = computed(() => {
   if (categoryFilter.value && categoryFilter.value !== $i18n('filters-category-all')) count++;
   return count;
 });
+
+const getLocaleSeparator = () => {
+  const displayLang = locale.value;
+  
+  // arabic comma for arabic-script languages
+  if (['ar', 'fa', 'ps', 'ur'].includes(displayLang)) {
+    return '،'; // arabic comma U+060C
+  }
+  return ',';
+};
 
 function onCategoryInput(event) {
   categorySearchTerm.value = event.target.value;
@@ -911,9 +925,9 @@ const hasActiveFilters = computed(() => {
 @media (min-width: 640px) {
   .language-toast {
     top: calc(4rem + var(--spacing-100));
-    right: var(--spacing-200);
+    inset-inline-end: var(--spacing-200);
     max-width: 24rem;
-    left: auto;
+    inset-inline-start: auto;
     z-index: 99;
   }
 }
