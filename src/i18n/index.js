@@ -1,8 +1,22 @@
 import { createI18n } from 'vue-banana-i18n'
-import enMessages from './en.json'
 import idMessages from './id.json'
+import enMessages from './en.json'
+import esMessages from './es.json'
+import frMessages from './fr.json'
+import gaMessages from './ga.json'
 import lbMessages from './lb.json'
+import ltMessages from './lt.json'
+import minMessages from './min.json'
+import nlMessages from './nl.json'
 import pmsMessages from './pms.json'
+import svMessages from './sv.json'
+import viMessages from './vi.json'
+import mkMessages from './mk.json'
+import heMessages from './he.json'
+import psMessages from './ps.json'
+import paMessages from './pa.json'
+import koMessages from './ko.json'
+import zhhansMessages from './zh-hans.json'
 import zhhantMessages from './zh-hant.json'
 
 import { DISPLAY_LANGUAGES } from './displayLanguages.js'
@@ -33,10 +47,24 @@ const getBrowserLanguage = () => {
 };
 
 const messages = {
-  en: enMessages,
   id: idMessages,
+  en: enMessages,
+  es: esMessages,
+  fr: frMessages,
+  ga: gaMessages,
   lb: lbMessages,
+  lt: ltMessages,
+  min: minMessages,
+  nl: nlMessages,
   pms: pmsMessages,
+  sv: svMessages,
+  vi: viMessages,
+  mk: mkMessages,
+  he: heMessages,
+  ps: psMessages,
+  pa: paMessages,
+  ko: koMessages,
+  'zh-hans': zhhansMessages,
   'zh-hant':zhhantMessages
 };
 
