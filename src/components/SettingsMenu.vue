@@ -75,7 +75,9 @@
       <div class="dialog-content">
         <cdx-field :is-fieldset="true">
           <cdx-radio v-for="lang in DISPLAY_LANGUAGES" :key="lang.code" v-model="tempLanguage" name="language" :input-value="lang.code">
+            <span dir="auto" style="display: block; text-align: start;">
             {{ lang.nativeName }}
+            </span>
           </cdx-radio>
         </cdx-field>
       </div>

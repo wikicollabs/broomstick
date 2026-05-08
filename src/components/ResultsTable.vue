@@ -454,7 +454,8 @@ function updateRowsPerPageAriaLabel() {
   height: 2rem;
   min-width: 2rem;
   width: 2rem;
-  padding: 0 var(--spacing-25);
+  padding-block: 0;
+  padding-inline: var(--spacing-25) !important;
   white-space: nowrap;
   background-color: var(--background-color-interactive) !important;
   border: 0.0625rem solid var(--border-color-interactive) !important;
@@ -478,7 +479,8 @@ function updateRowsPerPageAriaLabel() {
 
 @media (min-width: 640px) {
   .visibility-toggle {
-    padding: 0 var(--spacing-75);
+    padding-block: 0;
+    padding-inline: var(--spacing-75) !important;
     width: auto !important;
     min-width: auto !important;
   }

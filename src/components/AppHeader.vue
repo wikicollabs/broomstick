@@ -58,8 +58,9 @@ defineExpose({
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--spacing-50) var(--spacing-75) var(--spacing-50)
-    var(--spacing-100);
+  padding-block: var(--spacing-50);
+  padding-inline-start: var(--spacing-100);
+  padding-inline-end: var(--spacing-75);
 }
 
 @media (min-width: 640px) {
@@ -74,6 +75,7 @@ defineExpose({
   width: 100%; /* make it fill the header */
   justify-content: space-between;
   align-items: center;
+  /* REMOVED padding and height - not needed */
 }
 
 .logo {

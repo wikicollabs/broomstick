@@ -1,7 +1,21 @@
 export const DISPLAY_LANGUAGES = [
   { code: 'id', nativeName: 'Bahasa Indonesia' },
   { code: 'en', nativeName: 'English' },
+  { code: 'es', nativeName: 'Español' },
+  { code: 'fr', nativeName: 'Français' },
+  { code: 'ga', nativeName: 'Gaeilge' },
   { code: 'lb', nativeName: 'Lëtzebuergesch' },
+  { code: 'lt', nativeName: 'Lietuvių' },
+  { code: 'min', nativeName: 'Minangkabau' },
+  { code: 'nl', nativeName: 'Nederlands' },
   { code: 'pms', nativeName: 'Piemontèis' },
-  { code: 'zh-hant', nativeName: '中文（繁體)' },
+  { code: 'sv', nativeName: 'Svenska' },
+  { code: 'vi', nativeName: 'Tiếng Việt' },
+  { code: 'mk', nativeName: 'македонски' },
+  { code: 'he', nativeName: 'עברית '},
+  { code: 'ps', nativeName: 'پښتو' },
+  { code: 'pa', nativeName: 'ਪੰਜਾਬੀ' },
+  { code: 'ko', nativeName: '한국어' },
+  { code: 'zh-hans', nativeName: '中文（简体）' },
+  { code: 'zh-hant', nativeName: '中文（繁體)' }
 ]

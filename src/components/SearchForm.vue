@@ -318,6 +318,10 @@ function handleSearch() {
   width: 100%;
 }
 
+.search-form :deep(.cdx-field) {
+  margin-block-start: 0 !important;
+}
+
 .search-button {
   width: 100%;
   min-width: 0; /* CRITICAL - allows it to shrink below codex defaults */
