@@ -83,5 +83,7 @@ const isRTL = RTL_LANGUAGES.includes(langCode);
 
 document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
 
+const savedTextSize = localStorage.getItem('broomstick_text_size') || 'medium';
+document.documentElement.setAttribute('font-size', savedTextSize);
 
 app.mount('#app');

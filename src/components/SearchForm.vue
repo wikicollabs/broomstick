@@ -18,15 +18,22 @@
         :menu-items="filteredLanguageOptions"
         :placeholder="$i18n('search-language-placeholder')"
         :aria-label="$i18n('search-language-label')"
+        :class="{ 'combobox-error': languageError }"
         @input="onLanguageInput"
         @blur="onLanguageBlur"
         @focus="onLanguageFocus"
       />
     </cdx-field>
-    <div v-if="languageError" class="error-message" ref="languageErrorRef" tabindex="-1">
-      <cdx-icon :icon="cdxIconError" size="small" />
-      {{ languageError }}
-    </div>
+    <cdx-message
+        v-if="languageError"
+        type="error"
+        :inline="true"
+        class="error-message"
+        ref="languageErrorRef"
+        tabindex="-1"
+    >
+        {{ languageError }}
+    </cdx-message>
 
     <cdx-field
       class="gap-type-field"
@@ -39,15 +46,22 @@
         @update:selected="onQuerySelected"
         :placeholder="$i18n('search-query-placeholder')"
         :aria-label="$i18n('search-query-label')"
+        :class="{ 'combobox-error': gapTypeError }"
         @input="onGapTypeInput"
         @blur="onGapTypeBlur"
         @focus="onGapTypeFocus"
       />
     </cdx-field>
-    <div v-if="gapTypeError" class="error-message" ref="gapTypeErrorRef" tabindex="-1">
-      <cdx-icon :icon="cdxIconError" size="small" />
+    <cdx-message
+      v-if="gapTypeError"
+      type="error"
+      :inline="true"
+      class="error-message"
+      ref="gapTypeErrorRef"
+      tabindex="-1"
+    >
       {{ gapTypeError }}
-    </div>
+    </cdx-message>
 
     <cdx-button
       action="progressive"
@@ -310,11 +324,33 @@ function handleSearch() {
 </script>
 
 <style scoped>
+:deep(.combobox-error .cdx-text-input__input) {
+  color: var(--color-error) !important;
+}
+
+.language-type-field,
+.gap-type-field {
+  margin-bottom: var(--spacing-75) !important;
+}
+
+.language-type-field + .error-message,
+.gap-type-field + .error-message {
+  margin-top: calc(var(--spacing-75) * -1);
+  margin-bottom: var(--spacing-75) !important;
+}
+
+.error-message {
+  margin-bottom: var(--spacing-75);
+}
+
+.gap-type-field {
+  margin-top: 0 !important;
+}
+
 .search-form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-75);
   width: 100%;
 }
 
@@ -338,40 +374,19 @@ function handleSearch() {
   }
 }
 
-.error-message {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-50);
-  color: var(--color-error);
-  font-size: var(--font-size-medium);
-  font-weight: 700 !important;
-  margin-top: calc(var(--spacing-100) * -1);
-}
-
-.error-message :deep(.cdx-icon) {
-  color: var(--color-error);
-  width: 20px;
-  height: 20px;
-  min-width: 20px;
-}
-
-.error-message :deep(.cdx-message__content) {
-  margin-left: 0;
-  line-height: var(--line-height-small);
-
-}
-
 .selection-change-notice {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   align-self: flex-start;
   gap: var(--spacing-50);
   color: var(--color-base);
   font-size: var(--font-size-medium);
-  font-weight: 700 !important;
+  font-weight: 400 !important;
+  margin-top: 0.75rem !important; 
 }
 
 .selection-change-notice :deep(.cdx-icon) {
+  margin-top: 2px;
   color: var(--color-notice);
   width: 20px;
   height: 20px;

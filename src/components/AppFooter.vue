@@ -17,7 +17,7 @@
             <p class="footer-caption">
               {{ $i18n('footer-by') }}
               <a
-                href="https://meta.wikimedia.org/wiki/Software_Collaboration_for_Wikidata"
+                href="https://meta.wikimedia.org/wiki/Wikicollabs"
                 target="_blank"
                 rel="noopener"
                 class="wikicollabs-link"
