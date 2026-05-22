@@ -15,6 +15,27 @@ body {
   min-height: 100vh;
 }
 
+html,
+html[font-size='small'] {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+html[font-size='medium'] {
+  font-size: var(--font-size-medium);
+  line-height: var(--line-height-medium);
+}
+
+html[font-size='large'] {
+  font-size: var(--font-size-large);
+  line-height: var(--line-height-large);
+}
+
+html[font-size='extra-large'] {
+  font-size: var(--font-size-x-large);
+  line-height: var(--line-height-x-large);
+}
+
 /* manual dark mode when .dark class is present */
 html.dark {
   --color-base: #eaecf0;
@@ -36,12 +57,12 @@ html.dark {
   --color-destructive--visited: #c99391;
   --color-destructive--visited--hover: #dcb5b3;
   --color-destructive--visited--active: #e8cecd;
-  --color-error: #fd7865;
+  --color-error: #f54739;
   --color-error--hover: #fea898;
   --color-error--active: #ffc8bd;
   --color-warning: #ca982e;
   --color-success: #2cb491;
-  --color-notice: #a2a9b1;
+  --color-notice: #72777d;
   --color-content-added: #80cdb3;
   --color-content-removed: #fd7865;
   --color-base--subtle: #a2a9b1;
@@ -134,8 +155,45 @@ html.dark .cdx-table__table__sort-label{
   color: var(--color-inverted-fixed);
 }
 
-
 /* fix dialog header text in dark mode */
 html.dark .cdx-dialog__header__title{
   color: var(--color-inverted-fixed);
+}
+
+/* fix indicator and icon in dark mode */
+html.dark .cdx-select-vue__indicator:not(:disabled),
+html.dark .cdx-text-input__icon-indicator:not(:disabled),
+html.dark .cdx-combobox__input__icon-indicator:not(:disabled) {
+    color: var(--color-base) !important;
+}
+
+/* fix icon svg fill in dark mode */
+html.dark .cdx-select-vue:not(.cdx-select-vue--disabled) .cdx-select-vue__indicator svg,
+html.dark .cdx-text-input:not(.cdx-text-input--disabled) .cdx-text-input__icon-indicator svg {
+    fill: var(--color-base) !important;
+}
+
+/* fix button text in dark mode */
+html.dark .cdx-button:not(.cdx-button--action-progressive):not(:disabled) .cdx-button__label,
+html.dark .cdx-button:not(.cdx-button--action-progressive):not(:disabled),
+html.dark .cdx-toggle-button--quiet:not(:disabled) {
+    color: var(--color-base) !important;
+}
+
+/* fix toggle button icon in dark mode */
+html.dark .cdx-toggle-button--quiet:not(:disabled) .cdx-icon,
+html.dark .cdx-toggle-button--quiet:not(:disabled) svg {
+    color: var(--color-base) !important;
+    fill: var(--color-base) !important;
+}
+
+/* fix text input value in dark mode */
+html.dark .cdx-text-input__input:not(:disabled) {
+    color: var(--color-base) !important;
+}
+
+/* fix input error text color in dark mode */
+html.dark .cdx-field--status-error .cdx-text-input__input,
+html.dark .combobox-error .cdx-text-input__input {
+    color: var(--color-error) !important;
 }
