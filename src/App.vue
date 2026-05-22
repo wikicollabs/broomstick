@@ -8,16 +8,8 @@
 
 <template>
   <div class="app">
-  <CdxMessage 
-  v-if="showToast" 
-  type="success" 
-  class="language-toast"
-  ref="toastRef"
-  tabindex="0"
-  @keydown.escape="dismissToast"
->
-        {{ toastMessage }}
-      </CdxMessage>
+    <CdxToastContainer />
+
     <AppHeader @home="currentView = 'landing'" ref="headerRef" />
 
     <main class="main-content">
@@ -169,7 +161,7 @@
 
 <script setup>
 import { ref, onMounted, computed, watch, getCurrentInstance, nextTick} from "vue";
-import { CdxButton, CdxIcon, CdxProgressBar, CdxMessage, CdxTextInput, CdxSelect, CdxLabel, CdxCombobox, CdxField } from "@wikimedia/codex";
+import { CdxButton, CdxIcon, CdxProgressBar, CdxMessage, CdxTextInput, CdxSelect, CdxLabel, CdxCombobox, CdxField, CdxToastContainer, useToast } from "@wikimedia/codex";
 import { cdxIconCollapse, cdxIconExpand, cdxIconSearch} from "@wikimedia/codex-icons";
 import AppHeader from "./components/AppHeader.vue";
 import SearchForm from "./components/SearchForm.vue";
@@ -180,6 +172,8 @@ import { QUERY_GROUPS, getQuerySparql, getQueryOptionsForLanguage} from "./data/
 
 const instance = getCurrentInstance();
 const $i18n = instance?.appContext.config.globalProperties.$i18n;
+
+const toast = useToast();
 
 const locale = computed(() => localStorage.getItem('locale') || 'en');
 
@@ -194,7 +188,6 @@ const searchedLanguage = ref("English (en)");
 const searchedGapType = ref("is-empty");
 const textFilter = ref('');
 const categoryFilter = ref('');
-const toastRef = ref(null);
 const headerRef = ref(null);
 
 const isLoading = ref(false);
@@ -203,9 +196,6 @@ const connectionError = ref(false);
 const results = ref([]);
 const categoryFilterBlurred = ref(false);
 const categorySearchTerm = ref('');
-
-const showToast = ref(false);
-const toastMessage = ref('');
 
 // save to localStorage whenever search executes
 function saveLastSearch() {
@@ -245,32 +235,22 @@ onMounted(() => {
   restoreLastSearch(); // restore from localStorage first
   restoreFromUrl(); // then check url params and override if present
 
-    // check for language change toast
+  // check for language change toast
   const toastLang = localStorage.getItem('language_change_toast');
     if (toastLang) {
-      showToast.value = true;
-      toastMessage.value = $i18n('settings-language-changed', toastLang);
+      toast.show({
+        message: $i18n('settings-language-changed', toastLang),
+        type: 'success',
+        preventUserDismiss: true,
+        autoDismiss: true,
+      });
       localStorage.removeItem('language_change_toast');
-      
-      setTimeout(() => {
-        dismissToast();
-      }, 4000);
     }
-
 
   if (!categoryFilter.value) {
     categoryFilter.value = $i18n('filters-category-all');
   }
 });
-
-function dismissToast() {
-  const toastEl = toastRef.value?.$el || toastRef.value;
-  toastEl?.classList.add('fade-out');
-  
-  setTimeout(() => {
-    showToast.value = false;
-  }, 100);
-}
 
 // watch for display language changes and update the "all" filter value
 watch(() => $i18n('filters-category-all'), (newAllLabel, oldAllLabel) => {
@@ -676,7 +656,7 @@ const hasActiveFilters = computed(() => {
 
 .search-content h1 {
   color: var(--color-emphasized);
-  font-family: var(--font-family-serif);
+  font-family: var(--font-family-serif); 
   font-size: 2rem;
   font-weight: 400;
   line-height: 1.25;
@@ -871,15 +851,16 @@ const hasActiveFilters = computed(() => {
 
 .category-filter-error {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--spacing-50);
   color: var(--color-error);
   font-size: var(--font-size-medium);
-  font-weight: 700 !important;
+  font-weight: 400 !important;
   margin-top: var(--spacing-25);
 }
 
 .category-filter-error :deep(.cdx-icon) {
+  margin-top: 2px;
   color: var(--color-error);
   width: 20px;
   height: 20px;
@@ -889,63 +870,5 @@ const hasActiveFilters = computed(() => {
 .category-filter-error :deep(.cdx-message__content) {
   margin-left: 0;
   line-height: var(--line-height-small);
-}
-
-
-.language-toast {
-  position: fixed;
-  top: calc(3.375rem + var(--spacing-100));
-  right: var(--spacing-100);
-  left: var(--spacing-100);
-  line-height: var(--line-height-small);
-  font-size: var(--font-size-medium);
-  z-index: 99;
-
-}
-
-.language-toast :deep(.cdx-message) {
-  padding: var(--spacing-75);
-  align-items: flex-start;
-}
-
-.language-toast :deep(.cdx-message__content) {
-  flex: 1;
-  min-width: 0;
-  word-wrap: break-word;
-}
-
-.language-toast :deep(.cdx-message__icon) {
-  min-width: 1rem;
-  width: 1rem;
-  height: 1rem;
-  flex-shrink: 0;
-}
-
-/* tablet and desktop: constrain width */
-@media (min-width: 640px) {
-  .language-toast {
-    top: calc(4rem + var(--spacing-100));
-    inset-inline-end: var(--spacing-200);
-    max-width: 24rem;
-    inset-inline-start: auto;
-    z-index: 99;
-  }
-}
-
-
-.language-toast {
-  transition: opacity var(--transition-duration-base) var(--transition-timing-function-system);
-}
-
-.language-toast.fade-out {
-  opacity: 0;
-}
-
-.language-toast:focus {
-  outline: none;
-}
-
-.language-toast:focus-visible {
-  outline: auto;
 }
 </style>

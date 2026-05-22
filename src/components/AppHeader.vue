@@ -73,9 +73,14 @@ defineExpose({
 .header-content {
   display: flex;
   width: 100%; /* make it fill the header */
+  height: 100%;
   justify-content: space-between;
   align-items: center;
-  /* REMOVED padding and height - not needed */
+}
+
+.settings-menu {
+  display: flex;
+  align-items: center;
 }
 
 .logo {

@@ -42,7 +42,7 @@ app.provide('CdxI18nFunction', (key, ...params) => {
 
 
 // version-based localStorage invalidation
-const APP_VERSION = '1.5.0';
+const APP_VERSION = '1.6.0';
 const storedVersion = localStorage.getItem('broomstick_version');
 
 if (storedVersion !== APP_VERSION) {
@@ -83,5 +83,7 @@ const isRTL = RTL_LANGUAGES.includes(langCode);
 
 document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
 
+const savedTextSize = localStorage.getItem('broomstick_text_size') || 'medium';
+document.documentElement.setAttribute('font-size', savedTextSize);
 
 app.mount('#app');
