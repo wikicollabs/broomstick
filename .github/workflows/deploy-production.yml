@@ -1,0 +1,51 @@
+name: Deploy to Toolforge (Production)
+
+on:
+  workflow_dispatch:
+    inputs:
+      passphrase:
+        description: 'Enter deploy passphrase to confirm'
+        required: true
+
+jobs:
+  check-passphrase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify passphrase
+        run: |
+          if [ "${{ github.event.inputs.passphrase }}" != "${{ secrets.DEPLOY_PASSPHRASE_PRODUCTION }}" ]; then
+            echo "Wrong passphrase. Aborting."
+            exit 1
+          fi
+
+  deploy:
+    needs: check-passphrase
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Package dist
+        run: tar czf broomstick.tgz -C dist .
+      - name: Upload to Toolforge
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.TF_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan login.toolforge.org >> ~/.ssh/known_hosts
+          scp -i ~/.ssh/id_ed25519 broomstick.tgz noncesura@login.toolforge.org:~/broomstick-release/
+      - name: Deploy to production
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: login.toolforge.org
+          username: noncesura
+          key: ${{ secrets.TF_SSH_KEY }}
+          port: 22
+          request_pty: true
+          script_stop: true
+          script: |
+            become broomstick bash -c 'rm -rf ~/public_html/ && mkdir -p ~/public_html && tar xzf ~noncesura/broomstick-release/broomstick.tgz -C ~/public_html/'
