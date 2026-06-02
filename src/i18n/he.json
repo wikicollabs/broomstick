@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Neriah",
 			"YaronSh"
 		]
 	},
@@ -37,7 +38,7 @@
 	"table-header-lexcat-descending": "קטגוריה מילונית (מיון בסדר יורד)",
 	"cdx-table-pagination-status-message-determinate-short": "$1–$2 מתוך $3",
 	"cdx-table-pagination-status-message-determinate-long": "מוצגות תוצאות $1-$2 מתוך $3",
-	"cdx-table-pager-items-per-page-current": "$1 שורות",
+	"cdx-table-pager-items-per-page-current": "{{PLURAL:$1|שורה אחת|$1 שורות}}",
 	"cdx-table-pager-button-first-page": "הדף הראשון",
 	"cdx-table-pager-button-last-page": "הדף האחרון",
 	"cdx-table-pager-button-next-page": "הדף הבא",
@@ -62,7 +63,7 @@
 	"settings-theme-light": "בהירה",
 	"settings-theme-dark": "כהה",
 	"settings-language-label": "שפת התצוגה",
-	"settings-language-changed": "שפת התצוגה הוחלפה ל$1.",
+	"settings-language-changed": "שפת התצוגה הוחלפה ל$1",
 	"settings-language-reload": "Broomstick ייטען מחדש כדי להחליף את שפת התצוגה.",
 	"settings-close": "סגירה",
 	"settings-apply": "החלה",
@@ -72,13 +73,13 @@
 	"queries-general": "כללי",
 	"queries-senses": "משמעויות",
 	"queries-forms": "צורות",
-	"queries-is-empty": "ריקה",
-	"queries-missing-senses": "אין לה משמעויות",
-	"queries-missing-forms": "אין לה צורות",
-	"queries-missing-usage-example": "חסרה דוגמת שימוש $1",
-	"queries-missing-ipa": "חסר תעתיק IPA‏ $1",
-	"queries-missing-pronunciation-audio": "חסרה הקלטת הגייה $1",
-	"queries-missing-grammatical-features": "אין לה תכונות דקדוקיות",
+	"queries-is-empty": "יחידות מילוניות ריקות",
+	"queries-missing-senses": "יחידה מילונית ללא משמעויות",
+	"queries-missing-forms": "יחידה מילונית ללא צורות",
+	"queries-missing-usage-example": "יחידה מילונית חסרת דוגמת שימוש (P5831)",
+	"queries-missing-ipa": "יחידה מילונית חסרת תעתיק IPA‏ (P898)",
+	"queries-missing-pronunciation-audio": "יחידה מילונית חסרת הקלטת הגייה (P443)",
+	"queries-missing-grammatical-features": "יחידה מילונית ללא תכונות דקדוקיות",
 	"filters-heading": "מסנן",
 	"filters-clear-all": "לנקות הכול",
 	"filters-text-placeholder": "LID או שם ערך מילוני",

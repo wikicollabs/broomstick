@@ -1,0 +1,36 @@
+{
+	"@metadata": {
+		"authors": [
+			"Milicevic01"
+		]
+	},
+	"logo-alt": "лого",
+	"search-button": "Претрага",
+	"errors-reload-page": "Поново учитај страницу",
+	"cdx-table-pager-items-per-page-current": "$1 {{PLURAL:$1|редова}}",
+	"cdx-table-pager-button-first-page": "Прва страница",
+	"cdx-table-pager-button-last-page": "Последња страница",
+	"cdx-table-pager-button-next-page": "Следећа страница",
+	"cdx-table-pager-button-prev-page": "Претходна страница",
+	"state-on": "Укљ.",
+	"state-off": "Искљ.",
+	"footer-about": "О",
+	"footer-privacy": "Политика приватности",
+	"footer-license": "Лиценца",
+	"footer-source": "Изворни код",
+	"settings-menu-label": "Подешавања",
+	"settings-theme-label": "Тема",
+	"settings-theme-auto": "Аутоматски",
+	"settings-theme-light": "Светла",
+	"settings-theme-dark": "Тамна",
+	"settings-language-label": "Језик приказа",
+	"settings-language-no-results": "Језик није пронађен.",
+	"settings-text-size-label": "Величина текста",
+	"settings-text-size-small": "Мала",
+	"settings-text-size-medium": "Средње",
+	"settings-text-size-large": "Велика",
+	"settings-text-size-extra-large": "Веома велика",
+	"settings-close": "Затвори",
+	"settings-apply": "Примени",
+	"settings-cancel": "Откажи"
+}
