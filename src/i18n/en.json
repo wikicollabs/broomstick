@@ -6,8 +6,8 @@
   "search-heading": "Search",
   "search-language-label": "Lexeme language",
   "search-query-label": "Look for",
-  "search-language-placeholder": "Choose a language",
-  "search-query-placeholder": "Choose an option",
+  "search-language-placeholder": "Select a language",
+  "search-query-placeholder": "Select an option",
   "search-show-panel": "Search & filter",
   "search-show-panel-aria-with-filters": "Show search and filter ($1 {{PLURAL:$1|filter|filters}} active)",
   "search-show-panel-aria": "Show search and filter (no filter active)",
@@ -116,6 +116,6 @@
   "filters-text-label-aria": "Search LID or Lemma",
   "filters-category-all": "All",
   "filters-category-label": "Lexical category",
-  "filters-lexical-category-placeholder": "Choose a category",
+  "filters-lexical-category-placeholder": "Select a category",
   "filters-text-clear-aria": "Clear search terms"
 }
