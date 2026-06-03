@@ -18,7 +18,7 @@ importers:
         specifier: ^2.5.1
         version: 2.5.1
       '@wikimedia/codex-icons':
-        specifier: ^2.3.3
+        specifier: ^2.5.1
         version: 2.5.1
       vue-banana-i18n:
         specifier: ^2.3.0
