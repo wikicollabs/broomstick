@@ -10,8 +10,8 @@ import minMessages from './min.json'
 import nlMessages from './nl.json'
 import pmsMessages from './pms.json'
 import svMessages from './sv.json'
-import viMessages from './vi.json'
 import mkMessages from './mk.json'
+import srecMessages from './sr-ec.json'
 import heMessages from './he.json'
 import psMessages from './ps.json'
 import paMessages from './pa.json'
@@ -58,8 +58,8 @@ const messages = {
   nl: nlMessages,
   pms: pmsMessages,
   sv: svMessages,
-  vi: viMessages,
   mk: mkMessages,
+  'sr-ec': srecMessages,
   he: heMessages,
   ps: psMessages,
   pa: paMessages,
