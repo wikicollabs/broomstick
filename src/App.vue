@@ -50,7 +50,7 @@
                   : $i18n('search-show-panel') }}
             </CdxButton>
             <h1>
-              <bdi>{{ searchedLanguage }}</bdi>{{ getLocaleSeparator() }} <bdi>{{ getQueryLabel(searchedGapType) }}</bdi>
+              <bdi>{{ searchedLanguage }}</bdi> · <bdi>{{ getQueryLabel(searchedGapType) }}</bdi>
             </h1>
           </div>
 
@@ -477,16 +477,6 @@ const activeFilterCount = computed(() => {
   if (categoryFilter.value && categoryFilter.value !== $i18n('filters-category-all')) count++;
   return count;
 });
-
-const getLocaleSeparator = () => {
-  const displayLang = locale.value;
-  
-  // arabic comma for arabic-script languages
-  if (['ar', 'fa', 'ps', 'ur'].includes(displayLang)) {
-    return '،'; // arabic comma U+060C
-  }
-  return ',';
-};
 
 function onCategoryInput(event) {
   categorySearchTerm.value = event.target.value;
