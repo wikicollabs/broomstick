@@ -411,24 +411,23 @@ onMounted(() => {
     }
   });
 
-    // WORKAROUND: Codex MenuButton keyboard accessibility issue
+  // WORKAROUND: Codex MenuButton keyboard accessibility issue
   // 
-  // Problem: MenuButton blocks Enter/Space from reaching Menu's selection logic
-  // - MenuButton.onKeydown returns early for Enter/Space keys
+  // Problem: MenuButton blocks Space from reaching Menu's selection logic
+  // - MenuButton.onKeydown returns early for Space keys
   // - This prevents Menu.delegateKeyNavigation from handling selection
-  // - Tab key works fine bc it's not blocked
+  // - Note: Enter and Tab are working fine now.
   // 
-  // Impact: Keyboard users can navigate menu but can't select with Enter/Space
+  // Impact: Keyboard users can navigate menu but can't select with Space
   // 
-  // This listener catches Enter/Space when menu is expanded and manually triggers
+  // This listener catches Space when menu is expanded and manually triggers
   // the dialogs, replicating what Menu.handleKeyNavigation should do.
   // 
-  // TODO: Remove this once Codex fixes MenuButton to delegate Enter/Space to Menu
+  // TODO: Remove this once Codex fixes MenuButton to delegate Space to Menu
   // Related: https://github.com/wikimedia/design-codex/commit/f6c7f1f330cc050cb67a2d9a61d81f2ca85eb121
 
-  
   document.addEventListener('keydown', (e) => {
-    if (e.key !== 'Enter' && e.key !== ' ') return;
+    if (e.key !== ' ') return;
     
     const button = e.target.closest('button[aria-haspopup="menu"]');
     if (!button) return;
@@ -443,23 +442,22 @@ onMounted(() => {
     const highlighted = menu.querySelector('.cdx-menu-item--highlighted');
     if (!highlighted) return;
     
-    const ariaLabel = highlighted.getAttribute('aria-label');
+    e.preventDefault();
+    e.stopPropagation();
     
-    if (ariaLabel?.includes($i18n('settings-theme-label'))) {
-      e.preventDefault();
-      e.stopPropagation();
+    const menuItemsList = Array.from(menu.querySelectorAll('.cdx-menu-item'));
+    const highlightedIndex = menuItemsList.indexOf(highlighted);
+
+    if (highlightedIndex === 0) { 
       tempTheme.value = currentTheme.value;
       showThemeDialog.value = true;
       selectedItem.value = null;
-    } else if (ariaLabel?.includes($i18n('settings-language-label'))) {
-      e.preventDefault();
-      e.stopPropagation();
+    } else if (highlightedIndex === 1) { 
+      languageSearchQuery.value = "";
       tempLanguage.value = currentLanguage.value;
       showLanguageDialog.value = true;
       selectedItem.value = null;
-    } else if (ariaLabel?.includes($i18n('settings-text-size-label'))) {
-      e.preventDefault();
-      e.stopPropagation();
+    } else if (highlightedIndex === 2) {
       tempTextSize.value = currentTextSize.value;
       showTextSizeDialog.value = true;
       selectedItem.value = null;
