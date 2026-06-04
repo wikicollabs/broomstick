@@ -92,6 +92,10 @@
 	"settings-text-size-medium": "중간",
 	"settings-text-size-large": "큼",
 	"settings-text-size-extra-large": "매우 큼",
+	"settings-text-size-small-aria": "작음",
+	"settings-text-size-medium-aria": "중간",
+	"settings-text-size-large-aria": "큼",
+	"settings-text-size-extra-large-aria": "매우 큼",
 	"settings-close": "닫기",
 	"settings-apply": "적용",
 	"settings-cancel": "취소",
@@ -118,6 +122,6 @@
 	"filters-text-label-aria": "LID 검색 또는 기본형",
 	"filters-category-all": "모두",
 	"filters-category-label": "어휘 범주",
-	"filters-lexical-category-placeholder": "분류 선택하기",
+	"filters-lexical-category-placeholder": "분류 선택",
 	"filters-text-clear-aria": "검색어 지우기"
 }
