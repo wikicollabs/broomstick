@@ -4,6 +4,7 @@ export const DISPLAY_LANGUAGES = [
   { code: 'es', nativeName: 'Español' },
   { code: 'fr', nativeName: 'Français' },
   { code: 'ga', nativeName: 'Gaeilge' },
+  { code: 'gl', nativeName: 'Galego' },
   { code: 'lb', nativeName: 'Lëtzebuergesch' },
   { code: 'lt', nativeName: 'Lietuvių' },
   { code: 'min', nativeName: 'Minangkabau' },
