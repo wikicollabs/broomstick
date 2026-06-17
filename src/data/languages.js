@@ -33,6 +33,7 @@ export const LANGUAGES = [
   { display: 'Français (fr)', code: 'fr', autonym: 'Français', qid: 'Q150' },
   { display: 'Fulfulde (ff)', code: 'ff', autonym: 'Fulfulde', qid: 'Q33454' },
   { display: 'Gaeilge (ga)', code: 'ga', autonym: 'Gaeilge', qid: 'Q9142' },
+  { display: 'Galego (gl)', code: 'gl', autonym: 'Galego', qid: 'Q9307' },
   { display: 'Hausa (ha)', code: 'ha', autonym: 'Hausa', qid: 'Q56475' },
   { display: 'Hrvatski (hr)', code: 'hr', autonym: 'Hrvatski', qid: 'Q6654' },
   { display: 'Igbo (ig)', code: 'ig', autonym: 'Igbo', qid: 'Q33578' },
