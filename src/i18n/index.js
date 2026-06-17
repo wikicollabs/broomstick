@@ -4,6 +4,7 @@ import enMessages from './en.json'
 import esMessages from './es.json'
 import frMessages from './fr.json'
 import gaMessages from './ga.json'
+import glMessages from './gl.json'
 import lbMessages from './lb.json'
 import ltMessages from './lt.json'
 import minMessages from './min.json'
@@ -52,6 +53,7 @@ const messages = {
   es: esMessages,
   fr: frMessages,
   ga: gaMessages,
+  gl: glMessages,
   lb: lbMessages,
   lt: ltMessages,
   min: minMessages,
