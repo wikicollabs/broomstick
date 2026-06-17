@@ -6,6 +6,8 @@
 	},
 	"logo-alt": "лого",
 	"search-button": "Претрага",
+	"search-language-placeholder": "Изаберите језик",
+	"search-query-placeholder": "Изаберите опцију",
 	"errors-reload-page": "Поново учитај страницу",
 	"cdx-table-pager-items-per-page-current": "$1 {{PLURAL:$1|редова}}",
 	"cdx-table-pager-button-first-page": "Прва страница",
@@ -30,7 +32,12 @@
 	"settings-text-size-medium": "Средње",
 	"settings-text-size-large": "Велика",
 	"settings-text-size-extra-large": "Веома велика",
+	"settings-text-size-small-aria": "Мали",
+	"settings-text-size-medium-aria": "Средње",
+	"settings-text-size-large-aria": "Велики",
+	"settings-text-size-extra-large-aria": "Веома велика",
 	"settings-close": "Затвори",
 	"settings-apply": "Примени",
-	"settings-cancel": "Откажи"
+	"settings-cancel": "Откажи",
+	"filters-lexical-category-placeholder": "Изаберите категорију"
 }
