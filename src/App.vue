@@ -147,6 +147,7 @@
                   :total-count="results.length"
                   :text-filter="textFilter"
                   :connection-error="connectionError"
+                  :is-loading="isLoading"
                 />
               </div>
             </div>
