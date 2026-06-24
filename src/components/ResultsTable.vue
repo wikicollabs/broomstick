@@ -391,7 +391,7 @@ function toggleHideVisited() {
 }
 
 function focusToggle() {
-  toggleButtonRef.value?.focus();
+  document.querySelector('.visibility-toggle')?.focus();
 }
 
 defineExpose({ focusToggle });
