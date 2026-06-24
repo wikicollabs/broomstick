@@ -61,7 +61,7 @@
     <!-- display language dialog -->
     <cdx-dialog
       v-model:open="showLanguageDialog"
-      :title="''"
+      :title="$i18n('settings-language-label')"
       :fixed-height="true"
       :primary-action="{
         label: $i18n('settings-apply'),
