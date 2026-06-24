@@ -10,6 +10,7 @@ export const DISPLAY_LANGUAGES = [
   { code: 'min', nativeName: 'Minangkabau' },
   { code: 'nl', nativeName: 'Nederlands' },
   { code: 'pms', nativeName: 'Piemontèis' },
+  { code: 'sk', nativeName: 'Slovenčina' },
   { code: 'sv', nativeName: 'Svenska' },
   { code: 'mk', nativeName: 'македонски' },
   { code: 'sr-ec', nativeName: 'српски (ћирилица)' },

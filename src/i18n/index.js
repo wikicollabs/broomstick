@@ -10,6 +10,7 @@ import ltMessages from './lt.json'
 import minMessages from './min.json'
 import nlMessages from './nl.json'
 import pmsMessages from './pms.json'
+import skMessages from './sk.json'
 import svMessages from './sv.json'
 import mkMessages from './mk.json'
 import srecMessages from './sr-ec.json'
@@ -59,6 +60,7 @@ const messages = {
   min: minMessages,
   nl: nlMessages,
   pms: pmsMessages,
+  sk: skMessages,
   sv: svMessages,
   mk: mkMessages,
   'sr-ec': srecMessages,
