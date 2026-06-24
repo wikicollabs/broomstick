@@ -302,15 +302,7 @@ const tableData = computed(() => {
   return data;
 });
 
-const visibilityStatusMessage = computed(() => {
-  if (!hideVisited.value) return '';
-  
-  const count = hiddenCount.value;
-  if (count === 0) {
-    return $i18n('table-visibility-none-hidden');
-  }
-  return $i18n('table-visibility-hidden-announce', count, count);
-});
+const visibilityStatusMessage = ref('');
 
 const allVisitedAndHidden = computed(() => {
   return (
@@ -384,6 +376,12 @@ function isVisited(lexemeId) {
 
 function toggleHideVisited() {
   hideVisited.value = !hideVisited.value;
+  if (hideVisited.value) {
+    const count = hiddenCount.value;
+    visibilityStatusMessage.value = $i18n('table-visibility-hidden-announce', count, count);
+  } else {
+    visibilityStatusMessage.value = '';
+  }
 }
 
 
