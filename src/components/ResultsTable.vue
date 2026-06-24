@@ -390,13 +390,11 @@ function toggleHideVisited() {
   }
 }
 
-watch(() => props.isLoading, (newVal, oldVal) => {
-  if (oldVal === true && newVal === false) {
-    nextTick(() => {
-      toggleButtonRef.value?.focus();
-    });
-  }
-});
+function focusToggle() {
+  toggleButtonRef.value?.focus();
+}
+
+defineExpose({ focusToggle });
 
 
 function updateHeaderAriaLabels() {
