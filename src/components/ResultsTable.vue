@@ -171,6 +171,7 @@ const props = defineProps({
 const sortState = ref({});
 const visitedLexemes = ref(new Set());
 const hideVisited = ref(false);
+const toggleButtonRef = ref(null);
 
 
 
@@ -388,6 +389,14 @@ function toggleHideVisited() {
     visibilityStatusMessage.value = '';
   }
 }
+
+watch(() => props.isLoading, (newVal, oldVal) => {
+  if (oldVal === true && newVal === false) {
+    nextTick(() => {
+      toggleButtonRef.value?.focus();
+    });
+  }
+});
 
 
 function updateHeaderAriaLabels() {
