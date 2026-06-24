@@ -264,8 +264,10 @@ watch(() => $i18n('filters-category-all'), (newAllLabel, oldAllLabel) => {
 });
 
 watch(isLoading, (newVal, oldVal) => {
+  console.log('isLoading watcher fired', oldVal, '→', newVal);
   if (oldVal === true && newVal === false) {
     nextTick(() => {
+      console.log('resultsTableRef.value is:', resultsTableRef.value);
       resultsTableRef.value?.focusToggle();
     });
   }
