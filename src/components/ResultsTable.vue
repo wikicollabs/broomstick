@@ -35,6 +35,7 @@
         {{ $i18n('table-hidden-count', hiddenCount) }}
       </span>
       <CdxButton
+        ref="toggleButtonRef"
         class="visibility-toggle"
         :class="{ 'is-hidden': hideVisited }"
         action="progressive"
