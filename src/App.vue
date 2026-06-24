@@ -142,7 +142,8 @@
               </CdxMessage>
 
               <div v-else>
-                <ResultsTable 
+                <ResultsTable
+                  ref="resultsTableRef"
                   :results="filteredResults"
                   :total-count="results.length"
                   :text-filter="textFilter"
@@ -190,6 +191,7 @@ const searchedGapType = ref("is-empty");
 const textFilter = ref('');
 const categoryFilter = ref('');
 const headerRef = ref(null);
+const resultsTableRef = ref(null);
 
 const isLoading = ref(false);
 const error = ref(null);
@@ -258,6 +260,14 @@ watch(() => $i18n('filters-category-all'), (newAllLabel, oldAllLabel) => {
   // if the filter was set to the old "all" label, update it to the new one
   if (categoryFilter.value === oldAllLabel) {
     categoryFilter.value = newAllLabel;
+  }
+});
+
+watch(isLoading, (newVal, oldVal) => {
+  if (oldVal === true && newVal === false) {
+    nextTick(() => {
+      resultsTableRef.value?.focusToggle();
+    });
   }
 });
 
