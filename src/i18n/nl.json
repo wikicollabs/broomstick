@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"McDutchie",
 			"Siebrand"
 		]
 	},
@@ -40,8 +41,7 @@
 	"table-hide-visited": "Bezocht verbergen",
 	"table-hide-visited-aria": "Bezocht verbergen",
 	"table-hidden-count": "$1 {{PLURAL:$1|verborgen}}",
-	"table-visibility-none-hidden": "Er zijn geen bezochte Lexemen om te verbergen",
-	"table-visibility-hidden-announce": "{{PLURAL:$1|Één bezocht Lexeme verborgen|$1 bezochte Lexemen verborgen}}",
+	"table-visibility-hidden-announce": "{{PLURAL:$1|Eén lexeem verborgen|$1 lexemen verborgen}}",
 	"table-header-lid-default": "LID (standaard gesorteerd)",
 	"table-header-lid-ascending": "LID (oplopend gesorteerd)",
 	"table-header-lid-descending": "LID (aflopend gesorteerd)",

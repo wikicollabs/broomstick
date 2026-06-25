@@ -40,7 +40,6 @@
 	"table-hide-visited": "Ocultar visitado.",
 	"table-hide-visited-aria": "Ocultar visitado",
 	"table-hidden-count": "$1 {{PLURAL:$1|oculto|ocultos}}",
-	"table-visibility-none-hidden": "No hay lexemas visitados que ocultar",
 	"table-visibility-hidden-announce": "{{PLURAL:$1|$1 lexema visitado oculto|$1 lexemas visitados ocultos}}",
 	"table-header-lid-default": "ID de lexema (orden predeterminado)",
 	"table-header-lid-ascending": "ID de Lexema (orden ascendente)",

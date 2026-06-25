@@ -40,7 +40,6 @@
 	"table-hide-visited": "Dölj besökta",
 	"table-hide-visited-aria": "Dölj besökta",
 	"table-hidden-count": "$1 dold",
-	"table-visibility-none-hidden": "Inga besökta lexem att dölja",
 	"table-visibility-hidden-announce": "{{PLURAL:$1|1 besökt Lexeme dolt|$1 besökta Lexemes dolda}}",
 	"table-header-lid-default": "LID (standardsortering)",
 	"table-header-lid-ascending": "LID (stigande sortering)",

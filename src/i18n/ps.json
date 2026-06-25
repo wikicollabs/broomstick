@@ -40,7 +40,6 @@
 	"table-hide-visited": "ليدل شوي پټول",
 	"table-hide-visited-aria": "ليدل شوي پټول",
 	"table-hidden-count": "$1 {{PLURAL:$1|پټ‌شوی}}",
-	"table-visibility-none-hidden": "هېڅ ليدل شوې پيل‌ويوکي نشته چې پټ شي",
 	"table-visibility-hidden-announce": "{{PLURAL:$1|$1 ليدل شوی پيل‌ويوکی پټ شوی|$1 ليدل شوي پيل‌ويوکي پټ شوي}}",
 	"table-header-lid-default": "پيل‌‌ويوکي‌پېژند (تلواليز اوډل)",
 	"table-header-lid-ascending": "پيل‌‌ويوکي‌پېژند (پيليز اوډل)",

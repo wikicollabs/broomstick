@@ -41,7 +41,6 @@
 	"table-hide-visited": "隱藏瀏覽",
 	"table-hide-visited-aria": "隱藏瀏覽",
 	"table-hidden-count": "$1 個{{PLURAL:$1|已隱藏}}",
-	"table-visibility-none-hidden": "沒有要隱藏的已瀏覽詞位",
 	"table-visibility-hidden-announce": "已隱藏{{PLURAL:$1|1|$1}}個已瀏覽過的詞位",
 	"table-header-lid-default": "詞位 ID（預設排序）",
 	"table-header-lid-ascending": "詞位 ID（升序排序）",

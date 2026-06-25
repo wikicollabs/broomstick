@@ -38,7 +38,6 @@
 	"table-hide-visited": "Button text to toggle on/off to hide Lexemes that have been visited",
 	"table-hide-visited-aria": "Aria label for button text to toggle on/off to hide Lexemes that have been visited",
 	"table-hidden-count": "Text showing how many visited Lexemes are currently hidden from the table. $1 = number of hidden Lexemes. Translator MUST use {{PLURAL}}.",
-	"table-visibility-none-hidden": "Message shown in visibility toggle when no visited Lexemes are currently hidden",
 	"table-visibility-hidden-announce": "Screen reader announcement when visited Lexemes are hidden from the table. $1 = number of hidden Lexemes. Translator MUST use {{PLURAL}}.",
 	"table-header-lid-default": "Aria label for LID column header in default sort state",
 	"table-header-lid-ascending": "Aria label for LID column header when sorted ascending",
