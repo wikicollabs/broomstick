@@ -40,7 +40,7 @@
 	"table-hide-visited": "Скриј посетени",
 	"table-hide-visited-aria": "Скриј посетени",
 	"table-hidden-count": "$1 {{PLURAL:$1|скриена|скриени}}",
-	"table-visibility-hidden-announce": "{{PLURAL:$1|Скриена е $1 посетена лексема|Скриени се $1 посетени лексеми}}",
+	"table-visibility-hidden-announce": "{{PLURAL:$1|Скриена е $1 лексема|Скриени се $1 лексеми}}",
 	"table-header-lid-default": "LID (основно подредување)",
 	"table-header-lid-ascending": "LID (нагорно подредување)",
 	"table-header-lid-descending": "LID (надолно подредување)",

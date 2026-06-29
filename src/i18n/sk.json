@@ -40,7 +40,7 @@
 	"table-hide-visited": "Skryť navštívené",
 	"table-hide-visited-aria": "Skryť navštívené",
 	"table-hidden-count": "$1 {{PLURAL:$1|skrytá|skryté|skryté|skrytých}}",
-	"table-visibility-hidden-announce": "{{PLURAL:$1|$1 navštívená lexéma skrytá|$1 navštívené lexémy skryté|$1 navštívenej lexémy skrytej|$1 navštívených lexém skrytých}}",
+	"table-visibility-hidden-announce": "{{PLURAL:$1|$1 skrytá lexéma|$1 skryté lexémy|$1 skrytých lexém}}",
 	"table-header-lid-default": "LID (predvolené zoradenie)",
 	"table-header-lid-ascending": "LID (vzostupné zoradenie)",
 	"table-header-lid-descending": "LID (zostupné zoradenie)",
