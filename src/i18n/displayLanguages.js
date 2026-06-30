@@ -8,6 +8,7 @@ export const DISPLAY_LANGUAGES = [
   { code: 'lb', nativeName: 'Lëtzebuergesch' },
   { code: 'lt', nativeName: 'Lietuvių' },
   { code: 'min', nativeName: 'Minangkabau' },
+  { code: 'ppl', nativeName: 'Nawat' },
   { code: 'nl', nativeName: 'Nederlands' },
   { code: 'pms', nativeName: 'Piemontèis' },
   { code: 'sk', nativeName: 'Slovenčina' },
@@ -17,7 +18,7 @@ export const DISPLAY_LANGUAGES = [
   { code: 'he', nativeName: 'עברית '},
   { code: 'ps', nativeName: 'پښتو' },
   { code: 'pa', nativeName: 'ਪੰਜਾਬੀ' },
-  { code: 'ko', nativeName: '한국어' },
   { code: 'zh-hans', nativeName: '中文（简体）' },
-  { code: 'zh-hant', nativeName: '中文（繁體)' }
+  { code: 'zh-hant', nativeName: '中文（繁體)' },
+  { code: 'ko', nativeName: '한국어' }
 ]
