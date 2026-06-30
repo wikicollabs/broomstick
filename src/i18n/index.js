@@ -59,6 +59,7 @@ const messages = {
   lb: lbMessages,
   lt: ltMessages,
   min: minMessages,
+  ppl: pplMessages,
   nl: nlMessages,
   pms: pmsMessages,
   sk: skMessages,
@@ -68,9 +69,9 @@ const messages = {
   he: heMessages,
   ps: psMessages,
   pa: paMessages,
-  ko: koMessages,
   'zh-hans': zhhansMessages,
-  'zh-hant':zhhantMessages
+  'zh-hant':zhhantMessages,
+  ko: koMessages,
 };
 
 export default createI18n({
