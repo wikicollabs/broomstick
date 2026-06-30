@@ -40,7 +40,6 @@
 	"table-hide-visited": "Sambunyian nan dikunjuangi",
 	"table-hide-visited-aria": "Sambunyian nan dikunjuangi",
 	"table-hidden-count": "$1 {{PLURAL:$1|disambunyian}}",
-	"table-visibility-none-hidden": "Indak ado Leksem nan dikunjuangi untuk disambunyian",
 	"table-visibility-hidden-announce": "{{PLURAL:$1|$1 Leksem nan alah dikunjungi disambunyian|$1 Leksem nan alah dikunjungi disambunyian}}",
 	"table-header-lid-default": "LID (urutan default)",
 	"table-header-lid-ascending": "LID (urutan naiak)",

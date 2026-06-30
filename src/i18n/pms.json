@@ -40,7 +40,6 @@
 	"table-hide-visited": "Stërmé ij visità",
 	"table-hide-visited-aria": "Stërmé ij visità",
 	"table-hidden-count": "$1 {{PLURAL:$1|stërmà}}",
-	"table-visibility-none-hidden": "Gnun lessema visità da stërmé",
 	"table-visibility-hidden-announce": "{{PLURAL:$1|$1 lessema visità stërmà}}",
 	"table-header-lid-default": "LID (órdin ëstàndard)",
 	"table-header-lid-ascending": "LID (órdin chërsent)",

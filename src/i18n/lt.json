@@ -40,7 +40,6 @@
 	"table-hide-visited": "Slėpti aplankytus",
 	"table-hide-visited-aria": "Slėpti aplankytus",
 	"table-hidden-count": "$1 paslėptas (-i/ų)",
-	"table-visibility-none-hidden": "Nėra aplankytų leksemų, kurias būtų galima paslėpti",
 	"table-visibility-hidden-announce": "{{PLURAL:$1|1 aplankyta paslėpta leksema|$1 aplankytos paslėptos leksemos|$1 aplankytų paslėptų leksemų}}",
 	"table-header-lid-default": "LID (numatytasis rūšiavimas)",
 	"table-header-lid-ascending": "LID (rūšiavimas didėjimo tvarka)",

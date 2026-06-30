@@ -41,7 +41,6 @@
 	"table-hide-visited": "Sembunyikan yang dikunjungi",
 	"table-hide-visited-aria": "Sembunyikan yang dikunjungi",
 	"table-hidden-count": "$1 {{PLURAL:$1|disembunyikan}}",
-	"table-visibility-none-hidden": "Tidak ada Leksem yang telah dikunjungi untuk disembunyikan",
 	"table-visibility-hidden-announce": "{{PLURAL:$1|$1 Leksem yang telah dikunjungi disembunyikan|$1 Leksem yang telah dikunjungi disembunyikan}}",
 	"table-header-lid-default": "LID (urutan default)",
 	"table-header-lid-ascending": "LID (urutan menaik)",

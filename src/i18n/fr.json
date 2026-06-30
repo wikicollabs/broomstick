@@ -2,6 +2,7 @@
 	"@metadata": {
 		"authors": [
 			"Asteralee",
+			"Crowwhailord",
 			"Poro26",
 			"VIGNERON"
 		]
@@ -42,8 +43,7 @@
 	"table-hide-visited": "Masquer les vues",
 	"table-hide-visited-aria": "Masquer les vues",
 	"table-hidden-count": "$1 caché",
-	"table-visibility-none-hidden": "Aucun lexème vue à masquer",
-	"table-visibility-hidden-announce": "{{PLURAL:$1|1 lexème vu et masqué|$1 lexèmes vus et masqués}}",
+	"table-visibility-hidden-announce": "{{PLURAL:$1|1 lexème masqué|$1 lexèmes masqués}}",
 	"table-header-lid-default": "LID (tri par défaut)",
 	"table-header-lid-ascending": "LID (tri ascendant)",
 	"table-header-lid-descending": "LID (tri descendant)",

@@ -40,7 +40,6 @@
 	"table-hide-visited": "Folaigh cuairt",
 	"table-hide-visited-aria": "Folaigh cuairt",
 	"table-hidden-count": "$1 {{PLURAL:$1|i bhfolach}}",
-	"table-visibility-none-hidden": "Gan aon Leicséimí ar tugadh cuairt orthu le ceilt",
 	"table-visibility-hidden-announce": "{{PLURAL:$1|$1 cuairt tugtha ar Lexeme i bhfolach|$1 cuairt tugtha ar Lexemes i bhfolach}}",
 	"table-header-lid-default": "LID (sórtáil réamhshocraithe)",
 	"table-header-lid-ascending": "LID (sórtáil ardaitheach)",
