@@ -82,7 +82,7 @@ export const LANGUAGES = [
   { display: 'ייִדיש (yi)', code: 'yi', autonym: 'ייִדיש', qid: 'Q8641' },
   { display: 'עברית (he)', code: 'he', autonym: 'עברית', qid: 'Q9288' },
   { display: 'العربية (ar)', code: 'ar', autonym: 'العربية', qid: 'Q13955' },
-  { display: 'الداريجة  (ary)', code: 'ary', autonym: 'الداريجة ', qid: 'Q56426' },
+  { display: 'الدارجة (ary)', code: 'ary', autonym: 'الدارجة', qid: 'Q56426' },
   { display: 'فارسی (fa)', code: 'fa', autonym: 'فارسی', qid: 'Q9168' },
   { display: 'پښتو (ps)', code: 'ps', autonym: 'پښتو', qid: 'Q58680' },
   { display: 'मराठी (mr)', code: 'mr', autonym: 'मराठी', qid: 'Q1571' },
