@@ -14,17 +14,10 @@ export interface Language {
 
 // --- query ---
 
-// builds the final SPARQL string for a given language.
-// NOTE: this function-embedded shape reflects queries.js as it exists today.
-// story 2 moves SPARQL bodies to standalone files; Query's shape will
-// likely drop this field once that lands.
-export type SparqlFn = (languageQid: string, languageCode: string) => string
-
 export interface Query {
   value: string
   label: string
   languages: string[] | null // null = available to all languages
-  sparql: SparqlFn
 }
 
 export interface QueryGroup {
