@@ -1,0 +1,15 @@
+SELECT DISTINCT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
+  ?lexeme dct:language wd:%LANGUAGE_QID%;
+          wikibase:lemma ?lemma ;
+          wikibase:lexicalCategory ?lexicalCategory ;
+          ontolex:lexicalForm ?form.
+
+  FILTER NOT EXISTS {
+    ?lexeme ontolex:lexicalForm ?form2.
+    ?form2 wdt:P898 ?transcription .
+  }
+
+  SERVICE wikibase:label {
+    bd:serviceParam wikibase:language "%LANGUAGE_CODE%,mul,en" .
+  }
+}

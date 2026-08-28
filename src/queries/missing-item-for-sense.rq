@@ -1,0 +1,12 @@
+SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
+  ?lexeme dct:language wd:%LANGUAGE_QID%;
+          wikibase:lemma ?lemma ;
+          wikibase:lexicalCategory wd:Q1084;
+          ontolex:sense ?sense .
+  BIND(wd:Q1084 AS ?lexicalCategory)
+  FILTER NOT EXISTS {
+    ?lexeme ontolex:sense ?sense2.
+    ?sense2 wdt:P5137|wdt:P6271|wdt:P6593 ?anyItem.
+  }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "%LANGUAGE_CODE%,mul,en". }
+}
