@@ -16,8 +16,7 @@ export interface Language {
 
 export interface Query {
   value: string
-  label: string
-  languages: string[] | null // null = available to all languages
+  params?: string[]
 }
 
 export interface QueryGroup {

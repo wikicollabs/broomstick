@@ -8,6 +8,27 @@
 
 import type { Language } from '../types/types'
 
+// query values available to every language with no exceptions.
+// language-specific additions (e.g. gender-related properties) go in
+// LANGUAGE_EXTRA_QUERIES below, keyed by language code.
+export const UNIVERSAL_QUERIES = [
+  'is-empty',
+  'missing-senses',
+  'missing-forms',
+  'missing-external-identifiers',
+  'missing-usage-example',
+  'missing-item-for-sense',
+  'missing-predicate-troponym',
+  'missing-grammatical-features',
+  'missing-ipa',
+  'missing-pronunciation-audio',
+  'misplaced-item-for-sense',
+]
+
+// language-specific queries on top of UNIVERSAL_QUERIES, keyed by code.
+// empty for now, no language-specific queries exist yet.
+export const LANGUAGE_EXTRA_QUERIES: Record<string, string[]> = {}
+
 export const LANGUAGES: Language[] = [
   { display: 'Anarâškielâ (smn)', code: 'smn', autonym: 'Anarâškielâ', qid: 'Q33462' },
   { display: 'Aragonés (an)', code: 'an', autonym: 'Aragonés', qid: 'Q8765' },
@@ -107,10 +128,12 @@ export function getLanguageQid(displayString: string): string | undefined {
   return LANGUAGES.find(lang => lang.display === displayString)?.qid
 }
 
-export function getLanguageByDisplay(displayString: string): Language | undefined {
-  return LANGUAGES.find(lang => lang.display === displayString)
-}
-
 export function getLanguageCode(displayString: string): string | undefined {
   return LANGUAGES.find(lang => lang.display === displayString)?.code
+}
+
+export function getAvailableQueriesForLanguage(displayString: string): string[] {
+  const code = getLanguageCode(displayString)
+  const extras = code ? LANGUAGE_EXTRA_QUERIES[code] ?? [] : []
+  return [...UNIVERSAL_QUERIES, ...extras]
 }

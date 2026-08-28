@@ -7,6 +7,7 @@
  */
 
 import type { QueryGroup, QueryOptionGroup } from '../types/types'
+import { getAvailableQueriesForLanguage } from './languages'
 
 // raw SPARQL bodies live as standalone .rq files under src/queries/,
 // one per query value, filename matching the value string exactly.
@@ -20,80 +21,38 @@ for (const path in sparqlFiles) {
   sparqlByValue[value] = sparqlFiles[path]
 }
 
+// query metadata only. readable labels and group names live as i18n
+// message keys, derived from value/group below, not stored here.
 export const QUERY_GROUPS: QueryGroup[] = [
   {
     group: "General",
     queries: [
-      {
-        value: "is-empty",
-        label: "is empty",
-        languages: null, // null = all languages
-      },
-      {
-        value: "missing-senses",
-        label: "has no Senses",
-        languages: null,
-      },
-      {
-        value: "missing-forms",
-        label: "has no Forms",
-        languages: null,
-      },
-      {
-        value: "missing-external-identifiers",
-        label: "has no external identifiers",
-        languages: null,
-      },
-      {
-        value: "missing-usage-example",
-        label: "is missing usage example (P5831)",
-        languages: null,
-      },
+      { value: "is-empty" },
+      { value: "missing-senses" },
+      { value: "missing-forms" },
+      { value: "missing-external-identifiers" },
+      { value: "missing-usage-example", params: ["(P5831)"] },
     ],
   },
   {
     group: "Senses",
     queries: [
-      {
-        value: "missing-item-for-sense",
-        label: "is missing item for this sense (P5137), demonym of (P6271), or hyperonym (P6593)",
-        languages: null,
-      },
-      {
-        value: "missing-predicate-troponym",
-        label: "is missing predicate for (P9970) or troponym of (P5975)",
-        languages: null,
-      },
+      { value: "missing-item-for-sense", params: ["(P5137)", "(P6271)", "(P6593)"] },
+      { value: "missing-predicate-troponym", params: ["(P9970)", "(P5975)"] },
     ],
   },
   {
     group: "Forms",
     queries: [
-      {
-        value: "missing-grammatical-features",
-        label: "has no grammatical features",
-        languages: null,
-      },
-      {
-        value: "missing-ipa",
-        label: "is missing IPA transcription (P898)",
-        languages: null,
-      },
-      {
-        value: "missing-pronunciation-audio",
-        label: "is missing pronunciation audio (P443)",
-        languages: null,
-      },
+      { value: "missing-grammatical-features" },
+      { value: "missing-ipa", params: ["(P898)"] },
+      { value: "missing-pronunciation-audio", params: ["(P443)"] },
     ],
   },
   {
     group: "Misplacements",
     queries: [
-      {
-        value: "misplaced-item-for-sense",
-        label: "misplaced the item for this sense (P5137) at the Lexeme level instead of on the Senses level",
-        languages: null,
-      },
+      { value: "misplaced-item-for-sense", params: ["(P5137)"] },
     ],
   },
   {
@@ -104,43 +63,24 @@ export const QUERY_GROUPS: QueryGroup[] = [
   },
 ];
 
+// builds the option list for a given language's display string, deriving
+// group/item labels as i18n message keys from QUERY_GROUPS. groups with
+// no available items for this language are dropped entirely.
 export function getQueryOptionsForLanguage(language: string | null): QueryOptionGroup[] {
-  // just return message keys, not translations
-  const allLanguagesQueries: QueryOptionGroup[] = [
-    {
-      label: 'queries-general',
-      items: [
-        { value: 'is-empty', label: 'queries-is-empty' },
-        { value: 'missing-senses', label: 'queries-missing-senses' },
-        { value: 'missing-forms', label: 'queries-missing-forms' },
-        { value: 'missing-external-identifiers', label: 'queries-missing-external-identifiers' },
-        { value: 'missing-usage-example', label: 'queries-missing-usage-example', params: ['(P5831)']  }
-      ]
-    },
-    {
-      label: 'queries-senses',
-      items: [
-        { value: 'missing-item-for-sense', label: 'queries-missing-item-for-sense', params: ['(P5137)', '(P6271)', '(P6593)'] },
-        { value: 'missing-predicate-troponym', label: 'queries-missing-predicate-troponym', params: ['(P9970)', '(P5975)']  }
-      ]
-    },
-    {
-      label: 'queries-forms',
-      items: [
-        { value: 'missing-ipa', label: 'queries-missing-ipa', params: ['(P898)']  },
-        { value: 'missing-pronunciation-audio', label: 'queries-missing-pronunciation-audio', params: ['(P443)']  },
-        { value: 'missing-grammatical-features', label: 'queries-missing-grammatical-features' }
-      ]
-    },
-    {
-      label: 'queries-misplacements',
-      items: [
-        { value: 'misplaced-item-for-sense', label: 'queries-misplaced-item-for-sense', params: ['(P5137)']  }
-      ]
-    }
-  ];
+  const availableValues = language ? getAvailableQueriesForLanguage(language) : []
 
-  return allLanguagesQueries;
+  return QUERY_GROUPS
+    .map((group) => ({
+      label: `queries-${group.group.toLowerCase()}`,
+      items: group.queries
+        .filter((query) => availableValues.includes(query.value))
+        .map((query) => ({
+          value: query.value,
+          label: `queries-${query.value}`,
+          ...(query.params ? { params: query.params } : {}),
+        })),
+    }))
+    .filter((group) => group.items.length > 0);
 }
 
 // get sparql by query value, with language placeholders substituted in
@@ -149,8 +89,8 @@ export function getQuerySparql(queryValue: string, languageQid: string, language
   if (!template) return null
 
   return template
-    .replace('%LANGUAGE_QID%', languageQid)
-    .replace('%LANGUAGE_CODE%', languageCode)
+    .replace(/%LANGUAGE_QID%/g, languageQid)
+    .replace(/%LANGUAGE_CODE%/g, languageCode)
 }
 
 // get all query values as flat array (for validation)

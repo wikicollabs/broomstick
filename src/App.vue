@@ -170,7 +170,7 @@ import SearchForm from "./components/SearchForm.vue";
 import ResultsTable from "./components/ResultsTable.vue";
 import AppFooter from "./components/AppFooter.vue";
 import { getLanguageQid, getLanguageCode, LANGUAGES } from "./data/languages.js";
-import { QUERY_GROUPS, getQuerySparql, getQueryOptionsForLanguage} from "./data/queries.js";
+import { getQuerySparql, getQueryOptionsForLanguage} from "./data/queries.js";
 
 const instance = getCurrentInstance();
 const $i18n = instance?.appContext.config.globalProperties.$i18n;
