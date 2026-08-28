@@ -169,7 +169,7 @@ import AppHeader from "./components/AppHeader.vue";
 import SearchForm from "./components/SearchForm.vue";
 import ResultsTable from "./components/ResultsTable.vue";
 import AppFooter from "./components/AppFooter.vue";
-import { getQueryOptionsForLanguage } from "./data/queries.js";
+import { getQueryOptionsForLanguage } from "./data/queryOptions.js";
 import { useSearchStore } from "./state/searchStore";
 import { storeToRefs } from "pinia";
 

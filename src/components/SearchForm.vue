@@ -94,10 +94,9 @@ import { computed, ref, watch, getCurrentInstance, nextTick } from "vue";
 import { CdxField, CdxCombobox, CdxButton, CdxIcon, CdxMessage } from "@wikimedia/codex";
 import { cdxIconSearch, cdxIconError } from "@wikimedia/codex-icons";
 import { LANGUAGES } from "../data/languages.js";
-import {
-  getQueryOptionsForLanguage,
-  getAllQueryValues,
-} from "../data/queries.js";
+import { getAllQueryValues } from "../data/queries.js";
+import { getQueryOptionsForLanguage} from "../data/queryOptions.js";
+
 const instance = getCurrentInstance();
 const $i18n = instance?.appContext.config.globalProperties.$i18n;
 

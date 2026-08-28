@@ -7,11 +7,12 @@
  */
 
 import type { Language } from '../types/types'
+import type { QueryId } from './queries'
 
 // query values available to every language with no exceptions.
 // language-specific additions (e.g. gender-related properties) go in
 // LANGUAGE_EXTRA_QUERIES below, keyed by language code.
-export const UNIVERSAL_QUERIES = [
+export const UNIVERSAL_QUERIES: readonly QueryId[] = [
   'is-empty',
   'missing-senses',
   'missing-forms',
@@ -27,7 +28,7 @@ export const UNIVERSAL_QUERIES = [
 
 // language-specific queries on top of UNIVERSAL_QUERIES, keyed by code.
 // empty for now, no language-specific queries exist yet.
-export const LANGUAGE_EXTRA_QUERIES: Record<string, string[]> = {}
+export const LANGUAGE_EXTRA_QUERIES: Record<string, readonly QueryId[]> = {}
 
 export const LANGUAGES: Language[] = [
   { display: 'Anarâškielâ (smn)', code: 'smn', autonym: 'Anarâškielâ', qid: 'Q33462' },
