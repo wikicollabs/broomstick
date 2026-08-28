@@ -8,6 +8,18 @@
 
 import type { QueryGroup, QueryOptionGroup } from '../types/types'
 
+// raw SPARQL bodies live as standalone .rq files under src/queries/,
+// one per query value, filename matching the value string exactly.
+// keys come back as full relative paths (e.g. "../queries/is-empty.rq"),
+// so they're normalized to bare values below for lookup by query value.
+const sparqlFiles = import.meta.glob('../queries/*.rq', { query: '?raw', import: 'default', eager: true }) as Record<string, string>
+
+const sparqlByValue: Record<string, string> = {}
+for (const path in sparqlFiles) {
+  const value = path.replace('../queries/', '').replace('.rq', '')
+  sparqlByValue[value] = sparqlFiles[path]
+}
+
 export const QUERY_GROUPS: QueryGroup[] = [
   {
     group: "General",
@@ -16,79 +28,26 @@ export const QUERY_GROUPS: QueryGroup[] = [
         value: "is-empty",
         label: "is empty",
         languages: null, // null = all languages
-        sparql: (languageQid, languageCode) => `
-          SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
-            ?lexeme dct:language wd:${languageQid} ;
-                    wikibase:lemma ?lemma;
-                    wikibase:lexicalCategory ?lexicalCategory.
-            FILTER NOT EXISTS { ?lexeme ontolex:lexicalForm ?form }
-            FILTER NOT EXISTS { ?lexeme ontolex:sense ?sense }
-            ?lexeme wikibase:statements 0 .
-            SERVICE wikibase:label { bd:serviceParam wikibase:language "${languageCode},mul,en". }
-          }
-        `,
       },
       {
         value: "missing-senses",
         label: "has no Senses",
         languages: null,
-        sparql: (languageQid, languageCode) => `
-          SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
-            ?lexeme dct:language wd:${languageQid} ;
-                    wikibase:lemma ?lemma ;
-                    wikibase:lexicalCategory ?lexicalCategory.
-            FILTER NOT EXISTS { ?lexeme ontolex:sense ?sense }
-          SERVICE wikibase:label { bd:serviceParam wikibase:language "${languageCode},mul,en". }
-          }
-        `,
       },
       {
         value: "missing-forms",
         label: "has no Forms",
         languages: null,
-        sparql: (languageQid, languageCode) => `
-          SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
-            ?lexeme dct:language wd:${languageQid} ;
-                    wikibase:lemma ?lemma ;
-                    wikibase:lexicalCategory ?lexicalCategory.
-            FILTER NOT EXISTS { ?lexeme ontolex:lexicalForm ?form }
-          SERVICE wikibase:label { bd:serviceParam wikibase:language "${languageCode},mul,en". }
-          }
-        `,
       },
       {
         value: "missing-external-identifiers",
         label: "has no external identifiers",
         languages: null,
-        sparql: (languageQid, languageCode) => `
-SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
-  ?lexeme dct:language wd:${languageQid} ;
-          wikibase:lemma ?lemma;
-  wikibase:lexicalCategory ?lexicalCategory.
-
-  FILTER NOT EXISTS {
-    ?lexeme ?p ?val.
-    ?prop wikibase:directClaim ?p ;
-          wikibase:propertyType wikibase:ExternalId.
-  }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "${languageCode},mul,en". }
-}
-        `,
       },
       {
         value: "missing-usage-example",
         label: "is missing usage example (P5831)",
         languages: null,
-        sparql: (languageQid, languageCode) => `
-          SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
-            ?lexeme dct:language wd:${languageQid} ;
-                    wikibase:lemma ?lemma ;
-                  wikibase:lexicalCategory ?lexicalCategory.
-            FILTER NOT EXISTS { ?lexeme wdt:P5831 ?example }
-          SERVICE wikibase:label { bd:serviceParam wikibase:language "${languageCode},mul,en". }
-
-          }
-        `,
       },
     ],
   },
@@ -96,44 +55,14 @@ SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
     group: "Senses",
     queries: [
       {
-        value:
-          "missing-item-for-sense",
-        label:
-          "is missing item for this sense (P5137), demonym of (P6271), or hyperonym (P6593)",
+        value: "missing-item-for-sense",
+        label: "is missing item for this sense (P5137), demonym of (P6271), or hyperonym (P6593)",
         languages: null,
-        sparql: (languageQid, languageCode) => `
-          SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
-            ?lexeme dct:language wd:${languageQid};
-                    wikibase:lemma ?lemma ;
-                    wikibase:lexicalCategory wd:Q1084;
-                    ontolex:sense ?sense .
-           BIND(wd:Q1084 AS ?lexicalCategory)
-              FILTER NOT EXISTS {
-    ?lexeme ontolex:sense ?sense2.
-    ?sense2 wdt:P5137|wdt:P6271|wdt:P6593 ?anyItem.
-  }
-SERVICE wikibase:label { bd:serviceParam wikibase:language "${languageCode},mul,en". }
-          }
-        `,
       },
       {
         value: "missing-predicate-troponym",
         label: "is missing predicate for (P9970) or troponym of (P5975)",
         languages: null,
-        sparql: (languageQid, languageCode) => `
-          SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
-            ?lexeme dct:language wd:${languageQid};
-                    wikibase:lemma ?lemma ;
-                    wikibase:lexicalCategory wd:Q24905;
-                    ontolex:sense ?sense .
-           BIND(wd:Q24905 AS ?lexicalCategory)
-              FILTER NOT EXISTS {
-    ?lexeme ontolex:sense ?sense2.
-    ?sense2 wdt:P9970|wdt:P5975 ?anyPredicate.
-  }
-SERVICE wikibase:label { bd:serviceParam wikibase:language "${languageCode},mul,en". }
-          }
-        `,
       },
     ],
   },
@@ -144,61 +73,16 @@ SERVICE wikibase:label { bd:serviceParam wikibase:language "${languageCode},mul,
         value: "missing-grammatical-features",
         label: "has no grammatical features",
         languages: null,
-        sparql: (languageQid, languageCode) => `
-          SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
-            ?lexeme dct:language wd:${languageQid} ;
-                    wikibase:lemma ?lemma ;
-                  wikibase:lexicalCategory ?lexicalCategory;
-                    ontolex:lexicalForm ?form .
-            FILTER NOT EXISTS { ?form wikibase:grammaticalFeature ?feature }
-SERVICE wikibase:label { bd:serviceParam wikibase:language "${languageCode},mul,en". }
-          }
-        `,
       },
       {
         value: "missing-ipa",
         label: "is missing IPA transcription (P898)",
         languages: null,
-        sparql: (languageQid, languageCode) => `
-SELECT DISTINCT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
-  ?lexeme dct:language wd:${languageQid};
-          wikibase:lemma ?lemma ;
-          wikibase:lexicalCategory ?lexicalCategory ;
-          ontolex:lexicalForm ?form.
-
-  FILTER NOT EXISTS {
-    ?lexeme ontolex:lexicalForm ?form2.
-    ?form2 wdt:P898 ?transcription .
-  }
-
-  SERVICE wikibase:label {
-    bd:serviceParam wikibase:language "${languageCode},mul,en" .
-  }
-}
-
-        `,
       },
       {
         value: "missing-pronunciation-audio",
         label: "is missing pronunciation audio (P443)",
         languages: null,
-        sparql: (languageQid, languageCode) => `
-SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
-  ?lexeme dct:language wd:${languageQid};
-          wikibase:lemma ?lemma ;
-          wikibase:lexicalCategory ?lexicalCategory ;
-          ontolex:lexicalForm ?form.
-
-  FILTER NOT EXISTS {
-    ?lexeme ontolex:lexicalForm ?form2.
-    ?form2 wdt:P443 ?audio .
-  }
-
-  SERVICE wikibase:label {
-    bd:serviceParam wikibase:language "${languageCode},mul,en" .
-  }
-}
-        `,
       },
     ],
   },
@@ -206,32 +90,12 @@ SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
     group: "Misplacements",
     queries: [
       {
-        value:
-          "misplaced-item-for-sense",
-        label:
-          "misplaced the item for this sense (P5137) at the Lexeme level instead of on the Senses level",
+        value: "misplaced-item-for-sense",
+        label: "misplaced the item for this sense (P5137) at the Lexeme level instead of on the Senses level",
         languages: null,
-        sparql: (languageQid, languageCode) => `
-SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
-  ?lexeme dct:language wd:${languageQid};
-          wikibase:lemma ?lemma ;
-          wikibase:lexicalCategory ?lexicalCategory ;
-          wdt:P5137 ?senseItem .
-
-  FILTER NOT EXISTS {
-    ?lexeme ontolex:sense ?sense .
-    ?sense wdt:P5137 ?validUse .
-  }
-
-  SERVICE wikibase:label {
-    bd:serviceParam wikibase:language "${languageCode},mul,en" .
-  }
-}
-        `,
       },
     ],
   },
-
   {
     group: "Language-specific",
     queries: [
@@ -240,22 +104,6 @@ SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
   },
 ];
 
-/*
-// get queries filtered by selected language, returns grouped format for CdxCombobox
-export function getQueryOptionsForLanguage(selectedLanguage) {
-  if (!selectedLanguage) return [];
-
-  return QUERY_GROUPS.map((group) => ({
-    label: group.group,
-    items: group.queries
-      .filter((q) => !q.languages || q.languages.includes(selectedLanguage))
-      .map((q) => ({
-        value: q.value,
-        label: q.label,
-      })),
-  })).filter((group) => group.items.length > 0); // remove empty groups
-}
-*/
 export function getQueryOptionsForLanguage(language: string | null): QueryOptionGroup[] {
   // just return message keys, not translations
   const allLanguagesQueries: QueryOptionGroup[] = [
@@ -295,14 +143,14 @@ export function getQueryOptionsForLanguage(language: string | null): QueryOption
   return allLanguagesQueries;
 }
 
-
-// get sparql by query value
+// get sparql by query value, with language placeholders substituted in
 export function getQuerySparql(queryValue: string, languageQid: string, languageCode: string): string | null {
-  for (const group of QUERY_GROUPS) {
-    const query = group.queries.find((q) => q.value === queryValue);
-    if (query) return query.sparql(languageQid, languageCode);
-  }
-  return null;
+  const template = sparqlByValue[queryValue]
+  if (!template) return null
+
+  return template
+    .replace('%LANGUAGE_QID%', languageQid)
+    .replace('%LANGUAGE_CODE%', languageCode)
 }
 
 // get all query values as flat array (for validation)
