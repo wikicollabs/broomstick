@@ -149,8 +149,8 @@ export function getQuerySparql(queryValue: string, languageQid: string, language
   if (!template) return null
 
   return template
-    .replace('%LANGUAGE_QID%', languageQid)
-    .replace('%LANGUAGE_CODE%', languageCode)
+    .replace(/%LANGUAGE_QID%/g, languageQid)
+    .replace(/%LANGUAGE_CODE%/g, languageCode)
 }
 
 // get all query values as flat array (for validation)
