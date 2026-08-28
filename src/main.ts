@@ -7,14 +7,17 @@
  */
 
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import './style.css'
 import App from './App.vue'
 import i18n from './i18n'
 import '@wikimedia/codex-design-tokens/theme-wikimedia-ui.css'
 import '@wikimedia/codex/dist/codex.style-bidi.css';
 
+
 const app = createApp(App);
 
+app.use(createPinia());
 app.use(i18n);
 
 app.provide('CdxI18nFunction', (key: string, ...params: unknown[]) => {
