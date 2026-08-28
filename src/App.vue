@@ -10,7 +10,7 @@
   <div class="app">
     <CdxToastContainer />
 
-    <AppHeader @home="currentView = 'landing'" ref="headerRef" />
+    <AppHeader @home="store.goHome()" ref="headerRef" />
 
     <main class="main-content">
 
@@ -169,8 +169,9 @@ import AppHeader from "./components/AppHeader.vue";
 import SearchForm from "./components/SearchForm.vue";
 import ResultsTable from "./components/ResultsTable.vue";
 import AppFooter from "./components/AppFooter.vue";
-import { getLanguageQid, getLanguageCode, LANGUAGES } from "./data/languages.js";
-import { getQuerySparql, getQueryOptionsForLanguage} from "./data/queries.js";
+import { getQueryOptionsForLanguage } from "./data/queries.js";
+import { useSearchStore } from "./state/searchStore";
+import { storeToRefs } from "pinia";
 
 const instance = getCurrentInstance();
 const $i18n = instance?.appContext.config.globalProperties.$i18n;
@@ -179,41 +180,26 @@ const toast = useToast();
 
 const locale = computed(() => localStorage.getItem('locale') || 'en');
 
-const isRestoringFromUrl = ref(false);
+const store = useSearchStore();
+const {
+  currentView,
+  selectedLanguage,
+  selectedGapType,
+  searchedLanguage,
+  searchedGapType,
+  isLoading,
+  error,
+  connectionError,
+  results,
+} = storeToRefs(store);
 
-const currentView = ref("landing");
 const isPanelCollapsed = ref(false);
-
-const selectedLanguage = ref("English (en)");
-const selectedGapType = ref("is-empty");
-const searchedLanguage = ref("English (en)");
-const searchedGapType = ref("is-empty");
 const textFilter = ref('');
 const categoryFilter = ref('');
 const headerRef = ref(null);
 const resultsTableRef = ref(null);
-
-const isLoading = ref(false);
-const error = ref(null);
-const connectionError = ref(false);
-const results = ref([]);
 const categoryFilterBlurred = ref(false);
 const categorySearchTerm = ref('');
-
-// save to localStorage whenever search executes
-function saveLastSearch() {
-  localStorage.setItem("broomstick_last_language", selectedLanguage.value);
-  localStorage.setItem("broomstick_last_query", selectedGapType.value);
-}
-
-// restore from localStorage on mount
-function restoreLastSearch() {
-  const savedLanguage = localStorage.getItem("broomstick_last_language");
-  const savedQuery = localStorage.getItem("broomstick_last_query");
-
-  if (savedLanguage) selectedLanguage.value = savedLanguage;
-  if (savedQuery) selectedGapType.value = savedQuery;
-}
 
 function getQueryLabel(queryValue) {
   if (!queryValue) return '';
@@ -235,8 +221,10 @@ function getQueryLabel(queryValue) {
 
 // call restore on mount
 onMounted(() => {
-  restoreLastSearch(); // restore from localStorage first
-  restoreFromUrl(); // then check url params and override if present
+  store.restoreLastSearch(); // restore from localStorage first
+  store.restoreFromUrl(); // then check url params and override if present
+
+  window.addEventListener('popstate', store.handlePopState);
 
   // check for language change toast
   const toastLang = localStorage.getItem('language_change_toast');
@@ -274,110 +262,11 @@ watch(isLoading, (newVal, oldVal) => {
 });
 
 async function executeSearch() {
-  const languageQid = getLanguageQid(selectedLanguage.value);
-  const languageCode = getLanguageCode(selectedLanguage.value);
-  const querySparql = getQuerySparql(selectedGapType.value, languageQid, languageCode);
-
-  if (!languageQid) {
-    error.value = $i18n('errors-language-not-found');
-    return;
-  }
-
-  if (!querySparql) {
-    error.value = $i18n('errors-query-not-found');
-    return;
-  }
-
-  searchedLanguage.value = selectedLanguage.value;
-  searchedGapType.value = selectedGapType.value;
-  saveLastSearch();
-
-    // push url params immediately when search starts
-  const params = new URLSearchParams({
-    lang: languageCode,
-    query: selectedGapType.value,
-  });
-  history.pushState(null, "", `?${params.toString()}`);
-
-  error.value = null;
-  connectionError.value = false;
-  isLoading.value = true;
   textFilter.value = '';
   categoryFilter.value = $i18n('filters-category-all');
-  currentView.value = "search";
   isPanelCollapsed.value = window.innerWidth < 640;
-  results.value = [];
-
-  try {
-    const response = await fetch("https://query.wikidata.org/sparql", {
-      method: "POST",
-      headers: {
-        Accept: "application/sparql-results+json",
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `query=${encodeURIComponent(querySparql)}`,
-    });
-
-    if (!response.ok) {
-      throw new Error("Query failed");
-    }
-
-    const data = await response.json();
-
-    const lexemeMap = new Map();
-
-    data.results.bindings.forEach((binding) => {
-      const lexemeId = binding.lexeme.value.split("/").pop();
-      const lemma = binding.lemma.value;
-      const categoryLabel = binding.lexicalCategoryLabel?.value || "";
-      const categoryQid = binding.lexicalCategory?.value.split("/").pop() || "";
-      const lexicalCategory = categoryQid
-        ? `${categoryLabel} (${categoryQid})`
-        : categoryLabel;
-
-      if (lexemeMap.has(lexemeId)) {
-        const existing = lexemeMap.get(lexemeId);
-        if (!existing.lemmas.includes(lemma)) {
-          existing.lemmas.push(lemma);
-        }
-      } else {
-        lexemeMap.set(lexemeId, {
-          lexemeId: lexemeId,
-          lemmas: [lemma],
-          lexicalCategory: lexicalCategory,
-        });
-      }
-    });
-
-    results.value = Array.from(lexemeMap.values()).map((item) => ({
-      lexemeId: item.lexemeId,
-      lemma: item.lemmas.join(" / "),
-      lexicalCategory: item.lexicalCategory,
-    }));
-
-  } catch (err) {
-    console.error("Query error:", err);
-    connectionError.value = true;
-  } finally {
-    isLoading.value = false;
-  }
+  await store.executeSearch();
 }
-
-const restoreFromUrl = () => {
-  const params = new URLSearchParams(window.location.search);
-  const langCode = params.get('lang');
-  const query = params.get('query');
-  
-  if (langCode && query) {
-    const langObj = LANGUAGES.find(l => l.code === langCode);
-    if (langObj) {
-      selectedLanguage.value = langObj.display;
-      selectedGapType.value = query;
-      currentView.value = 'search';
-      executeSearch();
-    }
-  }
-};
 
 
 

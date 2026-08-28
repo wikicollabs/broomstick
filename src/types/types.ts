@@ -57,10 +57,19 @@ export interface SparqlBindingValue {
 
 // --- state ---
 
+export type ViewName = 'landing' | 'search'
+
+export interface AppUrlState {
+  view: ViewName
+  language: string | null // language code, not Language.display
+  queryId: string | null
+}
+
 // search selection state — scope matches what story 4's Pinia store
 // is expected to own (selected language + query, and the values
 // captured at the moment a search actually runs).
 export interface SearchSelectionState {
+  currentView: ViewName
   selectedLanguage: string // Language.display, used as lookup key — see note near Language
   selectedGapType: string  // Query.value
   searchedLanguage: string
@@ -71,6 +80,6 @@ export interface SearchSelectionState {
 export interface SearchResultsState {
   results: LexemeResult[]
   isLoading: boolean
-  error: string | null
+  error: string | null // i18n message key, not translated text — component translates at display time
   connectionError: boolean
 }
