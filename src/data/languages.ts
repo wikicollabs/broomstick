@@ -128,10 +128,6 @@ export function getLanguageQid(displayString: string): string | undefined {
   return LANGUAGES.find(lang => lang.display === displayString)?.qid
 }
 
-export function getLanguageByDisplay(displayString: string): Language | undefined {
-  return LANGUAGES.find(lang => lang.display === displayString)
-}
-
 export function getLanguageCode(displayString: string): string | undefined {
   return LANGUAGES.find(lang => lang.display === displayString)?.code
 }
