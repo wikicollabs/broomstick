@@ -6,7 +6,9 @@
  * @see https://github.com/wikicollabs/broomstick
  */
 
-export const QUERY_GROUPS = [
+import type { QueryGroup, QueryOptionGroup } from '../types/types'
+
+export const QUERY_GROUPS: QueryGroup[] = [
   {
     group: "General",
     queries: [
@@ -254,9 +256,9 @@ export function getQueryOptionsForLanguage(selectedLanguage) {
   })).filter((group) => group.items.length > 0); // remove empty groups
 }
 */
-export function getQueryOptionsForLanguage(language) {
+export function getQueryOptionsForLanguage(language: string | null): QueryOptionGroup[] {
   // just return message keys, not translations
-  const allLanguagesQueries = [
+  const allLanguagesQueries: QueryOptionGroup[] = [
     {
       label: 'queries-general',
       items: [
@@ -295,7 +297,7 @@ export function getQueryOptionsForLanguage(language) {
 
 
 // get sparql by query value
-export function getQuerySparql(queryValue, languageQid, languageCode) {
+export function getQuerySparql(queryValue: string, languageQid: string, languageCode: string): string | null {
   for (const group of QUERY_GROUPS) {
     const query = group.queries.find((q) => q.value === queryValue);
     if (query) return query.sparql(languageQid, languageCode);
@@ -304,6 +306,6 @@ export function getQuerySparql(queryValue, languageQid, languageCode) {
 }
 
 // get all query values as flat array (for validation)
-export function getAllQueryValues() {
+export function getAllQueryValues(): string[] {
   return QUERY_GROUPS.flatMap((group) => group.queries.map((q) => q.value));
 }
