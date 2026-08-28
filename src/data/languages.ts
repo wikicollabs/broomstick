@@ -6,7 +6,9 @@
  * @see https://github.com/wikicollabs/broomstick
  */
 
-export const LANGUAGES = [
+import type { Language } from '../types/types'
+
+export const LANGUAGES: Language[] = [
   { display: 'Anarâškielâ (smn)', code: 'smn', autonym: 'Anarâškielâ', qid: 'Q33462' },
   { display: 'Aragonés (an)', code: 'an', autonym: 'Aragonés', qid: 'Q8765' },
   { display: 'Bahasa Indonesia (id)', code: 'id', autonym: 'Bahasa Indonesia', qid: 'Q9240' },
@@ -101,16 +103,14 @@ export const LANGUAGES = [
 ]
 
 // helper functions
-export function getLanguageQid(displayString) {
+export function getLanguageQid(displayString: string): string | undefined {
   return LANGUAGES.find(lang => lang.display === displayString)?.qid
 }
 
-export function getLanguageByDisplay(displayString) {
+export function getLanguageByDisplay(displayString: string): Language | undefined {
   return LANGUAGES.find(lang => lang.display === displayString)
 }
 
-export function getLanguageCode(displayString) {
+export function getLanguageCode(displayString: string): string | undefined {
   return LANGUAGES.find(lang => lang.display === displayString)?.code
-
 }
-
