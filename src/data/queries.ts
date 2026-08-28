@@ -6,8 +6,7 @@
  * @see https://github.com/wikicollabs/broomstick
  */
 
-import type { QueryGroup, QueryOptionGroup } from '../types/types'
-import { getAvailableQueriesForLanguage } from './languages'
+import type { QueryGroup } from '../types/types'
 
 // raw SPARQL bodies live as standalone .rq files under src/queries/,
 // one per query value, filename matching the value string exactly.
@@ -23,7 +22,7 @@ for (const path in sparqlFiles) {
 
 // query metadata only. readable labels and group names live as i18n
 // message keys, derived from value/group below, not stored here.
-export const QUERY_GROUPS: QueryGroup[] = [
+export const QUERY_GROUPS = [
   {
     group: "General",
     queries: [
@@ -61,27 +60,9 @@ export const QUERY_GROUPS: QueryGroup[] = [
       // to be implemented later
     ],
   },
-];
+] as const satisfies readonly QueryGroup[]
 
-// builds the option list for a given language's display string, deriving
-// group/item labels as i18n message keys from QUERY_GROUPS. groups with
-// no available items for this language are dropped entirely.
-export function getQueryOptionsForLanguage(language: string | null): QueryOptionGroup[] {
-  const availableValues = language ? getAvailableQueriesForLanguage(language) : []
-
-  return QUERY_GROUPS
-    .map((group) => ({
-      label: `queries-${group.group.toLowerCase()}`,
-      items: group.queries
-        .filter((query) => availableValues.includes(query.value))
-        .map((query) => ({
-          value: query.value,
-          label: `queries-${query.value}`,
-          ...(query.params ? { params: query.params } : {}),
-        })),
-    }))
-    .filter((group) => group.items.length > 0);
-}
+export type QueryId = (typeof QUERY_GROUPS)[number]['queries'][number]['value']
 
 // get sparql by query value, with language placeholders substituted in
 export function getQuerySparql(queryValue: string, languageQid: string, languageCode: string): string | null {
