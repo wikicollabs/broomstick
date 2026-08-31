@@ -108,14 +108,14 @@
                         <template #label>
                           {{ $i18n('filters-category-label') }}
                         </template>
-<cdx-combobox
-:key="$i18n.locale"
-  v-model:selected="categoryFilter"
-  :menu-items="filteredCategoryMenuItems"
-  :placeholder="$i18n('filters-lexical-category-placeholder')"
-  @input="onCategoryInput"
-  @blur="categoryFilterBlurred = true"
-/>
+                        <cdx-combobox
+                        :key="$i18n.locale"
+                          v-model:selected="categoryFilter"
+                          :menu-items="filteredCategoryMenuItems"
+                          :placeholder="$i18n('filters-lexical-category-placeholder')"
+                          @input="onCategoryInput"
+                          @blur="categoryFilterBlurred = true"
+                        />
                       </cdx-field>
                       <cdx-message 
                         v-if="categoryFilterError"
@@ -131,26 +131,16 @@
               </div>
             </div>
 
-          <div class="results-area">
-            <div v-if="isLoading" class="loading-state" role="status" aria-live="assertive">
-              <h3>{{ $i18n('results-querying') }}</h3>
-              <CdxProgressBar :aria-label="$i18n('results-querying-aria')" aria-hidden="true" />
-            </div>
-
-              <CdxMessage v-else-if="error" type="error">
-                {{ error }}
-              </CdxMessage>
-
-              <div v-else>
-                <ResultsTable
-                  ref="resultsTableRef"
-                  :results="filteredResults"
-                  :total-count="results.length"
-                  :text-filter="textFilter"
-                  :connection-error="connectionError"
-                  :is-loading="isLoading"
-                />
-              </div>
+            <div class="results-area">
+              <ResultsPanel
+                ref="resultsTableRef"
+                :is-loading="isLoading"
+                :error="error"
+                :results="filteredResults"
+                :total-count="results.length"
+                :text-filter="textFilter"
+                :connection-error="connectionError"
+              />
             </div>
           </div>
         </div>
@@ -163,11 +153,11 @@
 
 <script setup>
 import { ref, onMounted, computed, watch, getCurrentInstance, nextTick} from "vue";
-import { CdxButton, CdxIcon, CdxProgressBar, CdxMessage, CdxTextInput, CdxSelect, CdxLabel, CdxCombobox, CdxField, CdxToastContainer, useToast } from "@wikimedia/codex";
+import { CdxButton, CdxIcon, CdxMessage, CdxTextInput, CdxSelect, CdxLabel, CdxCombobox, CdxField, CdxToastContainer, useToast } from "@wikimedia/codex";
 import { cdxIconCollapse, cdxIconExpand, cdxIconSearch} from "@wikimedia/codex-icons";
 import AppHeader from "./components/AppHeader.vue";
 import SearchForm from "./components/SearchForm.vue";
-import ResultsTable from "./components/ResultsTable.vue";
+import ResultsPanel from "./components/results/ResultsPanel.vue";
 import AppFooter from "./components/AppFooter.vue";
 import { getQueryOptionsForLanguage } from "./data/queryOptions.js";
 import { useSearchStore } from "./state/searchStore";
@@ -594,30 +584,6 @@ const hasActiveFilters = computed(() => {
   flex: 1;
   min-width: 0;
   width: 100%;
-}
-
-.loading-state {
-  padding: var(--spacing-100);
-  border: 0.0625rem solid var(--border-color-base);
-  border-radius: var(--border-radius-base);
-  width: 100%;
-}
-
-.loading-state h3 {
-  margin: 0 0 var(--spacing-100) 0;
-  color: var(--color-emphasized);
-  text-align: center;
-}
-
-.loading-state :deep(.cdx-progress-bar__bar) {
-  background-color: var(--background-color-progressive) !important;
-}
-
-@media (min-width: 1024px) {
-  .loading-state :deep(.cdx-progress-bar) {
-    max-width: 32rem;
-    margin: 0 auto;
-  }
 }
 
 .collapse-button {
