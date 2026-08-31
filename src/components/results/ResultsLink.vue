@@ -36,15 +36,13 @@ const $i18n = instance?.appContext.config.globalProperties.$i18n as (
 
 interface Props {
   lexemeId: string;
-  lemma?: string;
-  lexicalCategory?: string;
+  lemma: string;
+  lexicalCategory: string;
   isVisited?: boolean;
   textFilter?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  lemma: "",
-  lexicalCategory: "",
   isVisited: false,
   textFilter: "",
 });

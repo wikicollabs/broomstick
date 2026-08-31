@@ -15,12 +15,11 @@
 import { computed } from "vue";
 
 interface Props {
-  text?: string;
+  text: string;
   filter?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  text: "",
   filter: "",
 });
 

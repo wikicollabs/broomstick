@@ -111,13 +111,11 @@ interface Props {
   totalCount: number;
   textFilter?: string;
   connectionError?: boolean;
-  isLoading?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   textFilter: "",
   connectionError: false,
-  isLoading: false,
 });
 
 const sortState = ref<Record<string, "asc" | "desc">>({});
@@ -204,24 +202,11 @@ const tableCaption = computed(() => {
   return $i18n('table-result-count', count, count);
 });
 
-interface TableRow {
-  visited: string;
-  lexemeId: string;
-  lemma: string;
-  lexicalCategory: string;
-}
+const tableData = computed<LexemeResult[]>(() => {
 
-const tableData = computed<TableRow[]>(() => {
+  let data: LexemeResult[] = filteredResults.value;
 
-  let data: TableRow[] = filteredResults.value.map((result) => ({
-    visited: "",
-    lexemeId: result.lexemeId,
-    lemma: result.lemma,
-    lexicalCategory: result.lexicalCategory,
-  }));
-
-
-  const sortColumn = Object.keys(sortState.value)[0] as keyof TableRow | undefined;
+  const sortColumn = Object.keys(sortState.value)[0] as keyof LexemeResult | undefined;
 
   if (sortColumn) {
     const sortDirection = sortState.value[sortColumn];
