@@ -25,14 +25,14 @@
       />
     </cdx-field>
     <cdx-message
-        v-if="languageError"
-        type="error"
-        :inline="true"
-        class="error-message"
-        ref="languageErrorRef"
-        tabindex="-1"
+      v-if="languageError"
+      type="error"
+      :inline="true"
+      class="error-message"
+      ref="languageErrorRef"
+      tabindex="-1"
     >
-        {{ languageError }}
+      {{ languageError }}
     </cdx-message>
 
     <cdx-field
@@ -78,14 +78,14 @@
     </cdx-button>
 
     <cdx-message 
-  v-if="hasChangedSelection && resultsExist && activeFilterCount > 0"
-  type="notice"
-  inline
-  class="selection-change-notice"
-  role="status"
->
-  {{ $i18n('search-form-filter-clear-notice') }}
-</cdx-message>
+      v-if="hasChangedSelection && resultsExist && activeFilterCount > 0"
+      type="notice"
+      inline
+      class="selection-change-notice"
+      role="status"
+    >
+      {{ $i18n('search-form-filter-clear-notice') }}
+    </cdx-message>
   </div>
 </template>
 
@@ -93,9 +93,8 @@
 import { computed, ref, watch, getCurrentInstance, nextTick } from "vue";
 import { CdxField, CdxCombobox, CdxButton, CdxIcon, CdxMessage } from "@wikimedia/codex";
 import { cdxIconSearch, cdxIconError } from "@wikimedia/codex-icons";
-import { LANGUAGES } from "../data/languages.js";
-import { getAllQueryValues } from "../data/queries.js";
-import { getQueryOptionsForLanguage} from "../data/queryOptions.js";
+import { LANGUAGES, getAvailableQueriesForLanguage } from "../data/languages.js";
+import { getQueryOptionsForLanguage } from "../data/queryOptions.js";
 
 const instance = getCurrentInstance();
 const $i18n = instance?.appContext.config.globalProperties.$i18n;
@@ -148,6 +147,16 @@ const gapTypeOptions = computed(() => {
       label: item.params ? $i18n(item.label, ...item.params) : $i18n(item.label)
     }))
   }));
+});
+
+const availableGapTypeValues = computed(() =>
+  props.language ? getAvailableQueriesForLanguage(props.language) : []
+);
+
+watch(() => props.language, () => {
+  if (props.gapType && !availableGapTypeValues.value.includes(props.gapType)) {
+    emit("update:gapType", "");
+  }
 });
 
 const languageSearchTerm = ref("");
@@ -217,14 +226,11 @@ watch(languageError, (newError) => {
   }
 });
 
-
-
 const gapTypeError = computed(() => {
   if (!gapTypeBlurred.value) return "";
   if (!props.gapType) return "";
 
-  const validValues = getAllQueryValues();
-  if (!validValues.includes(props.gapType)) {
+  if (!availableGapTypeValues.value.includes(props.gapType)) {
     return $i18n('errors-query-not-found');
   }
   return "";
@@ -245,10 +251,9 @@ const isSearchDisabled = computed(() => {
   if (props.disabled) return true;
 
   const validLanguages = languageOptions.map((opt) => opt.value);
-  const validGapTypes = getAllQueryValues();
 
   if (!validLanguages.includes(props.language)) return true;
-  if (!validGapTypes.includes(props.gapType)) return true;
+  if (!availableGapTypeValues.value.includes(props.gapType)) return true;
 
   return false;
 });
