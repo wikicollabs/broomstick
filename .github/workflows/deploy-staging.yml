@@ -54,7 +54,6 @@ jobs:
         run: |
           echo "Deploying commit:"
           git log -1 --oneline
-
           echo
           echo "Full SHA:"
           git rev-parse HEAD
@@ -82,12 +81,10 @@ jobs:
       - name: Verify Dustpan content in build
         run: |
           echo "Checking built files for Dustpan content..."
-
           if ! grep -Rqi "dustpan" dist/; then
             echo "Dustpan content was not found in dist/."
             exit 1
           fi
-
           echo "Dustpan content found in build."
 
       - name: Get build metadata
@@ -104,35 +101,24 @@ jobs:
 
       - name: Package build
         run: |
-          tar czf \
-            "broomstick-${{ steps.build.outputs.VERSION }}-${{ steps.build.outputs.SHA }}-staging.tgz" \
-            -C dist .
+          tar czf             "broomstick-${{ steps.build.outputs.VERSION }}-${{ steps.build.outputs.SHA }}-staging.tgz"             -C dist .
 
       - name: Set up Toolforge SSH
         env:
           TF_SSH_KEY: ${{ secrets.TF_SSH_KEY }}
         run: |
           mkdir -p ~/.ssh
-
           printf '%s\n' "$TF_SSH_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-
           ssh-keyscan login.toolforge.org >> ~/.ssh/known_hosts
 
       - name: Upload package to Toolforge
         run: |
-          scp \
-            -i ~/.ssh/id_ed25519 \
-            "broomstick-${{ steps.build.outputs.VERSION }}-${{ steps.build.outputs.SHA }}-staging.tgz" \
-            noncesura@login.toolforge.org:~/broomstick-release/
+          scp             -i ~/.ssh/id_ed25519             "broomstick-${{ steps.build.outputs.VERSION }}-${{ steps.build.outputs.SHA }}-staging.tgz"             noncesura@login.toolforge.org:~/broomstick-release/
 
       - name: Deploy to staging
         run: |
-          ssh \
-            -tt \
-            -i ~/.ssh/id_ed25519 \
-            noncesura@login.toolforge.org \
-            "become broomstick-staging bash -s" <<'EOF'
+          ssh             -T             -i ~/.ssh/id_ed25519             noncesura@login.toolforge.org             "become broomstick-staging bash -s" <<'EOF'
           set -e
 
           ARCHIVE="/home/noncesura/broomstick-release/broomstick-${{ steps.build.outputs.VERSION }}-${{ steps.build.outputs.SHA }}-staging.tgz"
@@ -151,7 +137,6 @@ jobs:
           tar xzf "$ARCHIVE" -C "$HOME/public_html/"
 
           echo "Checking deployed files for Dustpan content..."
-
           if ! grep -Rqi "dustpan" "$HOME/public_html/"; then
             echo "Dustpan content was not found in deployed files."
             exit 1
