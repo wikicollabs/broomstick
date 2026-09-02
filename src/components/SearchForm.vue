@@ -13,13 +13,14 @@
       :status="languageError ? 'error' : 'default'"
     >
       <template #label>{{ $i18n('search-language-label') }}</template>
-      <cdx-combobox
+      <language-select
         v-model:selected="selectedLanguageValue"
-        :menu-items="filteredLanguageOptions"
+        :disabled="disabled"
         :placeholder="$i18n('search-language-placeholder')"
+        :search-placeholder="$i18n('search-language-placeholder')"
         :aria-label="$i18n('search-language-label')"
-        :class="{ 'combobox-error': languageError }"
-        @input="onLanguageInput"
+        :search-aria-label="$i18n('search-language-label')"
+        :no-results-text="$i18n('search-language-no-results')"
         @blur="onLanguageBlur"
         @focus="onLanguageFocus"
       />
@@ -95,6 +96,7 @@ import { CdxField, CdxCombobox, CdxButton, CdxIcon, CdxMessage } from "@wikimedi
 import { cdxIconSearch, cdxIconError } from "@wikimedia/codex-icons";
 import { LANGUAGES, getAvailableQueriesForLanguage } from "../data/languages.js";
 import { getQueryOptionsForLanguage } from "../data/queryOptions.js";
+import LanguageSelect from "./LanguageSelect.vue";
 
 const instance = getCurrentInstance();
 const $i18n = instance?.appContext.config.globalProperties.$i18n;
@@ -159,18 +161,10 @@ watch(() => props.language, () => {
   }
 });
 
-const languageSearchTerm = ref("");
 const gapTypeSearchTerm = ref("");
 const languageBlurred = ref(false);
 const gapTypeBlurred = ref(false);
 
-const filteredLanguageOptions = computed(() => {
-  if (!languageSearchTerm.value) return languageOptions;
-  const search = languageSearchTerm.value.toLowerCase();
-  return languageOptions.filter((opt) =>
-    opt.label.toLowerCase().includes(search)
-  );
-});
 
 const filteredGapTypeOptions = computed(() => {
   if (!gapTypeSearchTerm.value) return gapTypeOptions.value;
@@ -258,13 +252,6 @@ const isSearchDisabled = computed(() => {
   return false;
 });
 
-function onLanguageInput(event) {
-  languageSearchTerm.value = event.target.value;
-  // clear blur flag when user starts typing again
-  if (languageBlurred.value && event.target.value === "") {
-    languageBlurred.value = false;
-  }
-}
 
 function onGapTypeInput(event) {
   gapTypeSearchTerm.value = event.target.value;
@@ -301,10 +288,6 @@ function onGapTypeBlur() {
 }
 
 function onLanguageFocus() {
-  // clear search term if there's an error, allowing dropdown to work
-  if (languageError.value && languageSearchTerm.value) {
-    languageSearchTerm.value = "";
-  }
   languageBlurred.value = false;
 }
 
