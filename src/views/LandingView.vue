@@ -93,15 +93,15 @@ async function executeSearch() {
 
 .landing-view h1 {
   font-family: var(--font-family-serif);
-  font-size: 2rem;
+  font-size: var(--font-size-xxx-large);
   font-weight: 400;
-  line-height: 1.25;
+  line-height: var(--line-height-xxx-large);
   color: var(--color-emphasized);
   margin: 0 0 var(--spacing-50) 0;
 }
 
 .subtitle {
-  color: var(--color-subtle);
+  color: var(--color-base);
   margin: 0;
 }
 
