@@ -18,7 +18,7 @@
     <g>
       <path
         d="M42.667 245.333V512H512V128C512 57.308 454.692 0 384 0H0v202.667l42.667 42.666Z"
-        fill="#196551"
+        fill="currentColor"
       />
       <path
         fill-rule="evenodd"
