@@ -527,6 +527,7 @@ function saveLanguage() {
 
 .settings-dialog__search {
   flex: 1 1 auto;
+  min-width: 0;
 }
 
 
