@@ -1,3 +1,4 @@
+```yaml
 name: Deploy to Toolforge (Staging)
 
 on:
@@ -78,53 +79,74 @@ jobs:
       - name: Build application
         run: pnpm run build
 
+      - name: Verify Dustpan content in build
+        run: |
+          echo "Checking built files for Dustpan content..."
+
+          if ! grep -Rqi "dustpan" dist/; then
+            echo "Dustpan content was not found in dist/."
+            exit 1
+          fi
+
+          echo "Dustpan content found in build."
+
       - name: Get build metadata
         id: build
         run: |
-          echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
-          echo "sha=$(git rev-parse --short=12 HEAD)" >> "$GITHUB_OUTPUT"
+          echo "VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+          echo "SHA=$(git rev-parse --short=12 HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Show build metadata
+        run: |
+          echo "Version: ${{ steps.build.outputs.VERSION }}"
+          echo "SHA: ${{ steps.build.outputs.SHA }}"
+          echo "Archive: broomstick-${{ steps.build.outputs.VERSION }}-${{ steps.build.outputs.SHA }}-staging.tgz"
 
       - name: Package build
         run: |
           tar czf \
-            "broomstick-${{ steps.build.outputs.version }}-${{ steps.build.outputs.sha }}-staging.tgz" \
+            "broomstick-${{ steps.build.outputs.VERSION }}-${{ steps.build.outputs.SHA }}-staging.tgz" \
             -C dist .
 
-      - name: Upload package to Toolforge
+      - name: Set up Toolforge SSH
         env:
           TF_SSH_KEY: ${{ secrets.TF_SSH_KEY }}
         run: |
           mkdir -p ~/.ssh
+
           printf '%s\n' "$TF_SSH_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
 
           ssh-keyscan login.toolforge.org >> ~/.ssh/known_hosts
 
+      - name: Upload package to Toolforge
+        run: |
           scp \
             -i ~/.ssh/id_ed25519 \
-            "broomstick-${{ steps.build.outputs.version }}-${{ steps.build.outputs.sha }}-staging.tgz" \
+            "broomstick-${{ steps.build.outputs.VERSION }}-${{ steps.build.outputs.SHA }}-staging.tgz" \
             noncesura@login.toolforge.org:~/broomstick-release/
 
       - name: Deploy to staging
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: login.toolforge.org
-          username: noncesura
-          key: ${{ secrets.TF_SSH_KEY }}
-          port: 22
-          request_pty: true
-          script_stop: true
-          script: |
-            become broomstick-staging bash -c '
-              set -e
+        run: |
+          ssh \
+            -tt \
+            -i ~/.ssh/id_ed25519 \
+            noncesura@login.toolforge.org \
+            "become broomstick-staging bash -lc 'set -e; \
+            ARCHIVE=/home/noncesura/broomstick-release/broomstick-${{ steps.build.outputs.VERSION }}-${{ steps.build.outputs.SHA }}-staging.tgz; \
+            echo \"Deploying archive: \$ARCHIVE\"; \
+            test -f \"\$ARCHIVE\"; \
+            rm -rf \"\$HOME/public_html\"/*; \
+            tar xzf \"\$ARCHIVE\" -C \"\$HOME/public_html/\"; \
+            echo \"Checking deployed files for Dustpan content...\"; \
+            grep -Rqi dustpan \"\$HOME/public_html/\"; \
+            echo \"Deployment complete.\"'"
 
-              archive=~noncesura/broomstick-release/broomstick-${{ steps.build.outputs.version }}-${{ steps.build.outputs.sha }}-staging.tgz
-
-              echo "Deploying archive:"
-              echo "$archive"
-
-              rm -rf ~/public_html/*
-              tar xzf "$archive" -C ~/public_html/
-
-              echo "Deployment complete."
-            '
+      - name: Deployment summary
+        run: |
+          echo "Deployed:"
+          echo "broomstick-${{ steps.build.outputs.VERSION }}-${{ steps.build.outputs.SHA }}-staging.tgz"
+          echo
+          echo "Commit:"
+          git log -1 --oneline
+```
