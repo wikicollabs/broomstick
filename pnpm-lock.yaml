@@ -9,14 +9,14 @@ importers:
   .:
     dependencies:
       '@wikimedia/codex':
-        specifier: ^2.5.1
-        version: 2.5.1(vue@3.5.34(typescript@5.9.3))
+        specifier: ^2.6.2
+        version: 2.6.2(vue@3.5.34(typescript@5.9.3))
       '@wikimedia/codex-design-tokens':
-        specifier: ^2.5.1
-        version: 2.5.1
+        specifier: ^2.6.2
+        version: 2.6.2
       '@wikimedia/codex-icons':
-        specifier: ^2.5.1
-        version: 2.5.1
+        specifier: ^2.6.2
+        version: 2.6.2
       pinia:
         specifier: ^4.0.3
         version: 4.0.3(@vue/devtools-api@8.2.1)(typescript@5.9.3)(vue@3.5.34(typescript@5.9.3))
@@ -432,17 +432,17 @@ packages:
       vue:
         optional: true
 
-  '@wikimedia/codex-design-tokens@2.5.1':
-    resolution: {integrity: sha512-HhUP2zURfZYOEw9rHUILMF1OEBIylBAPS88xyGUVLRaTbJ3g8tTV85lesDR8qMhEKwClaeuCTXl8mgP4VDS6VQ==}
-    engines: {node: '>=20.20.2', npm: '>=10.8.1'}
+  '@wikimedia/codex-design-tokens@2.6.2':
+    resolution: {integrity: sha512-gbMMV4Nw/fTsZdWiaSqWwP7F4V6lctoQA6zfuy/hGppQlU29BetT4suBuBHhOGW+Y3RohljhkAQXunKREhFVvA==}
+    engines: {node: '>=24.14.1', npm: '>=11.10.0'}
 
-  '@wikimedia/codex-icons@2.5.1':
-    resolution: {integrity: sha512-ZbAXQD0dLuqj8uoMrpswusPymAZ07Pt0Y5wp1mNS3YyHuc1aAvsOGWdsV88YYoJN1l2jvYUE98/KoAKn7Cw5YA==}
-    engines: {node: '>=20.20.2', npm: '>=10.8.2'}
+  '@wikimedia/codex-icons@2.6.2':
+    resolution: {integrity: sha512-civbR6I12sCTua9t8oPNqVBCHAF30x9rQT5kYIYgBR6hhcBL9NhzYdSLgjROpnkprt1rCVKRzMEBGBae5oNauw==}
+    engines: {node: '>=24.14.1', npm: '>=11.11.0'}
 
-  '@wikimedia/codex@2.5.1':
-    resolution: {integrity: sha512-CTdnIDyzzJdWDcN2IZ/+F32SvOu+GDVCPZYwipsROZ4y/lC2wLT6Ws3oN/5j+NOntlKVAVnjhBoUt4RYl2n1NA==}
-    engines: {node: '>=20.20.2', npm: '>=10.8.2'}
+  '@wikimedia/codex@2.6.2':
+    resolution: {integrity: sha512-TcT6M2sHq44aZMIOmInJKrZ8uOwVGT4i71WEAq5+pNvg4BVmPCRvoSYsLwEXqEolVB7xigUhH+BCb0P624sSUQ==}
+    engines: {node: '>=24.14.1', npm: '>=11.11.0'}
     peerDependencies:
       vue: ^3.5.13
 
@@ -912,14 +912,14 @@ snapshots:
       typescript: 5.9.3
       vue: 3.5.34(typescript@5.9.3)
 
-  '@wikimedia/codex-design-tokens@2.5.1': {}
+  '@wikimedia/codex-design-tokens@2.6.2': {}
 
-  '@wikimedia/codex-icons@2.5.1': {}
+  '@wikimedia/codex-icons@2.6.2': {}
 
-  '@wikimedia/codex@2.5.1(vue@3.5.34(typescript@5.9.3))':
+  '@wikimedia/codex@2.6.2(vue@3.5.34(typescript@5.9.3))':
     dependencies:
       '@floating-ui/vue': 1.0.6(vue@3.5.34(typescript@5.9.3))
-      '@wikimedia/codex-icons': 2.5.1
+      '@wikimedia/codex-icons': 2.6.2
       vue: 3.5.34(typescript@5.9.3)
     transitivePeerDependencies:
       - '@vue/composition-api'
