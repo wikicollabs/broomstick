@@ -2,6 +2,8 @@
   "broomstick-tagline": "Uncover Lexemes that can be improved on Wikidata",
   "broomstick-subtitle": "Select a Lexeme language and query to begin.",
   "logo-alt": "logo",
+  "landing-improve-wikiprojects-link":"Try $1",
+  "landing-improve-wikiprojects-help":": uncover WikiProjects that can be improved.",
   "search-button": "Search",
   "search-heading": "Search",
   "search-language-label": "Lexeme language",
