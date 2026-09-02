@@ -71,7 +71,7 @@
                 v-model="textFilter"
                 ref="textInputRef"
                 input-type="search"
-                :start-icon="cdxIconSearch"
+                :start-icon="cdxIconFunnel"
                 :clearable="true"
                 :placeholder="$i18n('filters-text-placeholder')"
                 :aria-label="$i18n('filters-text-label-aria')"
@@ -82,12 +82,11 @@
                     <template #label>
                       {{ $i18n('filters-category-label') }}
                     </template>
-                    <cdx-combobox
-                    :key="$i18n.locale"
+                    <cdx-select
                       v-model:selected="categoryFilter"
-                      :menu-items="filteredCategoryMenuItems"
-                      :placeholder="$i18n('filters-lexical-category-placeholder')"
-                      @input="onCategoryInput"
+                      :menu-items="allCategoryMenuItems"
+                      :default-label="$i18n('filters-lexical-category-placeholder')"
+                      :status="categoryFilterError ? 'error' : 'default'"
                       @blur="categoryFilterBlurred = true"
                     />
                   </cdx-field>
@@ -123,8 +122,8 @@
 
 <script setup>
 import { ref, onMounted, computed, watch, getCurrentInstance, nextTick } from "vue";
-import { CdxButton, CdxIcon, CdxMessage, CdxTextInput, CdxCombobox, CdxField } from "@wikimedia/codex";
-import { cdxIconCollapse, cdxIconExpand, cdxIconSearch } from "@wikimedia/codex-icons";
+import { CdxButton, CdxIcon, CdxMessage, CdxTextInput, CdxSelect, CdxField } from "@wikimedia/codex";
+import { cdxIconCollapse, cdxIconExpand, cdxIconFunnel } from "@wikimedia/codex-icons";
 import SearchForm from "../components/SearchForm.vue";
 import ResultsPanel from "../components/results/ResultsPanel.vue";
 import { getQueryOptionsForLanguage } from "../data/queryOptions.js";
@@ -151,7 +150,6 @@ const textFilter = ref('');
 const categoryFilter = ref('');
 const resultsTableRef = ref(null);
 const categoryFilterBlurred = ref(false);
-const categorySearchTerm = ref('');
 
 function getQueryLabel(queryValue) {
   if (!queryValue) return '';
@@ -198,7 +196,6 @@ watch(isLoading, (newVal, oldVal) => {
 async function executeSearch() {
   textFilter.value = '';
   categoryFilter.value = $i18n('filters-category-all');
-  categorySearchTerm.value = '';
   isPanelCollapsed.value = window.innerWidth < 640;
   await store.executeSearch();
 }
@@ -276,14 +273,6 @@ const allCategoryMenuItems = computed(() => {
   ];
 });
 
-const filteredCategoryMenuItems = computed(() => {
-  if (!categorySearchTerm.value) return allCategoryMenuItems.value;
-  const search = categorySearchTerm.value.toLowerCase();
-  return allCategoryMenuItems.value.filter(item => 
-    item.label.toLowerCase().includes(search)
-  );
-});
-
 const categoryFilterError = computed(() => {
   if (!categoryFilterBlurred.value) return '';
   if (categoryFilter.value === $i18n('filters-category-all') || !categoryFilter.value) return '';
@@ -313,18 +302,9 @@ const activeFilterCount = computed(() => {
   return count;
 });
 
-function onCategoryInput(event) {
-  categorySearchTerm.value = event.target.value;
-  // reset blur flag when user starts typing
-  if (categoryFilterBlurred.value) {
-    categoryFilterBlurred.value = false;
-  }
-}
-
 function clearFilters() {
   textFilter.value = '';
   categoryFilter.value = $i18n('filters-category-all');
-  categorySearchTerm.value = '';
 }
 
 const hasActiveFilters = computed(() => {
@@ -528,11 +508,11 @@ const hasActiveFilters = computed(() => {
   text-overflow: ellipsis;
 }
 
-:deep(.cdx-combobox) {
+:deep(.cdx-select-vue) {
   width: 100%;
 }
 
-:deep(.cdx-combobox__input) {
+:deep(.cdx-select-vue__handle) {
   width: 100%;
 }
 
