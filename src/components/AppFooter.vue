@@ -81,7 +81,7 @@
 <script setup>
 import { CdxIcon } from "@wikimedia/codex";
 import { cdxIconLinkExternal } from "@wikimedia/codex-icons";
-import BroomstickIcon from "./BroomstickIcon.vue";
+import BroomstickIcon from "./icons/BroomstickIcon.vue";
 import { getCurrentInstance } from 'vue';
 
 const instance = getCurrentInstance();
@@ -151,7 +151,7 @@ const $i18n = instance?.appContext.config.globalProperties.$i18n;
 .footer-branding {
   display: flex;
   align-items: center;
-  gap: var(--spacing-50);
+  gap: var(--spacing-100); /* changed from spacing-50 (MA) */
 }
 
 .footer-logo {
