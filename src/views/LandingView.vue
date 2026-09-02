@@ -133,7 +133,7 @@ async function executeSearch() {
   width: calc(var(--font-size-medium, 1rem) + 4px);
   height: var(--line-height-medium, 1.625rem);
   flex-shrink: 0;
-  color: var(--color-progressive);
+  color: #196551;
 }
 
 .dustpan-link {
