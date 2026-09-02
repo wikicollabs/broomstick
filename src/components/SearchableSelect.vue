@@ -15,7 +15,6 @@
       <cdx-select
         :selected="selected"
         :menu-items="[]"
-        :disabled="disabled"
         :default-label="defaultLabel"
         class="searchable-select__visual"
         aria-hidden="true"
@@ -75,7 +74,9 @@
         @update:selected="onSelect"
       >
         <template #no-results>
-          {{ noResultsText }}
+          <span class="searchable-select__no-results">
+            {{ noResultsText }}
+          </span>
         </template>
       </cdx-menu>
     </div>
@@ -313,10 +314,6 @@ onBeforeUnmount(() => {
   color: var(--color-placeholder);
 }
 
-.searchable-select--disabled .searchable-select__label {
-  color: var(--color-disabled);
-}
-
 .searchable-select__popup {
   position: absolute;
   top: 100%;
@@ -352,5 +349,9 @@ onBeforeUnmount(() => {
   border: 0;
   border-radius: 0;
   box-shadow: none;
+}
+
+.searchable-select__no-results {
+  color: var(--color-base);
 }
 </style>
