@@ -1,1 +1,16 @@
-<svg width="512" height="512" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#Favicon__a)"><path d="M455.111 398.222H512V512H398.222v-56.889H56.889V56.889H455.11v341.333Z" fill="#3056A9"/><g clip-path="url(#Favicon__b)" fill="#fff"><path d="M369.778 398.222h-42.667l-14.222-85.333-14.222 85.333H142.222l14.222-113.778h199.112l14.222 113.778Zm-99.556-170.667h56.889c15.709 0 28.445 12.736 28.445 28.445H156.444c0-15.709 12.735-28.445 28.445-28.445h56.889V113.778h28.444v113.777Z"/></g></g><defs><clipPath id="Favicon__a"><path fill="#fff" d="M0 0h512v512H0z"/></clipPath><clipPath id="Favicon__b"><path fill="#fff" transform="translate(113.778 113.778)" d="M0 0h284.444v284.444H0z"/></clipPath></defs></svg>
+<svg width="36" height="36" viewBox="-2 -2 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g clip-path="url(#clip0_broomstick)">
+    <path
+      fill-rule="evenodd"
+      clip-rule="evenodd"
+      d="M33 15.75L36 18.75V36H9C4.02944 36 0 31.9706 0 27V0H33V15.75ZM6.75 20.25V27C6.75 29.4852 8.76478 31.4999 11.25 31.5H20.25V22.5H22.5L24.75 31.5H29.25V29.25L27 20.25H6.75ZM11.25 4.5V15.75H6.75V18H26.4375L25.875 15.75H15.75L13.5 4.5H11.25Z"
+      fill="#3056A9"
+    />
+  </g>
+
+  <defs>
+    <clipPath id="clip0_broomstick">
+      <rect width="36" height="36" fill="white"/>
+    </clipPath>
+  </defs>
+</svg>
