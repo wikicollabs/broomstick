@@ -5,6 +5,7 @@
   "search-button": "Search",
   "search-heading": "Search",
   "search-language-label": "Lexeme language",
+  "search-language-no-results": "No languages found.",
   "search-query-label": "Look for",
   "search-language-placeholder": "Select a language",
   "search-query-placeholder": "Select an option",
