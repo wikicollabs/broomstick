@@ -30,6 +30,15 @@ jobs:
             exit 1
           fi
 
+      - name: Verify branch
+        env:
+          GITHUB_REF_VALUE: ${{ github.ref }}
+        run: |
+          if [ "$GITHUB_REF_VALUE" != "refs/heads/staging" ]; then
+            echo "This workflow must be run from the staging branch."
+            exit 1
+          fi
+
   deploy:
     name: Deploy
     needs: check-passphrase
@@ -43,7 +52,7 @@ jobs:
 
       - name: Show deployed commit
         run: |
-          echo "Deploying:"
+          echo "Deploying commit:"
           git log -1 --oneline
           echo
           echo "Full SHA:"
@@ -72,13 +81,13 @@ jobs:
       - name: Get build metadata
         id: build
         run: |
-          echo "VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
-          echo "SHA=$(git rev-parse --short=12 HEAD)" >> "$GITHUB_OUTPUT"
+          echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+          echo "sha=$(git rev-parse --short=12 HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Package build
         run: |
           tar czf \
-            "broomstick-${{ steps.build.outputs.VERSION }}-${{ steps.build.outputs.SHA }}-staging.tgz" \
+            "broomstick-${{ steps.build.outputs.version }}-${{ steps.build.outputs.sha }}-staging.tgz" \
             -C dist .
 
       - name: Upload package to Toolforge
@@ -86,7 +95,6 @@ jobs:
           TF_SSH_KEY: ${{ secrets.TF_SSH_KEY }}
         run: |
           mkdir -p ~/.ssh
-
           printf '%s\n' "$TF_SSH_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
 
@@ -94,7 +102,7 @@ jobs:
 
           scp \
             -i ~/.ssh/id_ed25519 \
-            "broomstick-${{ steps.build.outputs.VERSION }}-${{ steps.build.outputs.SHA }}-staging.tgz" \
+            "broomstick-${{ steps.build.outputs.version }}-${{ steps.build.outputs.sha }}-staging.tgz" \
             noncesura@login.toolforge.org:~/broomstick-release/
 
       - name: Deploy to staging
@@ -110,10 +118,13 @@ jobs:
             become broomstick-staging bash -c '
               set -e
 
-              ARCHIVE=~noncesura/broomstick-release/broomstick-${{ steps.build.outputs.VERSION }}-${{ steps.build.outputs.SHA }}-staging.tgz
+              archive=~noncesura/broomstick-release/broomstick-${{ steps.build.outputs.version }}-${{ steps.build.outputs.sha }}-staging.tgz
 
-              echo "Deploying $ARCHIVE"
+              echo "Deploying archive:"
+              echo "$archive"
 
               rm -rf ~/public_html/*
-              tar xzf "$ARCHIVE" -C ~/public_html/
+              tar xzf "$archive" -C ~/public_html/
+
+              echo "Deployment complete."
             '
