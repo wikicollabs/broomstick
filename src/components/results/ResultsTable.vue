@@ -212,8 +212,15 @@ const tableData = computed<LexemeResult[]>(() => {
     const sortDirection = sortState.value[sortColumn];
 
     data = [...data].sort((a, b) => {
-      let aVal = String(a[sortColumn]).toLowerCase();
-      let bVal = String(b[sortColumn]).toLowerCase();
+      // Hacky: CdxTable has no built-in numeric sort, it only tracks sort
+      if (sortColumn === "lexemeId") {
+        const aNum = parseInt(String(a[sortColumn]).replace(/\D/g, ""), 10);
+        const bNum = parseInt(String(b[sortColumn]).replace(/\D/g, ""), 10);
+        return sortDirection === "asc" ? aNum - bNum : bNum - aNum;
+      }
+
+      const aVal = String(a[sortColumn]).toLowerCase();
+      const bVal = String(b[sortColumn]).toLowerCase();
 
       if (sortDirection === "asc") {
         return aVal.localeCompare(bVal);
