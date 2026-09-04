@@ -15,7 +15,7 @@ const STORAGE_KEY_HIDE_VISITED = "broomstick_hide_visited";
 type I18nFn = (key: string, ...params: unknown[]) => string;
 
 export interface UseVisitedLexemesReturn {
-  visitedLexemes: Ref<Set<string>>;
+  visitedLexemes: ComputedRef<Set<string>>;
   hideVisited: Ref<boolean>;
   visibilityStatusMessage: Ref<string>;
   hiddenCount: ComputedRef<number>;
@@ -29,20 +29,29 @@ export interface UseVisitedLexemesReturn {
 
 /**
  * @param results - reactive results list (e.g. toRef(props, 'results'))
+ * @param scopeKey - reactive key identifying the current language+query scope (e.g. "id:is-empty")
  * @param $i18n - the app's i18n function
  */
 export function useVisitedLexemes(
   results: Ref<LexemeResult[]>,
+  scopeKey: Ref<string>,
   $i18n: I18nFn
 ): UseVisitedLexemesReturn {
-  const visitedLexemes = ref<Set<string>>(new Set());
+  const visitedByScope = ref<Record<string, Set<string>>>({});
   const hideVisited = ref(false);
   const visibilityStatusMessage = ref("");
 
   function restoreFromStorage(): void {
     const savedVisited = sessionStorage.getItem(STORAGE_KEY_VISITED);
     if (savedVisited) {
-      visitedLexemes.value = new Set(JSON.parse(savedVisited));
+      const parsed = JSON.parse(savedVisited);
+      if (!Array.isArray(parsed)) {
+        const restored: Record<string, Set<string>> = {};
+        for (const scope in parsed) {
+          restored[scope] = new Set(parsed[scope]);
+        }
+        visitedByScope.value = restored;
+      }
     }
 
     const savedHideVisited = sessionStorage.getItem(STORAGE_KEY_HIDE_VISITED);
@@ -53,15 +62,23 @@ export function useVisitedLexemes(
 
   // save to sessionStorage on changes
   watch(
-    visitedLexemes,
-    (newSet) => {
-      sessionStorage.setItem(STORAGE_KEY_VISITED, JSON.stringify([...newSet]));
+    visitedByScope,
+    (newState) => {
+      const serializable: Record<string, string[]> = {};
+      for (const scope in newState) {
+        serializable[scope] = [...newState[scope]];
+      }
+      sessionStorage.setItem(STORAGE_KEY_VISITED, JSON.stringify(serializable));
     },
     { deep: true }
   );
 
   watch(hideVisited, (newVal) => {
     sessionStorage.setItem(STORAGE_KEY_HIDE_VISITED, String(newVal));
+  });
+
+  const visitedLexemes = computed<Set<string>>(() => {
+    return visitedByScope.value[scopeKey.value] ?? new Set();
   });
 
   const hiddenCount = computed<number>(() => {
@@ -81,12 +98,16 @@ export function useVisitedLexemes(
   });
 
   const allVisitedAndHidden = computed<boolean>(() => {
-    return Boolean(hideVisited) && filteredResults.value.length === 0;
+    return results.value.length > 0 && hideVisited.value && filteredResults.value.length === 0;
   });
 
   function markVisited(lexemeId: string): void {
+    const scope = scopeKey.value;
     setTimeout(() => {
-      visitedLexemes.value.add(lexemeId);
+      if (!visitedByScope.value[scope]) {
+        visitedByScope.value[scope] = new Set<string>();
+      }
+      visitedByScope.value[scope].add(lexemeId);
     }, 100);
   }
 
