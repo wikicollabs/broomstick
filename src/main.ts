@@ -11,6 +11,7 @@ import { createPinia } from 'pinia'
 import './style.css'
 import App from './App.vue'
 import i18n from './i18n'
+import { getBrowserLanguage } from './i18n/displayLanguages.js'
 import '@wikimedia/codex-design-tokens/theme-wikimedia-ui.css'
 import '@wikimedia/codex/dist/codex.style-bidi.css';
 
@@ -72,7 +73,7 @@ if (localStorage?.getItem('theme')) {
 }
 
 const RTL_LANGUAGES = ['ar', 'he', 'fa', 'ps', 'ur', 'yi'];
-const savedLocale = localStorage.getItem('locale') || 'en';
+const savedLocale = localStorage.getItem('locale') || getBrowserLanguage();
 const langCode = savedLocale.split('-')[0];
 const isRTL = RTL_LANGUAGES.includes(langCode);
 

@@ -234,7 +234,7 @@ import {
   cdxIconClear,
   cdxIconSearchCaseSensitive,
 } from "@wikimedia/codex-icons";
-import { DISPLAY_LANGUAGES } from '../i18n/displayLanguages.js';
+import { DISPLAY_LANGUAGES, getBrowserLanguage } from '../i18n/displayLanguages.js';
 
 const instance = getCurrentInstance();
 const $i18n = instance?.appContext.config.globalProperties.$i18n;
@@ -245,7 +245,7 @@ const getLanguageName = (locale) => {
 
 const selectedItem = ref(null);
 const currentTheme = ref("auto");
-const currentLanguage = ref(localStorage.getItem('locale') || 'en');  
+const currentLanguage = ref(localStorage.getItem('locale') || getBrowserLanguage());  
 const currentTextSize = ref(localStorage.getItem('broomstick_text_size') || 'medium');
 
 const tempTheme = ref("auto");
@@ -395,7 +395,7 @@ const hasThemeChanged = computed(() => {
 });
 
 const hasLanguageChanged = computed(() => {
-  const currentLocale = localStorage.getItem('locale') || 'en';
+  const currentLocale = localStorage.getItem('locale') || getBrowserLanguage();
   return tempLanguage.value !== currentLocale;
 });
 
