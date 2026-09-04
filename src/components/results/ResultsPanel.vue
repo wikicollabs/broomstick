@@ -21,6 +21,8 @@
       ref="resultsTableRef"
       :results="results"
       :total-count="totalCount"
+      :searched-language="searchedLanguage"
+      :searched-gap-type="searchedGapType"
       :text-filter="textFilter"
       :connection-error="connectionError"
       :is-loading="isLoading"
@@ -45,6 +47,8 @@ interface Props {
   error?: string | null;
   results: LexemeResult[];
   totalCount: number;
+  searchedLanguage: string;
+  searchedGapType: string;
   textFilter?: string;
   connectionError?: boolean;
 }

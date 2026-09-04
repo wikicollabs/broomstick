@@ -111,6 +111,8 @@
             :error="error"
             :results="filteredResults"
             :total-count="results.length"
+            :searched-language="searchedLanguage"
+            :searched-gap-type="searchedGapType"
             :text-filter="textFilter"
             :connection-error="connectionError"
           />

@@ -13,7 +13,7 @@
       tabindex="-1"
       :columns="
         results.length === 0 ||
-        (hideVisited && filteredResults.length === 0) ||
+        allVisitedAndHidden ||
           props.connectionError
           ? []
           : columns
@@ -21,7 +21,7 @@
       :data="tableData"
       :paginate="
         results.length > 0 &&
-        !(hideVisited && filteredResults.length === 0) &&
+        !allVisitedAndHidden &&
         !props.connectionError
       "
       :pagination-size-options="paginationOptions"
@@ -77,7 +77,7 @@
       <template #empty-state>
         <ResultsEmpty
           :connection-error="props.connectionError"
-          :all-visited-hidden="hideVisited && filteredResults.length === 0"
+          :all-visited-hidden="allVisitedAndHidden"
           @reload="reloadPage"
         />
       </template>
@@ -90,6 +90,7 @@ import { ref, computed, onMounted, getCurrentInstance, watch, nextTick, toRef } 
 import { CdxTable, CdxIcon } from "@wikimedia/codex";
 import { cdxIconSuccess, cdxIconNotBright } from "@wikimedia/codex-icons";
 import type { LexemeResult } from "../../types/types";
+import { getLanguageCode } from "../../data/languages";
 import { useVisitedLexemes } from "./composables/useVisitedLexemes";
 import ResultsVisibility from "./ResultsVisibility.vue";
 import ResultsEmpty from "./ResultsEmpty.vue";
@@ -109,6 +110,8 @@ const reloadPage = () => {
 interface Props {
   results: LexemeResult[];
   totalCount: number;
+  searchedLanguage: string;
+  searchedGapType: string;
   textFilter?: string;
   connectionError?: boolean;
 }
@@ -121,6 +124,10 @@ const props = withDefaults(defineProps<Props>(), {
 const sortState = ref<Record<string, "asc" | "desc">>({});
 const visibilityControlsRef = ref<InstanceType<typeof ResultsVisibility> | null>(null);
 
+const scopeKey = computed(
+  () => `${getLanguageCode(props.searchedLanguage) ?? ""}:${props.searchedGapType}`
+);
+
 const {
   hideVisited,
   visibilityStatusMessage,
@@ -131,7 +138,7 @@ const {
   isVisited,
   toggleHideVisited,
   restoreFromStorage,
-} = useVisitedLexemes(toRef(props, "results"), $i18n);
+} = useVisitedLexemes(toRef(props, "results"), scopeKey, $i18n);
 
 const columns = computed(() => [
   {
