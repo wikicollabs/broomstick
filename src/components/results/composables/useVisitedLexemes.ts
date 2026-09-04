@@ -43,18 +43,50 @@ export function useVisitedLexemes(
 
   function restoreFromStorage(): void {
     const savedVisited = sessionStorage.getItem(STORAGE_KEY_VISITED);
+
     if (savedVisited) {
-      const parsed = JSON.parse(savedVisited);
-      if (!Array.isArray(parsed)) {
-        const restored: Record<string, Set<string>> = {};
-        for (const scope in parsed) {
-          restored[scope] = new Set(parsed[scope]);
+      try {
+        const parsed = JSON.parse(savedVisited);
+
+        if (
+          Array.isArray(parsed) ||
+          parsed === null ||
+          typeof parsed !== "object"
+        ) {
+          sessionStorage.removeItem(STORAGE_KEY_VISITED);
+        } else {
+          const restored: Record<string, Set<string>> = {};
+          let isValid = true;
+
+          for (const scope in parsed) {
+            const visitedLexemes = parsed[scope];
+
+            if (
+              !Array.isArray(visitedLexemes) ||
+              !visitedLexemes.every(
+                (lexemeId) => typeof lexemeId === "string"
+              )
+            ) {
+              isValid = false;
+              break;
+            }
+
+            restored[scope] = new Set(visitedLexemes);
+          }
+
+          if (isValid) {
+            visitedByScope.value = restored;
+          } else {
+            sessionStorage.removeItem(STORAGE_KEY_VISITED);
+          }
         }
-        visitedByScope.value = restored;
+      } catch {
+        sessionStorage.removeItem(STORAGE_KEY_VISITED);
       }
     }
 
     const savedHideVisited = sessionStorage.getItem(STORAGE_KEY_HIDE_VISITED);
+
     if (savedHideVisited) {
       hideVisited.value = savedHideVisited === "true";
     }
