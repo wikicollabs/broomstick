@@ -45,7 +45,7 @@ app.provide('CdxI18nFunction', (key: string, ...params: unknown[]) => {
 });
 
 // version-based localStorage invalidation
-const APP_VERSION = '1.7.4';
+const APP_VERSION = '2.0.0';
 const storedVersion = localStorage.getItem('broomstick_version');
 
 if (storedVersion !== APP_VERSION) {

@@ -22,11 +22,23 @@
               href="https://dustpan.toolforge.org/"
               target="_blank"
               rel="noopener noreferrer"
-              class="dustpan-link"
+              class="external-link"
               :aria-label="$i18n('landing-try-dustpan-link', 'Dustpan')"
             >{{ $i18n('landing-improve-wikiprojects-link', 'Dustpan') }}</a>{{ $i18n('landing-improve-wikiprojects-help') }}
           </span>
         </div>
+
+        <CdxMessage class="privacy-policy-message" inline>
+          {{ $i18n('landing-broomstick-privacy-update', 'Broomstick') }}
+          <a
+            href="https://www.wikidata.org/wiki/Wikidata:Broomstick/Privacy_policy"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="external-link"
+          >
+            {{ $i18n('landing-broomstick-privacy-link') }}
+          </a>
+        </CdxMessage>
       </section>
 
       <section class="section-form">
@@ -49,6 +61,7 @@ import SearchForm from "../components/SearchForm.vue";
 import DustpanIcon from "../components/icons/DustpanIcon.vue";
 import { useSearchStore } from "../state/searchStore";
 import { storeToRefs } from "pinia";
+import { CdxMessage } from '@wikimedia/codex';
 
 const instance = getCurrentInstance();
 const $i18n = instance?.appContext.config.globalProperties.$i18n;
@@ -136,13 +149,17 @@ async function executeSearch() {
   color: #196551;
 }
 
-.dustpan-link {
+.privacy-policy-message {
+  margin-top: 0.5rem;
+}
+
+.external-link {
   color: var(--color-progressive);
   text-decoration: none;
 }
 
-.dustpan-link:hover,
-.dustpan-link:focus {
+.external-link:hover,
+.external-link:focus {
   text-decoration: underline;
 }
 
