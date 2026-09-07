@@ -13,26 +13,27 @@
       :status="languageError ? 'error' : 'default'"
     >
       <template #label>{{ $i18n('search-language-label') }}</template>
-      <cdx-combobox
+      <language-select
         v-model:selected="selectedLanguageValue"
-        :menu-items="filteredLanguageOptions"
+        :disabled="disabled"
         :placeholder="$i18n('search-language-placeholder')"
+        :search-placeholder="$i18n('search-language-placeholder')"
         :aria-label="$i18n('search-language-label')"
-        :class="{ 'combobox-error': languageError }"
-        @input="onLanguageInput"
+        :search-aria-label="$i18n('search-language-label')"
+        :no-results-text="$i18n('search-language-no-results')"
         @blur="onLanguageBlur"
         @focus="onLanguageFocus"
       />
     </cdx-field>
     <cdx-message
-        v-if="languageError"
-        type="error"
-        :inline="true"
-        class="error-message"
-        ref="languageErrorRef"
-        tabindex="-1"
+      v-if="languageError"
+      type="error"
+      :inline="true"
+      class="error-message"
+      ref="languageErrorRef"
+      tabindex="-1"
     >
-        {{ languageError }}
+      {{ languageError }}
     </cdx-message>
 
     <cdx-field
@@ -40,14 +41,12 @@
       :status="gapTypeError ? 'error' : 'default'"
     >
       <template #label>{{ $i18n('search-query-label') }}</template>
-      <cdx-combobox
-        :selected="getDisplayValue(selectedGapTypeValue)"
-        :menu-items="filteredGapTypeOptions"
-        @update:selected="onQuerySelected"
-        :placeholder="$i18n('search-query-placeholder')"
+      <cdx-select
+        v-model:selected="selectedGapTypeValue"
+        :menu-items="gapTypeOptions"
+        :default-label="$i18n('search-query-placeholder')"
+        :status="gapTypeError ? 'error' : 'default'"
         :aria-label="$i18n('search-query-label')"
-        :class="{ 'combobox-error': gapTypeError }"
-        @input="onGapTypeInput"
         @blur="onGapTypeBlur"
         @focus="onGapTypeFocus"
       />
@@ -78,26 +77,25 @@
     </cdx-button>
 
     <cdx-message 
-  v-if="hasChangedSelection && resultsExist && activeFilterCount > 0"
-  type="notice"
-  inline
-  class="selection-change-notice"
-  role="status"
->
-  {{ $i18n('search-form-filter-clear-notice') }}
-</cdx-message>
+      v-if="hasChangedSelection && resultsExist && activeFilterCount > 0"
+      type="notice"
+      inline
+      class="selection-change-notice"
+      role="status"
+    >
+      {{ $i18n('search-form-filter-clear-notice') }}
+    </cdx-message>
   </div>
 </template>
 
 <script setup>
 import { computed, ref, watch, getCurrentInstance, nextTick } from "vue";
-import { CdxField, CdxCombobox, CdxButton, CdxIcon, CdxMessage } from "@wikimedia/codex";
+import { CdxField, CdxSelect, CdxButton, CdxIcon, CdxMessage } from "@wikimedia/codex";
 import { cdxIconSearch, cdxIconError } from "@wikimedia/codex-icons";
-import { LANGUAGES } from "../data/languages.js";
-import {
-  getQueryOptionsForLanguage,
-  getAllQueryValues,
-} from "../data/queries.js";
+import { LANGUAGES, getAvailableQueriesForLanguage } from "../data/languages.js";
+import { getQueryOptionsForLanguage } from "../data/queryOptions.js";
+import LanguageSelect from "./LanguageSelect.vue";
+
 const instance = getCurrentInstance();
 const $i18n = instance?.appContext.config.globalProperties.$i18n;
 
@@ -151,32 +149,18 @@ const gapTypeOptions = computed(() => {
   }));
 });
 
-const languageSearchTerm = ref("");
-const gapTypeSearchTerm = ref("");
+const availableGapTypeValues = computed(() =>
+  props.language ? getAvailableQueriesForLanguage(props.language) : []
+);
+
+watch(() => props.language, () => {
+  if (props.gapType && !availableGapTypeValues.value.includes(props.gapType)) {
+    emit("update:gapType", "");
+  }
+});
+
 const languageBlurred = ref(false);
 const gapTypeBlurred = ref(false);
-
-const filteredLanguageOptions = computed(() => {
-  if (!languageSearchTerm.value) return languageOptions;
-  const search = languageSearchTerm.value.toLowerCase();
-  return languageOptions.filter((opt) =>
-    opt.label.toLowerCase().includes(search)
-  );
-});
-
-const filteredGapTypeOptions = computed(() => {
-  if (!gapTypeSearchTerm.value) return gapTypeOptions.value;
-  const search = gapTypeSearchTerm.value.toLowerCase();
-
-  return gapTypeOptions.value
-    .map((group) => ({
-      label: group.label,
-      items: group.items.filter((opt) =>
-        opt.label.toLowerCase().includes(search)
-      ),
-    }))
-    .filter((group) => group.items.length > 0);
-});
 
 const selectedLanguageValue = computed({
   get() {
@@ -189,10 +173,10 @@ const selectedLanguageValue = computed({
 
 const selectedGapTypeValue = computed({
   get() {
-    return props.gapType;
+    return props.gapType || null;
   },
   set(value) {
-    emit("update:gapType", value);
+    emit("update:gapType", value ?? "");
   },
 });
 
@@ -218,14 +202,11 @@ watch(languageError, (newError) => {
   }
 });
 
-
-
 const gapTypeError = computed(() => {
   if (!gapTypeBlurred.value) return "";
   if (!props.gapType) return "";
 
-  const validValues = getAllQueryValues();
-  if (!validValues.includes(props.gapType)) {
+  if (!availableGapTypeValues.value.includes(props.gapType)) {
     return $i18n('errors-query-not-found');
   }
   return "";
@@ -246,47 +227,13 @@ const isSearchDisabled = computed(() => {
   if (props.disabled) return true;
 
   const validLanguages = languageOptions.map((opt) => opt.value);
-  const validGapTypes = getAllQueryValues();
 
   if (!validLanguages.includes(props.language)) return true;
-  if (!validGapTypes.includes(props.gapType)) return true;
+  if (!availableGapTypeValues.value.includes(props.gapType)) return true;
 
   return false;
 });
 
-function onLanguageInput(event) {
-  languageSearchTerm.value = event.target.value;
-  // clear blur flag when user starts typing again
-  if (languageBlurred.value && event.target.value === "") {
-    languageBlurred.value = false;
-  }
-}
-
-function onGapTypeInput(event) {
-  gapTypeSearchTerm.value = event.target.value;
-  // clear blur flag when user starts typing again
-  if (gapTypeBlurred.value && event.target.value === "") {
-    gapTypeBlurred.value = false;
-  }
-}
-
-// finds the translated label for display
-function getDisplayValue(value) {
-  if (!value) return '';
-  
-  for (const group of filteredGapTypeOptions.value) {
-    const item = group.items.find(i => i.value === value);
-    if (item) return item.label; // this is already translated from getQueryOptionsForLanguage
-  }
-  return value;
-}
-
-// handles selection, emits the VALUE (for sparql lookup)
-function onQuerySelected(selectedValue) {
-  
-  // combobox sends the value directly, just emit it
-  emit("update:gapType", selectedValue);
-}
 
 function onLanguageBlur() {
   languageBlurred.value = true;
@@ -297,18 +244,10 @@ function onGapTypeBlur() {
 }
 
 function onLanguageFocus() {
-  // clear search term if there's an error, allowing dropdown to work
-  if (languageError.value && languageSearchTerm.value) {
-    languageSearchTerm.value = "";
-  }
   languageBlurred.value = false;
 }
 
 function onGapTypeFocus() {
-  // clear search term if there's an error, allowing dropdown to work
-  if (gapTypeError.value && gapTypeSearchTerm.value) {
-    gapTypeSearchTerm.value = "";
-  }
   gapTypeBlurred.value = false;
 }
 
@@ -324,10 +263,6 @@ function handleSearch() {
 </script>
 
 <style scoped>
-:deep(.combobox-error .cdx-text-input__input) {
-  color: var(--color-error) !important;
-}
-
 .language-type-field,
 .gap-type-field {
   margin-bottom: var(--spacing-75) !important;
@@ -345,6 +280,10 @@ function handleSearch() {
 
 .gap-type-field {
   margin-top: 0 !important;
+}
+
+.gap-type-field :deep(.cdx-field__control) {
+  display: flex;
 }
 
 .search-form {
@@ -403,9 +342,15 @@ function handleSearch() {
   min-width: 0;
 }
 
-:deep(.cdx-combobox) {
+:deep(.cdx-select-vue) {
   width: 100%;
   min-width: 0;
+}
+
+:deep(.cdx-select-vue__handle) {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 :deep(.cdx-text-input) {
@@ -425,6 +370,9 @@ function handleSearch() {
   margin-top: 0;
 }
 :deep(.cdx-field--status-error .cdx-text-input__input) {
+  background-color: var(--background-color-error-subtle);
+}
+:deep(.cdx-field--status-error .cdx-select-vue__handle) {
   background-color: var(--background-color-error-subtle);
 }
 </style>

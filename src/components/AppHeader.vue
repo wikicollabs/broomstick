@@ -30,7 +30,7 @@
 <script setup>
 import { ref } from 'vue';
 import SettingsMenu from "./SettingsMenu.vue";
-import BroomstickLogo from "./BroomstickLogo.vue";
+import BroomstickLogo from "./icons/BroomstickLogo.vue";
 const logoRef = ref(null);
 const emit = defineEmits(["home"]);
 

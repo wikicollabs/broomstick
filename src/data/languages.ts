@@ -6,7 +6,31 @@
  * @see https://github.com/wikicollabs/broomstick
  */
 
-export const LANGUAGES = [
+import type { Language } from '../types/types'
+import type { QueryId } from './queries'
+
+// query values available to every language with no exceptions.
+// language-specific additions (e.g. gender-related properties) go in
+// LANGUAGE_EXTRA_QUERIES below, keyed by language code.
+export const UNIVERSAL_QUERIES: readonly QueryId[] = [
+  'is-empty',
+  'missing-senses',
+  'missing-forms',
+  'missing-external-identifiers',
+  'missing-usage-example',
+  'missing-item-for-sense',
+  'missing-predicate-troponym',
+  'missing-grammatical-features',
+  'missing-ipa',
+  'missing-pronunciation-audio',
+  'misplaced-item-for-sense',
+]
+
+// language-specific queries on top of UNIVERSAL_QUERIES, keyed by code.
+// empty for now, no language-specific queries exist yet.
+export const LANGUAGE_EXTRA_QUERIES: Record<string, readonly QueryId[]> = {}
+
+export const LANGUAGES: Language[] = [
   { display: 'Anarâškielâ (smn)', code: 'smn', autonym: 'Anarâškielâ', qid: 'Q33462' },
   { display: 'Aragonés (an)', code: 'an', autonym: 'Aragonés', qid: 'Q8765' },
   { display: 'Bahasa Indonesia (id)', code: 'id', autonym: 'Bahasa Indonesia', qid: 'Q9240' },
@@ -101,16 +125,16 @@ export const LANGUAGES = [
 ]
 
 // helper functions
-export function getLanguageQid(displayString) {
+export function getLanguageQid(displayString: string): string | undefined {
   return LANGUAGES.find(lang => lang.display === displayString)?.qid
 }
 
-export function getLanguageByDisplay(displayString) {
-  return LANGUAGES.find(lang => lang.display === displayString)
-}
-
-export function getLanguageCode(displayString) {
+export function getLanguageCode(displayString: string): string | undefined {
   return LANGUAGES.find(lang => lang.display === displayString)?.code
-
 }
 
+export function getAvailableQueriesForLanguage(displayString: string): string[] {
+  const code = getLanguageCode(displayString)
+  const extras = code ? LANGUAGE_EXTRA_QUERIES[code] ?? [] : []
+  return [...UNIVERSAL_QUERIES, ...extras]
+}

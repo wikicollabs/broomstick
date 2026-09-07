@@ -1,0 +1,12 @@
+SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
+  ?lexeme dct:language wd:%LANGUAGE_QID% ;
+          wikibase:lemma ?lemma;
+          wikibase:lexicalCategory ?lexicalCategory.
+
+  FILTER NOT EXISTS {
+    ?lexeme ?p ?val.
+    ?prop wikibase:directClaim ?p ;
+          wikibase:propertyType wikibase:ExternalId.
+  }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "%LANGUAGE_CODE%,mul,en". }
+}

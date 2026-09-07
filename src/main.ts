@@ -7,17 +7,21 @@
  */
 
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import './style.css'
 import App from './App.vue'
 import i18n from './i18n'
+import { getBrowserLanguage } from './i18n/displayLanguages.js'
 import '@wikimedia/codex-design-tokens/theme-wikimedia-ui.css'
 import '@wikimedia/codex/dist/codex.style-bidi.css';
 
+
 const app = createApp(App);
 
+app.use(createPinia());
 app.use(i18n);
 
-app.provide('CdxI18nFunction', (key, ...params) => {
+app.provide('CdxI18nFunction', (key: string, ...params: unknown[]) => {
   const translatedKeys = [
     'cdx-table-pagination-status-message-determinate-short',
     'cdx-table-pagination-status-message-determinate-long',
@@ -28,21 +32,20 @@ app.provide('CdxI18nFunction', (key, ...params) => {
     'cdx-table-pager-button-prev-page',
     'cdx-dialog-close-button-label'
   ];
-  
+
   if (!translatedKeys.includes(key)) {
-    return key; 
+    return key;
   }
-  
-  const unwrapRef = (val) => val?.value !== undefined ? val.value : val;
+
+  const unwrapRef = (val: unknown) =>
+    val && typeof val === 'object' && 'value' in val ? (val as { value: unknown }).value : val;
   const unwrappedParams = params.map(unwrapRef);
-  
+
   return app.config.globalProperties.$i18n(key, ...unwrappedParams);
 });
 
-
-
 // version-based localStorage invalidation
-const APP_VERSION = '1.7.4';
+const APP_VERSION = '2.0.0';
 const storedVersion = localStorage.getItem('broomstick_version');
 
 if (storedVersion !== APP_VERSION) {
@@ -50,34 +53,27 @@ if (storedVersion !== APP_VERSION) {
   localStorage.setItem('broomstick_version', APP_VERSION);
 }
 
-
-
 // apply theme immediately to prevent flash
 if (localStorage?.getItem('theme')) {
   const theme = localStorage.getItem('theme')
-  
+
   if (theme === 'dark') {
     document.documentElement.classList.add('dark')
   } else if (theme === 'light') {
     document.documentElement.classList.add('light')
-  }
-  else if (theme === 'auto') {
-    // check system preference
+  } else if (theme === 'auto') {
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
       document.documentElement.classList.add('dark')
     }
   }
-}
-
-else {
-  // no saved preference - check system preference
+} else {
   if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
     document.documentElement.classList.add('dark')
   }
 }
 
 const RTL_LANGUAGES = ['ar', 'he', 'fa', 'ps', 'ur', 'yi'];
-const savedLocale = localStorage.getItem('locale') || 'en';
+const savedLocale = localStorage.getItem('locale') || getBrowserLanguage();
 const langCode = savedLocale.split('-')[0];
 const isRTL = RTL_LANGUAGES.includes(langCode);
 
