@@ -23,7 +23,7 @@
               target="_blank"
               rel="noopener noreferrer"
               class="dustpan-link"
-              :aria-label="$i18n('landing-try-dustpan-link', 'Dustpan')"
+              :aria-label="$i18n('landing-improve-wikiprojects-link', 'Dustpan')"
             >{{ $i18n('landing-improve-wikiprojects-link', 'Dustpan') }}</a>{{ $i18n('landing-improve-wikiprojects-help') }}
           </span>
         </div>

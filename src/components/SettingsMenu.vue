@@ -26,12 +26,10 @@
       :primary-action="{
         label: $i18n('settings-apply'),
         actionType: 'progressive',
-        ariaLabel: $i18n('settings-apply'),
         disabled: !hasThemeChanged,
       }"
       :default-action="{
         label: $i18n('settings-cancel'),
-        ariaLabel: $i18n('settings-cancel'),
       }"
       @primary="saveTheme"
       @default="showThemeDialog = false"
@@ -42,16 +40,16 @@
         :hide-label="true"
         :is-fieldset="true" 
         >
-          <cdx-radio v-model="tempTheme" name="theme" input-value="auto" :aria-label="$i18n('settings-theme-auto-aria')">
+          <cdx-radio v-model="tempTheme" name="theme" input-value="auto">
             <template #default> {{ $i18n('settings-theme-auto') }} </template>
             <template #description>
               <span class="radio-description">{{ $i18n('settings-theme-auto-description') }}</span>
             </template>
           </cdx-radio>
-          <cdx-radio v-model="tempTheme" name="theme" input-value="light" :aria-label="$i18n('settings-theme-light')">
+          <cdx-radio v-model="tempTheme" name="theme" input-value="light">
             {{ $i18n('settings-theme-light') }}
           </cdx-radio>
-          <cdx-radio v-model="tempTheme" name="theme" input-value="dark" :aria-label="$i18n('settings-theme-dark')">
+          <cdx-radio v-model="tempTheme" name="theme" input-value="dark">
             {{ $i18n('settings-theme-dark') }}
           </cdx-radio>
         </cdx-field>
@@ -66,12 +64,10 @@
       :primary-action="{
         label: $i18n('settings-apply'),
         actionType: 'progressive',
-        disabled: !hasLanguageChanged,
-        ariaLabel: $i18n('settings-apply'),
+        disabled: !hasLanguageChanged
       }"
       :default-action="{
-        label: $i18n('settings-cancel'),
-        ariaLabel: $i18n('settings-cancel'),
+        label: $i18n('settings-cancel')
       }"
       @primary="saveLanguage"
       @default="showLanguageDialog = false"
@@ -85,6 +81,7 @@
             :start-icon="cdxIconSearch"
             :clearable="true"
             :placeholder="$i18n('settings-language-search-placeholder')"
+            :aria-label="$i18n('settings-language-search-placeholder')"
             />
 
           <cdx-button
@@ -111,7 +108,6 @@
               v-model="tempLanguage"
               name="language"
               :input-value="lang.code"
-              :aria-label="lang.label"
             >
               {{ lang.nativeName }}
             </cdx-radio>
@@ -141,6 +137,7 @@
             target="_blank" 
             rel="noopener"
             class="translate-link"
+            :aria-label="$i18n('settings-translate-link')"
           >
             {{ $i18n('settings-translate-link') }}
           </a>
@@ -156,12 +153,10 @@
       :primary-action="{
         label: $i18n('settings-apply'),
         actionType: 'progressive',
-        ariaLabel: $i18n('settings-apply'),
         disabled: tempTextSize === currentTextSize,
       }"
       :default-action="{
         label: $i18n('settings-cancel'),
-        ariaLabel: $i18n('settings-cancel'),
       }"
       @primary="saveTextSize"
       @default="showTextSizeDialog = false"
@@ -176,7 +171,6 @@
             v-model="tempTextSize" 
             name="text-size" 
             input-value="small" 
-            :aria-label="$i18n('settings-text-size-small')"
           >
             {{ $i18n('settings-text-size-small') }}
           </cdx-radio>
@@ -185,7 +179,6 @@
             v-model="tempTextSize" 
             name="text-size" 
             input-value="medium" 
-            :aria-label="$i18n('settings-text-size-medium-aria')"
           >
             {{ $i18n('settings-text-size-medium') }}
           </cdx-radio>
@@ -194,7 +187,6 @@
             v-model="tempTextSize" 
             name="text-size" 
             input-value="large" 
-            :aria-label="$i18n('settings-text-size-large')"
           >
             {{ $i18n('settings-text-size-large') }}
           </cdx-radio>
@@ -203,7 +195,6 @@
             v-model="tempTextSize" 
             name="text-size" 
             input-value="extra-large" 
-            :aria-label="$i18n('settings-text-size-extra-large')"
           >
             {{ $i18n('settings-text-size-extra-large') }}
           </cdx-radio>
