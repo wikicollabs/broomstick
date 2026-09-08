@@ -10,8 +10,8 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import './style.css'
 import App from './App.vue'
-import i18n from './i18n'
-import { getBrowserLanguage } from './i18n/displayLanguages.js'
+import i18n from './i18n/i18n'
+import { DISPLAY_LANGUAGES, getBrowserLanguage } from './i18n/displayLanguages'
 import '@wikimedia/codex-design-tokens/theme-wikimedia-ui.css'
 import '@wikimedia/codex/dist/codex.style-bidi.css';
 
@@ -45,7 +45,7 @@ app.provide('CdxI18nFunction', (key: string, ...params: unknown[]) => {
 });
 
 // version-based localStorage invalidation
-const APP_VERSION = '2.0.0';
+const APP_VERSION = '2.0.1';
 const storedVersion = localStorage.getItem('broomstick_version');
 
 if (storedVersion !== APP_VERSION) {
@@ -72,12 +72,15 @@ if (localStorage?.getItem('theme')) {
   }
 }
 
-const RTL_LANGUAGES = ['ar', 'he', 'fa', 'ps', 'ur', 'yi'];
 const savedLocale = localStorage.getItem('locale') || getBrowserLanguage();
-const langCode = savedLocale.split('-')[0];
-const isRTL = RTL_LANGUAGES.includes(langCode);
 
-document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+const displayLanguage =
+  DISPLAY_LANGUAGES.find(language => language.code === savedLocale) ??
+  DISPLAY_LANGUAGES.find(
+    language => language.code === savedLocale.split('-')[0]
+  );
+
+document.documentElement.dir = displayLanguage?.rtl ? 'rtl' : 'ltr';
 
 const savedTextSize = localStorage.getItem('broomstick_text_size') || 'medium';
 document.documentElement.setAttribute('font-size', savedTextSize);

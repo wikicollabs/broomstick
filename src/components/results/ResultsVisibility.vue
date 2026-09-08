@@ -17,7 +17,7 @@
       :class="{ 'is-hidden': hideVisited }"
       action="progressive"
       weight="quiet"
-      :aria-label="`${$i18n('table-hide-visited-aria')} ${hideVisited ? $i18n('state-on') : $i18n('state-off')}`"
+      :aria-label="`${$i18n('table-hide-visited')}`"
       :aria-pressed="hideVisited"
       @click="$emit('toggle')"
     >

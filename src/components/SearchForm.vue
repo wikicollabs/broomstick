@@ -19,7 +19,7 @@
         :placeholder="$i18n('search-language-placeholder')"
         :search-placeholder="$i18n('search-language-placeholder')"
         :aria-label="$i18n('search-language-label')"
-        :search-aria-label="$i18n('search-language-label')"
+        :search-aria-label="$i18n('search-language-label-aria')"
         :no-results-text="$i18n('search-language-no-results')"
         @blur="onLanguageBlur"
         @focus="onLanguageFocus"

@@ -22,8 +22,8 @@
               href="https://dustpan.toolforge.org/"
               target="_blank"
               rel="noopener noreferrer"
-              class="external-link"
-              :aria-label="$i18n('landing-try-dustpan-link', 'Dustpan')"
+              class="dustpan-link"
+              :aria-label="$i18n('landing-improve-wikiprojects-link', 'Dustpan')"
             >{{ $i18n('landing-improve-wikiprojects-link', 'Dustpan') }}</a>{{ $i18n('landing-improve-wikiprojects-help') }}
           </span>
         </div>
@@ -153,11 +153,14 @@ async function executeSearch() {
   margin-top: 0.5rem;
 }
 
+.dustpan-link,
 .external-link {
   color: var(--color-progressive);
   text-decoration: none;
 }
 
+.dustpan-link:hover,
+.dustpan-link:focus,
 .external-link:hover,
 .external-link:focus {
   text-decoration: underline;

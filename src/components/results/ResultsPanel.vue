@@ -9,7 +9,7 @@
 <template>
   <div v-if="isLoading" class="loading-state" role="status" aria-live="assertive">
     <h3>{{ $i18n('results-querying') }}</h3>
-    <CdxProgressBar :aria-label="$i18n('results-querying-aria')" aria-hidden="true" />
+    <CdxProgressBar :aria-label="$i18n('results-querying')" aria-hidden="true" />
   </div>
 
   <CdxMessage v-else-if="error" type="error">

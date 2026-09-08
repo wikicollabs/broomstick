@@ -59,6 +59,7 @@
                   weight="quiet"
                   :disabled="!hasActiveFilters"
                   :aria-disabled="!hasActiveFilters"
+                  :aria-label="$i18n('filters-clear-all')"
                   @click="clearFilters"
                   class="clear-filters-button"
                 >
