@@ -1,0 +1,39 @@
+{
+	"@metadata": {
+		"authors": [
+			"Asteralee",
+			"Beta16"
+		]
+	},
+	"landing-improve-wikiprojects-link": "Prova $1",
+	"landing-broomstick-privacy-update": "$1 ha una informativa sulla privacy aggiornata.",
+	"landing-broomstick-privacy-link": "Leggi l'informativa sulla privacy aggiornata.",
+	"search-language-no-results": "Nessuna lingua trovata.",
+	"search-language-placeholder": "Seleziona una lingua",
+	"search-query-placeholder": "Seleziona un'opzione",
+	"table-hidden-count": "$1 {{PLURAL:$1|nascosto|nascosti}}",
+	"cdx-table-pager-items-per-page-current": "$1 {{PLURAL:$1|riga|righe}}",
+	"cdx-table-pager-button-next-page": "Pagina successiva",
+	"state-on": "Attivo",
+	"state-off": "Disattivato",
+	"settings-theme-label": "Tema",
+	"settings-theme-light": "Chiaro",
+	"settings-language-search-placeholder": "Cerca lingua",
+	"settings-language-no-results": "Lingua non trovata.",
+	"settings-language-no-results-suggestion": "Prova ad usare parole chiave diverse.",
+	"settings-text-size-label": "Dimensione del testo",
+	"settings-text-size-small": "Piccolo",
+	"settings-text-size-medium": "Medio",
+	"settings-text-size-large": "Grande",
+	"settings-text-size-extra-large": "Molto grande",
+	"settings-text-size-small-aria": "Piccolo",
+	"settings-text-size-medium-aria": "Medio",
+	"settings-text-size-large-aria": "Grande",
+	"settings-text-size-extra-large-aria": "Molto grande",
+	"settings-close": "Chiudi",
+	"settings-cancel": "Annulla",
+	"queries-general": "Generale",
+	"filters-clear-all": "Pulisci tutto",
+	"filters-category-all": "Tutto",
+	"filters-lexical-category-placeholder": "Seleziona una categoria"
+}
