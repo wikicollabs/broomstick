@@ -153,11 +153,14 @@ async function executeSearch() {
   margin-top: 0.5rem;
 }
 
+.dustpan-link,
 .external-link {
   color: var(--color-progressive);
   text-decoration: none;
 }
 
+.dustpan-link:hover,
+.dustpan-link:focus,
 .external-link:hover,
 .external-link:focus {
   text-decoration: underline;
