@@ -10,6 +10,7 @@
       'searchable-select--disabled': disabled,
       'searchable-select--expanded': isExpanded,
     }"
+    @focusout="onWrapperFocusOut"
   >
     <div class="searchable-select__trigger">
       <cdx-select
@@ -228,6 +229,23 @@ function onSearchKeydown(event) {
   }
 
   menuRef.value?.delegateKeyNavigation?.(event);
+}
+
+function onWrapperFocusOut(event) {
+  if (!isExpanded.value) {
+    return;
+  }
+
+  const nextFocused = event.relatedTarget;
+  if (nextFocused && wrapperRef.value?.contains(nextFocused)) {
+    return;
+  }
+
+  nextTick(() => {
+    if (wrapperRef.value && !wrapperRef.value.contains(document.activeElement)) {
+      closeMenu();
+    }
+  });
 }
 
 function onDocumentPointerDown(event) {
