@@ -482,7 +482,6 @@ function saveLanguage() {
   
   localStorage.setItem('locale', currentLanguage.value);
   localStorage.setItem('language_change_toast', newLangName);
-  localStorage.setItem('broomstick_skip_requery', 'true');
   window.location.reload();
 }
 </script>

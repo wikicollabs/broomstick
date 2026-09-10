@@ -44,14 +44,36 @@ app.provide('CdxI18nFunction', (key: string, ...params: unknown[]) => {
   return app.config.globalProperties.$i18n(key, ...unwrappedParams);
 });
 
-// version-based localStorage invalidation
-const APP_VERSION = '2.0.2';
-const storedVersion = localStorage.getItem('broomstick_version');
+// storage schema versioning: decoupled from the app release version.
+// bump SCHEMA_VERSION only when a stored key's shape or meaning actually
+// changes, and add a migration entry for exactly what changed.
+const SCHEMA_VERSION = 1;
+const SCHEMA_KEY = 'broomstick_storage_schema_version';
 
-if (storedVersion !== APP_VERSION) {
-  localStorage.clear();
-  localStorage.setItem('broomstick_version', APP_VERSION);
+type Migration = (storage: Storage) => void;
+
+// keyed by the version being migrated FROM.
+const migrations: Record<number, Migration> = {
+  0: (storage) => storage.removeItem('broomstick_version'),
+};
+
+function runStorageMigrations() {
+  const stored = localStorage.getItem(SCHEMA_KEY);
+  const storedVersion = stored ? Number(stored) : 0;
+
+  if (Number.isNaN(storedVersion) || storedVersion > SCHEMA_VERSION) {
+    localStorage.setItem(SCHEMA_KEY, String(SCHEMA_VERSION));
+    return;
+  }
+
+  for (let v = storedVersion; v < SCHEMA_VERSION; v++) {
+    migrations[v]?.(localStorage);
+  }
+
+  localStorage.setItem(SCHEMA_KEY, String(SCHEMA_VERSION));
 }
+
+runStorageMigrations();
 
 // apply theme immediately to prevent flash
 if (localStorage?.getItem('theme')) {
