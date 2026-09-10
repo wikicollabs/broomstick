@@ -20,7 +20,7 @@
  * mid-error-state.
  */
 import { defineStore } from 'pinia'
-import { getLanguageQid, getLanguageCode, LANGUAGES } from '../data/languages'
+import { getLanguageQid, getLanguageCode, LANGUAGES, getAvailableQueriesForLanguage } from '../data/languages'
 import { getQuerySparql } from '../data/queries'
 import { readStateFromUrl, writeStateToUrl } from './urlState'
 import type { LexemeResult, ViewName } from '../types/types'
@@ -60,8 +60,28 @@ export const useSearchStore = defineStore('search', {
     restoreLastSearch() {
       const savedLanguage = localStorage.getItem('broomstick_last_language')
       const savedQuery = localStorage.getItem('broomstick_last_query')
-      if (savedLanguage) this.selectedLanguage = savedLanguage
-      if (savedQuery) this.selectedGapType = savedQuery
+
+      const languageValid = savedLanguage
+        ? LANGUAGES.some((l) => l.display === savedLanguage)
+        : false
+
+      if (!languageValid) {
+        localStorage.removeItem('broomstick_last_language')
+        localStorage.removeItem('broomstick_last_query')
+        return
+      }
+
+      this.selectedLanguage = savedLanguage as string
+
+      const queryValid = savedQuery
+        ? getAvailableQueriesForLanguage(this.selectedLanguage).includes(savedQuery)
+        : false
+
+      if (queryValid) {
+        this.selectedGapType = savedQuery as string
+      } else {
+        localStorage.removeItem('broomstick_last_query')
+      }
     },
     // applies whatever the URL says right now, on mount. runs a search
     // if the URL points at one. does not push a new history entry,
