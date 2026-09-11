@@ -47,6 +47,7 @@ export const useSearchStore = defineStore('search', {
     error: null as string | null,
     connectionError: false,
     results: [] as LexemeResult[],
+    queryRunId: 0,
   }),
   actions: {
     goHome() {
@@ -95,13 +96,25 @@ export const useSearchStore = defineStore('search', {
       this.applyUrlState(readStateFromUrl())
     },
     applyUrlState(state: ReturnType<typeof readStateFromUrl>) {
-      this.currentView = state.view
       if (state.view !== 'search' || !state.language || !state.queryId) {
+        this.currentView = 'landing'
         this.results = []
         return
       }
+
       const langObj = LANGUAGES.find((l) => l.code === state.language)
-      if (!langObj) return
+      const queryValid = langObj
+        ? getAvailableQueriesForLanguage(langObj.display).includes(state.queryId)
+        : false
+
+      if (!langObj || !queryValid) {
+        this.currentView = 'landing'
+        this.results = []
+        writeStateToUrl({ view: 'landing', language: null, queryId: null }, { replace: true })
+        return
+      }
+
+      this.currentView = 'search'
       this.selectedLanguage = langObj.display
       this.selectedGapType = state.queryId
       this.runQuery()
@@ -125,6 +138,8 @@ export const useSearchStore = defineStore('search', {
     // shared fetch + parse logic, used by executeSearch and by url
     // restoration (mount and popstate). does not touch the URL itself.
     async runQuery() {
+      const runId = ++this.queryRunId
+
       const languageQid = getLanguageQid(this.selectedLanguage)
       const languageCode = getLanguageCode(this.selectedLanguage)
 
@@ -165,6 +180,8 @@ export const useSearchStore = defineStore('search', {
 
         const data: LexemeSparqlResponse = await response.json()
 
+        if (runId !== this.queryRunId) return
+
         const lexemeMap = new Map<string, { lexemeId: string; lemmas: string[]; lexicalCategory: string }>()
 
         data.results.bindings.forEach((binding) => {
@@ -190,10 +207,13 @@ export const useSearchStore = defineStore('search', {
           lexicalCategory: item.lexicalCategory,
         }))
       } catch (err) {
+        if (runId !== this.queryRunId) return
         console.error('Query error:', err)
         this.connectionError = true
       } finally {
-        this.isLoading = false
+        if (runId === this.queryRunId) {
+          this.isLoading = false
+        }
       }
     },
   },
