@@ -1,133 +1,96 @@
 # Broomstick
 
-A web tool to identify Lexemes on Wikidata that can be improved.
+Broomstick is a tool for Wikidata contributors to uncover Lexemes that can be improved.
 
-## Overview
+- Tool: https://broomstick.toolforge.org
+- Wikidata: https://www.wikidata.org/wiki/Wikidata:Broomstick
 
-Broomstick helps Wikidata contributors discover Lexemes with missing or incomplete data. Contributor can select a language and query type to find Lexemes that can be improved.
+Choose a Lexeme language and a query type, and Broomstick runs the corresponding SPARQL query against Wikidata.
 
-The tool queries the Wikidata SPARQL endpoint directly and presents results in a table.
+Built as a companion to [Dustpan](https://dustpan.toolforge.org), which serves the same purpose for WikiProjects.
 
-**Live instance:** https://broomstick.toolforge.org
 
-**Wikidata page:** https://wikidata.org/wiki/Wikidata:Broomstick
+## How it works
 
-## Features
+- **Lexeme languages** are the top level selection (Français, Deutsch, 日本語, and so on). Each one maps to its language item on Wikidata.
+- **Query types** are grouped by area (General, Senses, Forms, Misplacements, Language-specific). Each one is a standalone SPARQL query targeting a specific missing property or issue.
 
-- Supports 75+ languages (more can be added)
-- Query types organized by category:
-  - General: empty Lexemes, missing Senses, missing Forms, missing external identifiers, missing usage examples
-  - Senses: missing semantic properties (item for this sense, hyperonyms, troponyms, etc.)
-  - Forms: missing grammatical features, IPA transcriptions, pronunciation audio
-  - Misplacements: properties placed at wrong structural level
-- Responsive layout for desktop and mobile
-- Dark mode support
-- Built with Codex design system
+Availability of a query type for a given language is controlled separately, in the language config, so there is one source of truth rather than the same list duplicated per query.
+
+Queries are kept as complete, standalone SPARQL files under `src/queries/`, one per query type, directly inspectable on GitHub rather than assembled from reusable fragments. Language and query definitions live under `src/data/`.
+
+Keeping queries and language config in the repository means new query types and language support can be proposed and reviewed through normal GitHub contributions.
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for details.
+
 
 ## Tech stack
 
-- Vue 3 (Composition API)
-- Vite (build tool)
-- vue-banana-i18n (i18n)
-- Codex (Wikimedia Design System)
-- SPARQL queries against Wikidata Query Service
+- Vue 3, Vite, Pinia for the frontend
+- [Codex](https://doc.wikimedia.org/codex/latest/), Wikimedia's design system, for UI components
+- vue-banana-i18n for translations
+- Express + MySQL service (`server/`) for logging the selection
 
-## Installation
 
-### Prerequisites
+## Development
 
-- Node.js (v16 or higher)
-- pnpm package manager
+Requirements:
 
-### Setup
+- Node.js 20 or later
+- pnpm 10.22.0
+
+Install dependencies and start the frontend:
 
 ```bash
-# Clone the repository
-git clone https://github.com/wikicollabs/broomstick.git
-cd broomstick
-
-# Install dependencies
 pnpm install
-
-# Run development server
-pnpm run dev
+pnpm dev
 ```
 
-The development server will start at `http://localhost:5173`.
-
-## Building for production
+Type-check the project:
 
 ```bash
-# Build the application
-pnpm run build
-
-# Preview production build locally
-pnpm run preview
+pnpm run type-check
 ```
 
-The built files will be in the `dist/` directory.
+Create a production build:
+
+```bash
+pnpm build
+```
+
+Preview the production build locally:
+
+```bash
+pnpm preview
+```
 
 ## Project structure
 
+```text
+src/
+├── components/   Vue components
+├── data/         Language and query type definitions
+├── i18n/         Translation files and language handling
+├── queries/      Standalone SPARQL query files
+├── state/        Pinia store and URL state
+├── types/        Shared TypeScript types
+└── views/        Application views (Landing and Search)
+
+server/           Express + MySQL service for logging the selection
 ```
-broomstick/
-├── public/
-│   ├── favicon.svg
-│   ├── icon.svg
-│   └── logo.svg
-├── src/
-│   ├── components/
-│   │   ├── AppFooter.vue
-│   │   ├── AppHeader.vue
-│   │   ├── BroomstickIcon.vue
-│   │   ├── BroomstickLogo.vue
-│   │   ├── ResultsTable.vue
-│   │   ├── SearchForm.vue
-│   │   └── SettingsMenu.vue
-│   ├── data/
-│   │   ├── languages.js
-│   │   └── queries.js
-│   ├── i18n/
-│   │   ├── en.json
-│   │   ├── id.json
-│   │   ├── qqq.json
-│   │   ├── displayLanguages.js
-│   │   └── index.js
-│   ├── App.vue
-│   ├── main.js
-│   └── style.css
-├── index.html
-├── package.json
-├── pnpm-lock.yaml
-└── vite.config.js
-```
+
+## Deployment
+
+Broomstick runs on Wikimedia Toolforge. Deployment happens through GitHub Actions workflows in `.github/workflows/`, targeting staging and production separately.
+
 
 ## Contributing
 
-**Note:** This is an early-stage project maintained by a small team. Response times on issues and pull requests may vary.
+Bug reports, new query types, new language support, and other improvements are welcome.
 
-Contributions are welcome. Please open an issue to discuss proposed changes.
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
 
-### Proposing new languages
-
-Open an issue with the following information:
-
-- Native name of the language (autonym)
-- Wikidata QID
-- Wikimedia language code
-
-### Proposing new queries
-
-Open an issue with the following information:
-
-- Query description
-- Target languages (all languages or specific ones)
-- SPARQL query template
 
 ## License
 
-GPL 2.0 or later - see LICENSE file for details.
-
-## Credits
-
-Created by [Wikicollabs](https://wikicollabs.org), as part of [Software Collaboration for Wikidata](https://meta.wikimedia.org/wiki/Software_Collaboration_for_Wikidata).
+GPL-2.0-or-later. See [LICENSE](./LICENSE).
