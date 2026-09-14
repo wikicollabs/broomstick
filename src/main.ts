@@ -12,6 +12,8 @@ import './style.css'
 import App from './App.vue'
 import i18n from './i18n/i18n'
 import { DISPLAY_LANGUAGES, getBrowserLanguage } from './i18n/displayLanguages'
+import { THEMES, TEXT_SIZES, DEFAULT_THEME, DEFAULT_TEXT_SIZE } from './types/types'
+import type { Theme, TextSize } from './types/types'
 import '@wikimedia/codex-design-tokens/theme-wikimedia-ui.css'
 import '@wikimedia/codex/dist/codex.style-bidi.css';
 
@@ -44,32 +46,47 @@ app.provide('CdxI18nFunction', (key: string, ...params: unknown[]) => {
   return app.config.globalProperties.$i18n(key, ...unwrappedParams);
 });
 
-// version-based localStorage invalidation
-const APP_VERSION = '2.0.2';
-const storedVersion = localStorage.getItem('broomstick_version');
+// storage schema versioning: decoupled from the app release version.
+// bump SCHEMA_VERSION only when a stored key's shape or meaning actually
+// changes, and add a migration entry for exactly what changed.
+const SCHEMA_VERSION = 1;
+const SCHEMA_KEY = 'broomstick_storage_schema_version';
 
-if (storedVersion !== APP_VERSION) {
-  localStorage.clear();
-  localStorage.setItem('broomstick_version', APP_VERSION);
+type Migration = (storage: Storage) => void;
+
+// keyed by the version being migrated FROM.
+const migrations: Record<number, Migration> = {
+  0: (storage) => storage.removeItem('broomstick_version'),
+};
+
+function runStorageMigrations() {
+  const stored = localStorage.getItem(SCHEMA_KEY);
+  const storedVersion = stored ? Number(stored) : 0;
+
+  if (Number.isNaN(storedVersion) || storedVersion > SCHEMA_VERSION) {
+    localStorage.setItem(SCHEMA_KEY, String(SCHEMA_VERSION));
+    return;
+  }
+
+  for (let v = storedVersion; v < SCHEMA_VERSION; v++) {
+    migrations[v]?.(localStorage);
+  }
+
+  localStorage.setItem(SCHEMA_KEY, String(SCHEMA_VERSION));
 }
 
-// apply theme immediately to prevent flash
-if (localStorage?.getItem('theme')) {
-  const theme = localStorage.getItem('theme')
+runStorageMigrations();
 
-  if (theme === 'dark') {
-    document.documentElement.classList.add('dark')
-  } else if (theme === 'light') {
-    document.documentElement.classList.add('light')
-  } else if (theme === 'auto') {
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      document.documentElement.classList.add('dark')
-    }
-  }
-} else {
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.classList.add('dark')
-  }
+// apply theme immediately to prevent flash
+const storedTheme = localStorage.getItem('theme');
+const theme: Theme = THEMES.includes(storedTheme as Theme) ? (storedTheme as Theme) : DEFAULT_THEME;
+
+if (theme === 'dark') {
+  document.documentElement.classList.add('dark')
+} else if (theme === 'light') {
+  document.documentElement.classList.add('light')
+} else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  document.documentElement.classList.add('dark')
 }
 
 const savedLocale = localStorage.getItem('locale') || getBrowserLanguage();
@@ -82,7 +99,8 @@ const displayLanguage =
 
 document.documentElement.dir = displayLanguage?.rtl ? 'rtl' : 'ltr';
 
-const savedTextSize = localStorage.getItem('broomstick_text_size') || 'medium';
+const storedTextSize = localStorage.getItem('broomstick_text_size');
+const savedTextSize: TextSize = TEXT_SIZES.includes(storedTextSize as TextSize) ? (storedTextSize as TextSize) : DEFAULT_TEXT_SIZE;
 document.documentElement.setAttribute('font-size', savedTextSize);
 
 app.mount('#app');

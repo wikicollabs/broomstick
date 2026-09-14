@@ -83,3 +83,14 @@ export interface SearchResultsState {
   error: string | null // i18n message key, not translated text — component translates at display time
   connectionError: boolean
 }
+
+// --- settings ---
+
+export type Theme = 'auto' | 'dark' | 'light'
+export type TextSize = 'small' | 'medium' | 'large' | 'extra-large'
+
+export const THEMES: readonly Theme[] = ['auto', 'dark', 'light']
+export const TEXT_SIZES: readonly TextSize[] = ['small', 'medium', 'large', 'extra-large']
+
+export const DEFAULT_THEME: Theme = 'auto'
+export const DEFAULT_TEXT_SIZE: TextSize = 'medium'

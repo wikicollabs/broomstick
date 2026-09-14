@@ -20,7 +20,7 @@
  * mid-error-state.
  */
 import { defineStore } from 'pinia'
-import { getLanguageQid, getLanguageCode, LANGUAGES } from '../data/languages'
+import { getLanguageQid, getLanguageCode, LANGUAGES, getAvailableQueriesForLanguage } from '../data/languages'
 import { getQuerySparql } from '../data/queries'
 import { readStateFromUrl, writeStateToUrl } from './urlState'
 import type { LexemeResult, ViewName } from '../types/types'
@@ -36,6 +36,14 @@ interface LexemeSparqlResponse {
   results: { bindings: LexemeSparqlBinding[] }
 }
 
+function logSelection(selection: string): void {
+  fetch('/api/log', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ selection }),
+  }).catch((err) => console.error('Failed to log selection:', err))
+}
+
 export const useSearchStore = defineStore('search', {
   state: () => ({
     currentView: 'landing' as ViewName,
@@ -47,6 +55,7 @@ export const useSearchStore = defineStore('search', {
     error: null as string | null,
     connectionError: false,
     results: [] as LexemeResult[],
+    queryRunId: 0,
   }),
   actions: {
     goHome() {
@@ -60,8 +69,28 @@ export const useSearchStore = defineStore('search', {
     restoreLastSearch() {
       const savedLanguage = localStorage.getItem('broomstick_last_language')
       const savedQuery = localStorage.getItem('broomstick_last_query')
-      if (savedLanguage) this.selectedLanguage = savedLanguage
-      if (savedQuery) this.selectedGapType = savedQuery
+
+      const languageValid = savedLanguage
+        ? LANGUAGES.some((l) => l.display === savedLanguage)
+        : false
+
+      if (!languageValid) {
+        localStorage.removeItem('broomstick_last_language')
+        localStorage.removeItem('broomstick_last_query')
+        return
+      }
+
+      this.selectedLanguage = savedLanguage as string
+
+      const queryValid = savedQuery
+        ? getAvailableQueriesForLanguage(this.selectedLanguage).includes(savedQuery)
+        : false
+
+      if (queryValid) {
+        this.selectedGapType = savedQuery as string
+      } else {
+        localStorage.removeItem('broomstick_last_query')
+      }
     },
     // applies whatever the URL says right now, on mount. runs a search
     // if the URL points at one. does not push a new history entry,
@@ -75,13 +104,25 @@ export const useSearchStore = defineStore('search', {
       this.applyUrlState(readStateFromUrl())
     },
     applyUrlState(state: ReturnType<typeof readStateFromUrl>) {
-      this.currentView = state.view
       if (state.view !== 'search' || !state.language || !state.queryId) {
+        this.currentView = 'landing'
         this.results = []
         return
       }
+
       const langObj = LANGUAGES.find((l) => l.code === state.language)
-      if (!langObj) return
+      const queryValid = langObj
+        ? getAvailableQueriesForLanguage(langObj.display).includes(state.queryId)
+        : false
+
+      if (!langObj || !queryValid) {
+        this.currentView = 'landing'
+        this.results = []
+        writeStateToUrl({ view: 'landing', language: null, queryId: null }, { replace: true })
+        return
+      }
+
+      this.currentView = 'search'
       this.selectedLanguage = langObj.display
       this.selectedGapType = state.queryId
       this.runQuery()
@@ -105,6 +146,8 @@ export const useSearchStore = defineStore('search', {
     // shared fetch + parse logic, used by executeSearch and by url
     // restoration (mount and popstate). does not touch the URL itself.
     async runQuery() {
+      const runId = ++this.queryRunId
+
       const languageQid = getLanguageQid(this.selectedLanguage)
       const languageCode = getLanguageCode(this.selectedLanguage)
 
@@ -119,6 +162,9 @@ export const useSearchStore = defineStore('search', {
         this.error = 'errors-query-not-found'
         return
       }
+
+      // logs the selection (language + query)
+      logSelection(window.location.pathname + window.location.search)
 
       this.searchedLanguage = this.selectedLanguage
       this.searchedGapType = this.selectedGapType
@@ -145,6 +191,8 @@ export const useSearchStore = defineStore('search', {
 
         const data: LexemeSparqlResponse = await response.json()
 
+        if (runId !== this.queryRunId) return
+
         const lexemeMap = new Map<string, { lexemeId: string; lemmas: string[]; lexicalCategory: string }>()
 
         data.results.bindings.forEach((binding) => {
@@ -170,10 +218,13 @@ export const useSearchStore = defineStore('search', {
           lexicalCategory: item.lexicalCategory,
         }))
       } catch (err) {
+        if (runId !== this.queryRunId) return
         console.error('Query error:', err)
         this.connectionError = true
       } finally {
-        this.isLoading = false
+        if (runId === this.queryRunId) {
+          this.isLoading = false
+        }
       }
     },
   },

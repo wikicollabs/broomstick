@@ -226,6 +226,7 @@ import {
   cdxIconSearchCaseSensitive,
 } from "@wikimedia/codex-icons";
 import { DISPLAY_LANGUAGES, getBrowserLanguage } from '../i18n/displayLanguages.js';
+import { THEMES, TEXT_SIZES, DEFAULT_THEME, DEFAULT_TEXT_SIZE } from '../types/types';
 
 const instance = getCurrentInstance();
 const $i18n = instance?.appContext.config.globalProperties.$i18n;
@@ -345,12 +346,13 @@ function saveTheme() {
 function restoreTheme() {
   const savedTheme = localStorage.getItem("theme");
 
-  if (savedTheme) {
+  if (savedTheme && THEMES.includes(savedTheme)) {
     currentTheme.value = savedTheme;
     applyTheme(savedTheme);
   } else {
-    // default to auto if nothing saved
-    currentTheme.value = "auto";
+    if (savedTheme) localStorage.removeItem("theme");
+    currentTheme.value = DEFAULT_THEME;
+    applyTheme(DEFAULT_THEME);
   }
 }
 
@@ -368,12 +370,13 @@ function saveTextSize() {
 function restoreTextSize() {
   const savedTextSize = localStorage.getItem("broomstick_text_size");
 
-  if (savedTextSize) {
+  if (savedTextSize && TEXT_SIZES.includes(savedTextSize)) {
     currentTextSize.value = savedTextSize;
     document.documentElement.setAttribute('font-size', savedTextSize);
   } else {
-    currentTextSize.value = "medium";
-    document.documentElement.setAttribute('font-size', "medium");
+    if (savedTextSize) localStorage.removeItem("broomstick_text_size");
+    currentTextSize.value = DEFAULT_TEXT_SIZE;
+    document.documentElement.setAttribute('font-size', DEFAULT_TEXT_SIZE);
   }
 }
 
@@ -482,7 +485,6 @@ function saveLanguage() {
   
   localStorage.setItem('locale', currentLanguage.value);
   localStorage.setItem('language_change_toast', newLangName);
-  localStorage.setItem('broomstick_skip_requery', 'true');
   window.location.reload();
 }
 </script>

@@ -27,18 +27,6 @@
             >{{ $i18n('landing-improve-wikiprojects-link', 'Dustpan') }}</a>{{ $i18n('landing-improve-wikiprojects-help') }}
           </span>
         </div>
-
-        <CdxMessage class="privacy-policy-message" inline>
-          {{ $i18n('landing-broomstick-privacy-update', 'Broomstick') }}
-          <a
-            href="https://www.wikidata.org/wiki/Wikidata:Broomstick/Privacy_policy"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="external-link"
-          >
-            {{ $i18n('landing-broomstick-privacy-link') }}
-          </a>
-        </CdxMessage>
       </section>
 
       <section class="section-form">
