@@ -16,7 +16,7 @@ pnpm-debug.log*
 .idea/
 
 #compressed
-broomstick.tgz
+*.tgz
 
 # OS files
 .DS_Store
