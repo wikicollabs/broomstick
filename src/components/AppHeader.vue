@@ -35,7 +35,6 @@ const logoRef = ref(null);
 const emit = defineEmits(["home"]);
 
 const goHome = () => {
-  window.history.pushState({}, '', window.location.pathname);
   emit('home');
 };
 
