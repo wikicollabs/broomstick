@@ -36,6 +36,14 @@ interface LexemeSparqlResponse {
   results: { bindings: LexemeSparqlBinding[] }
 }
 
+function logSelection(selection: string): void {
+  fetch('/api/log', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ selection }),
+  }).catch((err) => console.error('Failed to log selection:', err))
+}
+
 export const useSearchStore = defineStore('search', {
   state: () => ({
     currentView: 'landing' as ViewName,
@@ -154,6 +162,9 @@ export const useSearchStore = defineStore('search', {
         this.error = 'errors-query-not-found'
         return
       }
+
+      // logs the selection (language + query)
+      logSelection(window.location.pathname + window.location.search)
 
       this.searchedLanguage = this.selectedLanguage
       this.searchedGapType = this.selectedGapType
