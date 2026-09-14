@@ -6,6 +6,7 @@ const pool = require('./db');
 const app = express();
 const PORT = parseInt(process.env.PORT, 10) || 3000;
 
+app.use('/viewer', express.static(path.join(__dirname, 'viewer')));
 app.use(express.static(path.join(__dirname, 'dist')));
 app.use(express.json());
 
