@@ -1,6 +1,7 @@
 {
 	"@metadata": {
 		"authors": [
+			"Amire80",
 			"Neriah",
 			"YaronSh"
 		]
@@ -71,7 +72,7 @@
 	"settings-language-label": "שפת התצוגה",
 	"settings-language-search-placeholder": "חיפוש שפה",
 	"settings-language-no-results": "השפה לא נמצאה.",
-	"settings-language-no-results-suggestion": "כדאי לנסות להשתמש במילות מפתח אחרות.",
+	"settings-language-no-results-suggestion": "נא לנסות להשתמש במילות מפתח אחרות.",
 	"settings-language-changed": "שפת התצוגה הוחלפה ל$1",
 	"settings-language-reload": "Broomstick ייטען מחדש כדי להחליף את שפת התצוגה.",
 	"settings-text-size-label": "גודל כתב",
@@ -79,7 +80,7 @@
 	"settings-text-size-medium": "בינוני",
 	"settings-text-size-large": "גדול",
 	"settings-text-size-extra-large": "גדול מאוד",
-	"settings-close": "סגירת חלונית",
+	"settings-close": "סגירת תיבה",
 	"settings-apply": "החלה",
 	"settings-cancel": "ביטול",
 	"settings-translate-help": "רוצה להוסיף או לשפר את התרגום בשפה שלך?",
