@@ -9,27 +9,6 @@
 import type { Language } from '../types/types'
 import type { QueryId } from './queries'
 
-// query values available to every language with no exceptions.
-// language-specific additions (e.g. gender-related properties) go in
-// LANGUAGE_EXTRA_QUERIES below, keyed by language code.
-export const UNIVERSAL_QUERIES: readonly QueryId[] = [
-  'is-empty',
-  'missing-senses',
-  'missing-forms',
-  'missing-external-identifiers',
-  'missing-usage-example',
-  'missing-item-for-sense',
-  'missing-predicate-troponym',
-  'missing-grammatical-features',
-  'missing-ipa',
-  'missing-pronunciation-audio',
-  'misplaced-item-for-sense',
-]
-
-// language-specific queries on top of UNIVERSAL_QUERIES, keyed by code.
-// empty for now, no language-specific queries exist yet.
-export const LANGUAGE_EXTRA_QUERIES: Record<string, readonly QueryId[]> = {}
-
 export const LANGUAGES: Language[] = [
   { display: 'Anarâškielâ (smn)', code: 'smn', autonym: 'Anarâškielâ', qid: 'Q33462' },
   { display: 'Aragonés (an)', code: 'an', autonym: 'Aragonés', qid: 'Q8765' },
@@ -123,6 +102,69 @@ export const LANGUAGES: Language[] = [
   { display: '日本語 (ja)', code: 'ja', autonym: '日本語', qid: 'Q5287' },
   { display: '한국어 (ko)', code: 'ko', autonym: '한국어', qid: 'Q9176' }
 ]
+
+
+// query values available to every language with no exceptions.
+// language-specific additions (e.g. gender-related properties) go in
+// LANGUAGE_EXTRA_QUERIES below, keyed by language code.
+export const UNIVERSAL_QUERIES: readonly QueryId[] = [
+  'is-empty',
+  'missing-senses',
+  'missing-forms',
+  'missing-external-identifiers',
+  'missing-usage-example',
+  'missing-item-for-sense',
+  'missing-predicate-troponym',
+  'missing-grammatical-features',
+  'missing-ipa',
+  'missing-pronunciation-audio',
+  'misplaced-item-for-sense',
+]
+
+// language-specific queries on top of UNIVERSAL_QUERIES, keyed by code.
+export const LANGUAGE_EXTRA_QUERIES: Record<string, readonly QueryId[]> = {
+  an: ['missing-grammatical-gender'],
+  ar: ['missing-grammatical-gender', 'missing-conjugation-class'],
+  br: ['missing-grammatical-gender', 'missing-conjugation-class'],
+  ca: ['missing-grammatical-gender', 'missing-conjugation-class'],
+  cs: ['missing-grammatical-gender', 'missing-conjugation-class'],
+  da: ['missing-grammatical-gender', 'missing-conjugation-class'],
+  de: ['missing-grammatical-gender'],
+  es: ['missing-grammatical-gender'],
+  fr: ['missing-grammatical-gender', 'missing-conjugation-class'],
+  ga: ['missing-grammatical-gender'],
+  gu: ['missing-grammatical-gender'],
+  ha: ['missing-grammatical-gender'],
+  he: ['missing-grammatical-gender', 'missing-conjugation-class'],
+  hi: ['missing-grammatical-gender'],
+  hr: ['missing-grammatical-gender'],
+  it: ['missing-grammatical-gender', 'missing-conjugation-class'],
+  ja: ['missing-conjugation-class'],
+  kmr: ['missing-grammatical-gender'],
+  la: ['missing-grammatical-gender', 'missing-conjugation-class'],
+  lb: ['missing-grammatical-gender'],
+  lt: ['missing-grammatical-gender'],
+  lv: ['missing-grammatical-gender'],
+  mk: ['missing-grammatical-gender'],
+  ml: ['missing-simple-past', 'missing-simple-future'],
+  mr: ['missing-grammatical-gender'],
+  mt: ['missing-grammatical-gender'],
+  nb: ['missing-grammatical-gender'],
+  nl: ['missing-grammatical-gender', 'missing-conjugation-class'],
+  nn: ['missing-grammatical-gender'],
+  pa: ['missing-grammatical-gender'],
+  pl: ['missing-grammatical-gender', 'missing-conjugation-class'],
+  pt: ['missing-grammatical-gender'],
+  ro: ['missing-grammatical-gender'],
+  ru: ['missing-grammatical-gender', 'missing-conjugation-class'],
+  sa: ['missing-grammatical-gender'],
+  sk: ['missing-grammatical-gender'],
+  sq: ['missing-grammatical-gender'],
+  sr: ['missing-grammatical-gender'],
+  sv: ['missing-grammatical-gender', 'missing-conjugation-class', 'sv-missing-described-source-saob'],
+  uk: ['missing-grammatical-gender'],
+  yi: ['missing-grammatical-gender'],
+}
 
 // helper functions
 export function getLanguageQid(displayString: string): string | undefined {

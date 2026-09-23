@@ -1,8 +1,9 @@
 SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
+  VALUES ?lexicalCategory { wd:Q24905 }
   ?lexeme dct:language wd:%LANGUAGE_QID% ;
           wikibase:lemma ?lemma ;
-          wikibase:lexicalCategory ?lexicalCategory;
+          wikibase:lexicalCategory ?lexicalCategory ;
           ontolex:lexicalForm ?form .
-  FILTER NOT EXISTS { ?form wikibase:grammaticalFeature ?feature }
+  FILTER NOT EXISTS { ?lexeme a ontolex:LexicalEntry ; ontolex:lexicalForm/wikibase:grammaticalFeature wd:Q1392475 . }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "%LANGUAGE_CODE%,en". }
 }

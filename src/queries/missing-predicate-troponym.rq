@@ -8,5 +8,5 @@ SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
     ?lexeme ontolex:sense ?sense2.
     ?sense2 wdt:P9970|wdt:P5975 ?anyPredicate.
   }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "%LANGUAGE_CODE%,mul,en". }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "%LANGUAGE_CODE%,en". }
 }

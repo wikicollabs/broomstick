@@ -1,0 +1,11 @@
+# Adapted from a query by User:So9q, listed on https://www.wikidata.org/wiki/Wikidata:Lexicographical_data/Ideas_of_queries
+
+SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
+  VALUES ?lexicalCategory { wd:Q24905 }
+  ?lexeme dct:language wd:%LANGUAGE_QID% ;
+          wikibase:lemma ?lemma ;
+          wikibase:lexicalCategory ?lexicalCategory ;
+          wdt:P8478 [].
+  FILTER NOT EXISTS { ?lexeme wdt:P1343 wd:Q1935308. }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "%LANGUAGE_CODE%,en". }
+}
