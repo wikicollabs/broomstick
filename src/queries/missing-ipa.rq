@@ -10,6 +10,6 @@ SELECT DISTINCT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
   }
 
   SERVICE wikibase:label {
-    bd:serviceParam wikibase:language "%LANGUAGE_CODE%,mul,en" .
+    bd:serviceParam wikibase:language "%LANGUAGE_CODE%,en" .
   }
 }
