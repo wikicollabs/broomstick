@@ -57,7 +57,11 @@ export const QUERY_GROUPS = [
   {
     group: "Language-specific",
     queries: [
-      // to be implemented later
+      { value: "missing-grammatical-gender", params: ["(P5185)"] },
+      { value: "missing-conjugation-class", params: ["(P5186)"] },
+      { value: "sv-missing-described-source-saob", params: ["(P1343)"] },
+      { value: "missing-simple-past"},
+      { value: "missing-simple-future"},
     ],
   },
 ] as const satisfies readonly QueryGroup[]
