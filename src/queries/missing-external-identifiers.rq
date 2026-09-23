@@ -8,5 +8,5 @@ SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
     ?prop wikibase:directClaim ?p ;
           wikibase:propertyType wikibase:ExternalId.
   }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "%LANGUAGE_CODE%,mul,en". }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "%LANGUAGE_CODE%,en". }
 }

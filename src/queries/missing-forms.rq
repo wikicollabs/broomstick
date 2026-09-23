@@ -3,5 +3,5 @@ SELECT ?lexeme ?lemma ?lexicalCategory ?lexicalCategoryLabel WHERE {
           wikibase:lemma ?lemma ;
           wikibase:lexicalCategory ?lexicalCategory.
   FILTER NOT EXISTS { ?lexeme ontolex:lexicalForm ?form }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "%LANGUAGE_CODE%,mul,en". }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "%LANGUAGE_CODE%,en". }
 }
