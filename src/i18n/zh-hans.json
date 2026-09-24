@@ -106,6 +106,7 @@
 	"queries-senses": "义项",
 	"queries-forms": "词形",
 	"queries-misplacements": "错放",
+	"queries-language-specific": "特定语言",
 	"queries-is-empty": "空词位",
 	"queries-missing-senses": "没有意义的词位",
 	"queries-missing-forms": "没有词形的词位",

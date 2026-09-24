@@ -3,6 +3,7 @@
 		"authors": [
 			"Asteralee",
 			"Crowwhailord",
+			"NClara",
 			"Poro26",
 			"VIGNERON"
 		]
@@ -91,6 +92,7 @@
 	"queries-senses": "Sens",
 	"queries-forms": "Formes",
 	"queries-misplacements": "Mauvais placements",
+	"queries-language-specific": "Spécifique à la langue",
 	"queries-is-empty": "est vide",
 	"queries-missing-senses": "n’a pas de sens",
 	"queries-missing-forms": "n’a pas de formes",
@@ -102,6 +104,10 @@
 	"queries-missing-pronunciation-audio": "prononciation audio manquante $1",
 	"queries-missing-grammatical-features": "n’a pas de traits grammaticaux",
 	"queries-misplaced-item-for-sense": "élément mal placé pour ce sens $1 au niveau du lexème au lieu du niveau du sens",
+	"queries-missing-grammatical-gender": "Noms sans genre grammatical (P5185)",
+	"queries-sv-missing-described-source-saob": "Lexèmes qui ont un ID SAOB mais ne sont pas liés à l'ordbok Svenska Akademiens via décrit par la source (P1343)",
+	"queries-missing-simple-past": "Verbes sans forme au passé simple",
+	"queries-missing-simple-future": "Verbes sans forme au futur simple",
 	"filters-heading": "Filtre",
 	"filters-clear-all": "Effacer tout",
 	"filters-text-placeholder": "LID ou Lemme",

@@ -103,7 +103,7 @@
 	"queries-missing-item-for-sense": "Combobox option for finding Lexemes missing item for this sense (P5137), demonym of (P6271), or hyperonym (P6593) properties",
 	"queries-missing-predicate-troponym": "Combobox option for finding Lexemes missing predicate for (P9970) or troponym of (P5975) properties",
 	"queries-missing-ipa": "Combobox option for finding Lexemes missing IPA transcription property (P898)",
-	"queries-missing-pronunciation-audio": "Query option to find Lexemes that have no pronunciation audio (P443) defined",
+	"queries-missing-pronunciation-audio": "Query option to find Lexemes that have no grammatical features defined",
 	"queries-missing-grammatical-features": "Query option to find Lexemes that have no grammatical features defined",
 	"queries-misplaced-item-for-sense": "Combobox option for finding Lexemes with item for this sense (P5137) incorrectly placed at Lexeme level instead of Sense level",
 	"queries-missing-grammatical-gender": "Combobox option for finding noun Lexemes missing grammatical gender property (P5185). Only available for languages whose nouns have grammatical gender.",
