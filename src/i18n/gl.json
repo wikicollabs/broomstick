@@ -116,6 +116,7 @@
 	"queries-misplaced-item-for-sense": "Lexemas con elementos para esta acepción (P5137) no nivel de lexema en lugar do nivel de acepción",
 	"queries-missing-grammatical-gender": "Substantivos sen xénero gramatical (P5185)",
 	"queries-missing-conjugation-class": "Verbos sen clase de conxugación (P5186)",
+	"queries-sv-missing-described-source-saob": "Lexemas que teñen un ID SAOB pero que non están vencellados a Svenska Akademiens ordbok a través da descrición da fonte (P1343)",
 	"queries-missing-simple-past": "Verbos que carecen de pretérito perfecto",
 	"queries-missing-simple-future": "Verbos que carecen da forma de futuro",
 	"filters-heading": "Filtrar",
