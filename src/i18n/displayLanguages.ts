@@ -32,6 +32,7 @@ export const DISPLAY_LANGUAGES: DisplayLanguage[] = [
     { code: 'sr-ec', nativeName: 'српски (ћирилица)', rtl: false },
     { code: 'he', nativeName: 'עברית', rtl: true },
     { code: 'ps', nativeName: 'پښتو', rtl: true },
+    { code: 'skr-arab', nativeName:'سرائیکی', rtl: true },
     { code: 'pa', nativeName: 'ਪੰਜਾਬੀ', rtl: false },
     { code: 'zh-hans', nativeName: '中文（简体）', rtl: false },
     { code: 'zh-hant', nativeName: '中文（繁體）', rtl: false },
