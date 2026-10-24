@@ -1,0 +1,7 @@
+packages:
+  - "."
+  - "server"
+
+allowBuilds:
+  vue-demi: true
+  esbuild: true
