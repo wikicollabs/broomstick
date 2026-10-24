@@ -83,10 +83,10 @@ jobs:
 
           echo "Checking build result..."
 
-          toolforge build show | tee /tmp/broomstick-build-status.txt
+          toolforge build show | tee "$HOME/tmp/build-status.txt"
 
           if ! grep -Eq '^Status: ok([[:space:]]|$|\()' \
-            /tmp/broomstick-build-status.txt; then
+            "$HOME/tmp/build-status.txt"; then
             echo "Build did not succeed. Aborting."
             exit 1
           fi
