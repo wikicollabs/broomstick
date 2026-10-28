@@ -181,6 +181,7 @@ export const useSearchStore = defineStore('search', {
           headers: {
             Accept: 'application/sparql-results+json',
             'Content-Type': 'application/x-www-form-urlencoded',
+            'Api-User-Agent': 'Broomstick/1.0 (https://github.com/wikicollabs/broomstick)',
           },
           body: `query=${encodeURIComponent(querySparql)}`,
         })
