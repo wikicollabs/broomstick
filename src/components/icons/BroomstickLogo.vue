@@ -1,9 +1,9 @@
 <!--
   SPDX-License-Identifier: GPL-2.0-or-later
 
-  Dustpan
-  A tool to uncover WikiProjects that can be improved on Wikidata
-  @see https://github.com/wikicollabs/dustpan
+  Broomstick
+  A tool to uncover Lexemes that can be improved on Wikidata
+  @see https://github.com/wikicollabs/broomstick
 -->
 
 <template>
