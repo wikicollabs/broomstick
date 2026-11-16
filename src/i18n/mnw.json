@@ -1,0 +1,43 @@
+{
+	"@metadata": {
+		"authors": [
+			"Aue Nai",
+			"咽頭べさ"
+		]
+	},
+	"logo-alt": "လဝ်ဂဝ်",
+	"landing-improve-wikiprojects-link": "စမ်ၜတ် $1",
+	"search-button": "ဂၠာဲ",
+	"search-heading": "ဂၠာဲ",
+	"search-language-label": "ဘာသာဗီုပြၚ်ဂၞန်သေန်",
+	"search-language-label-aria": "ပရေၚ်ဘာသာဗီုပြၚ်ဂၞန်သေန်",
+	"search-language-no-results": "အရေဝ်ဘာသာဟွံဆဵု။",
+	"search-query-label": "ဗဵုရံၚ်သွက်",
+	"search-language-placeholder": "ဂၠာဲအရေဝ်ဘာသာမွဲသာ်",
+	"search-query-placeholder": "ရုဲကေတ်အရာမွဲမွဲသာ်",
+	"errors-lexical-category-not-found": "ဟွံဂွံဆဵုကေတ် ကဏ္ဍဝေါဟာရ။ စမ်ရုဲစှ်ရံၚ် ကဏ္ဍတၞဟ်ညိ။",
+	"table-lemma-header": "လပ်မာ",
+	"table-category-header": "ကဏ္ဍဝေါဟာရ",
+	"table-hidden-count": "$1 {{PLURAL:$1|မပၞုက်ထောံလဝ်}}",
+	"table-header-lexcat-default": "ကဏ္ဍဝေါဟာရ (လၟေၚ်တမ်)",
+	"table-header-lexcat-ascending": "ကဏ္ဍဝေါဟာရ (လၟေၚ် တိုန်)",
+	"table-header-lexcat-descending": "ကဏ္ဍဝေါဟာရ (လၟေၚ်စှ်ေ)",
+	"cdx-table-pager-items-per-page-current": "$1 {{PLURAL:$1|တန်|တန်ဂမၠိုၚ်}}",
+	"cdx-table-pager-button-first-page": "မုက်လိက်ကၠာအိုတ်",
+	"cdx-table-pager-button-last-page": "မုက်လိက်ဗွဲကြဴ",
+	"cdx-table-pager-button-next-page": "မုက်လိက်ဂတ",
+	"cdx-table-pager-button-prev-page": "မုက်လိက်ဗွဲလက္ကရဴ",
+	"state-on": "ပံက်",
+	"state-off": "တၟာတ်",
+	"footer-by": "နူ",
+	"footer-about": "ပရောပရာ",
+	"footer-privacy": "ပဝ်လသဳဆေၚ်စပ်ကဵုအခေါၚ်အရာပရေၚ်ပူဂဵု",
+	"footer-license": "လာၚ်ဇြေန်",
+	"footer-source": "တံမူလခိုတ်",
+	"settings-menu-label": "ပရေၚ်ဖျေံဒၞာဲဂမၠိုၚ်",
+	"settings-theme-label": "ပရေၚ်သဳကၠဳ",
+	"settings-language-label": "ဓမံက်ထ္ၜး အရေဝ်ဘာသာ",
+	"settings-language-search-placeholder": "ဂၠာဲ အရေဝ်ဘာသာ",
+	"settings-language-no-results": "ဟွံဆဵု အရေဝ်ဘာသာ",
+	"filters-category-label": "ကဏ္ဍ ဝေါဟာရ"
+}
